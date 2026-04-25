@@ -1,0 +1,16 @@
+# sw_store/.gitignore
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# IDE / Editor
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Docker (se userai volumi locali in futuro)
+.docker-data/
