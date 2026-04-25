@@ -51,3 +51,5 @@ end
 
 ## Dipendenze per authentication (Devise + JWT)
 gem "devise", "~> 5.0"
+gem 'devise-jwt'
+gem 'jsonapi-serializer'
