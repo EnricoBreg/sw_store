@@ -18,11 +18,11 @@ class Users::SessionsController < Devise::SessionsController
 
   # Uso di *_args per evitare eventuali errori in chiamata da parte della libreria devise
   def respond_to_on_destroy(*_args)
-=begin     if request.headers["Authorization"].present?
-      jwt_payload = JWT.decode(request.headers["Authorization"].split(" ").last,
-                                Rails.application.credentials.devise_jwt_secret_key!).first
-      current_user = User.find(jwt_payload["sub"])
-=end
+      # if request.headers["Authorization"].present?
+      #   jwt_payload = JWT.decode(request.headers["Authorization"].split(" ").last,
+      #                             Rails.application.credentials.devise_jwt_secret_key!).first
+      #   current_user = User.find(jwt_payload["sub"])
+
       # Non serve fare la decodifica del token JWT, devise ha già popolato l'helper current_user
       if current_user
         render json: {
@@ -35,8 +35,6 @@ class Users::SessionsController < Devise::SessionsController
           message: "Impossibile trovare una sessione attiva."
         }, status: :unauthorized
       end
-    end
-=begin
+    # end
   end
-=end
 end
