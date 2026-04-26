@@ -14,7 +14,7 @@ Rails.application.routes.draw do
   # ========================================================
   #   Routes per gestione utente corrente
   # ========================================================
-  get "auth/me", to: "current_user#index", defaults: { format: :json }
+  resource "/auth/me", controller: :current_user, only: [ :show, :update, :destroy ], defaults: { format: :json }
 
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
