@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+  # ========================================================
+  #   Routes per authenticazione e registrazione
+  # ========================================================
   devise_for :users, path: "auth", defaults: { format: :json }, path_names: {
     sign_in: "login",
     sign_out: "logout",
@@ -7,6 +10,12 @@ Rails.application.routes.draw do
     sessions: "users/sessions",
     registrations: "users/registrations"
   }
+
+  # ========================================================
+  #   Routes per gestione utente corrente
+  # ========================================================
+  get "auth/me", to: "current_user#index", defaults: { format: :json }
+
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
