@@ -17,20 +17,27 @@ Product.destroy_all
 
 
 puts "Creazione utenti base..."
+
 User.create(
-  name: "Admin User",
+  first_name: "Admin",
+  last_name: "User",
   email: "admin@swstore.com",
   password: "password123",
   password_confirmation: "password123",
   admin: true
 )
-User.create(
-  name: "John Doe",
-  email: "johndoe@example.com",
-  password: "password123",
-  password_confirmation: "password123",
-  admin: false
-)
+25.times do
+  User.create!(
+    first_name: Faker::Name.first_name,
+    last_name: Faker::Name.last_name,
+    email: Faker::Internet.unique.email,
+    password: "password123",
+    password_confirmation: "password123",
+    date_of_birth: Faker::Date.birthday(min_age: 18, max_age: 55),
+    number: Faker::PhoneNumber.cell_phone_in_e164,
+    admin: false
+  )
+end
 
 puts "Creazione di #{User.count} utenti completata!"
 

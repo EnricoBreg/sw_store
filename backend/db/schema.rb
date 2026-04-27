@@ -39,10 +39,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_27_153805) do
   create_table "users", force: :cascade do |t|
     t.boolean "admin", default: false, null: false
     t.datetime "created_at", null: false
+    t.date "date_of_birth"
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
+    t.string "first_name"
     t.string "jti", null: false
-    t.string "name"
+    t.string "last_name"
+    t.string "number"
     t.datetime "remember_created_at"
     t.datetime "reset_password_sent_at"
     t.string "reset_password_token"
