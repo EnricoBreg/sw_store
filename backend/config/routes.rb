@@ -16,6 +16,12 @@ Rails.application.routes.draw do
   # ========================================================
   resource "/auth/me", controller: :current_user, only: [ :show, :update, :destroy ], defaults: { format: :json }
 
+  # ========================================================
+  #   Routes Admin per gestione prodotti, ...
+  # ========================================================
+  namespace :admin do
+    resources :products
+  end
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
