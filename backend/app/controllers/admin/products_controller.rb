@@ -4,9 +4,19 @@ class Admin::ProductsController < ApplicationController
 
   # GET /admin/products
   def index
-    @products = Product.all
+    # TODO: implementare filtri
+    products = Product.all.order(created_at: :desc)
 
-    render json: @products
+    products = search_by_name(products) if params[:q].present?
+    products = products.where(category_id: params[:category_id]) if params[:category_id].present?
+
+    # Pagy accetta la query e il parametro della pagina dalla request
+    @pagy, @products = pagy(products, page: params[:page], items: params[:per_page])
+
+    render json: {
+      data: @products,
+      meta: @pagy.data_hash # Generazione automatica dei campi: page, last, count, etc.
+    }
   end
 
   # GET /admin/products/1
@@ -48,5 +58,9 @@ class Admin::ProductsController < ApplicationController
     # Only allow a list of trusted parameters through.
     def product_params
       params.expect(product: [ :name, :description, :price, :discount_percentage, :stock_quantity, :active ])
+    end
+
+    def search_by_name(scope)
+      scope.where("name ILIKE ?", "%#{params[:q]}%")
     end
 end
