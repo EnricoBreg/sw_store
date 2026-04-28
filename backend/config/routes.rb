@@ -25,6 +25,12 @@ Rails.application.routes.draw do
     resources :users, except: [ :create ] # La creazione degli utenti avviene tramite registrazione, non da admin
   end
 
+  # ========================================================
+  #   Routes pubbliche per utenti non loggati
+  # ========================================================
+  resources :products, only: [ :index, :show ], defaults: { format: :json }
+  resources :categories, only: [ :index, :show ], defaults: { format: :json }
+
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
