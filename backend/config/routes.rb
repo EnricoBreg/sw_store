@@ -34,6 +34,11 @@ Rails.application.routes.draw do
       end
 
       # ========================================================
+      #   Routes per utenti loggati (autenticazione richiesta)
+      # ========================================================
+      resources :addresses, module: :users
+
+      # ========================================================
       #   Routes pubbliche per utenti non loggati
       # ========================================================
       resources :products, only: [ :index, :show ]
