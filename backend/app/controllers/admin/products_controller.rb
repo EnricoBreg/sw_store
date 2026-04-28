@@ -5,12 +5,11 @@ class Admin::ProductsController < Admin::BaseController
   def index
     # TODO: implementare filtri
     products = Product.all.order(created_at: :desc)
-
     products = search_by_name(products) if params[:q].present?
     products = products.where(category_id: params[:category_id]) if params[:category_id].present?
 
     # Pagy accetta la query e il parametro della pagina dalla request
-    @pagy, @products = pagy(products, page: params[:page], items: params[:per_page])
+    @pagy, @products = pagy(products, page: params[:page], items: params[:limit])
 
     render json: {
       data: @products,
@@ -49,17 +48,16 @@ class Admin::ProductsController < Admin::BaseController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_product
-      @product = Product.find(params.expect(:id))
-    end
 
-    # Only allow a list of trusted parameters through.
-    def product_params
-      params.expect(product: [ :name, :description, :price, :discount_percentage, :stock_quantity, :active ])
-    end
+  def set_product
+    @product = Product.find(params.expect(:id))
+  end
 
-    def search_by_name(scope)
-      scope.where("name ILIKE ?", "%#{params[:q]}%")
-    end
+  def product_params
+    params.expect(product: [ :name, :description, :price, :discount_percentage, :stock_quantity, :active ])
+  end
+
+  def search_by_name(scope)
+    scope.where("name ILIKE ?", "%#{params[:q]}%")
+  end
 end

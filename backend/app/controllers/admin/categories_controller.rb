@@ -3,8 +3,16 @@ class Admin::CategoriesController < Admin::BaseController
 
   # GET /admin/categories
   def index
-    @categories = Category.all
-    render json: @categories
+    # TODO: implementare filtri
+    categories = Category.all.order(name: :asc)
+    categories = search_by_name(categories) if params[:q].present?
+
+    @pagy, @categories = pagy(categories, page: params[:page], items: params[:limit])
+
+    render json: {
+      data: @categories,
+      meta: @pagy.data_hash
+    }
   end
 
   # GET /admin/categories/:id
@@ -53,5 +61,9 @@ class Admin::CategoriesController < Admin::BaseController
 
   def category_params
     params.expect(category: [ :name, :description ])
+  end
+
+  def search_by_name(scope)
+    scope.where("name ILIKE ?", "%#{params[:q]}%")
   end
 end
