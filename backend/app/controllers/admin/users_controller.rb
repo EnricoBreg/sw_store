@@ -1,4 +1,4 @@
-class Admin::UsersController < ApplicationController
+class Admin::UsersController < Admin::BaseController
   before_action :authenticate_user!
   before_action :set_user, only: [ :show, :update, :destroy ]
 

@@ -1,5 +1,4 @@
-class Admin::CategoriesController < ApplicationController
-  before_action :authenticate_user!
+class Admin::CategoriesController < Admin::BaseController
   before_action :set_category, only: [ :show, :update, :destroy ]
 
   # GET /admin/categories
