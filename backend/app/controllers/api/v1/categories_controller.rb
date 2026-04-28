@@ -1,4 +1,4 @@
-class CategoriesController < ApplicationController
+class Api::V1::CategoriesController < Api::V1::BaseController
   def index
     categories = Category.all.order(name: :asc)
     categories = search_by_name(categories) if params[:q].present?

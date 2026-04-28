@@ -1,4 +1,4 @@
-class Admin::ProductsController < Admin::BaseController
+class Api::V1::Admin::ProductsController < Api::V1::AdminController
   before_action :set_product, only: %i[ show update destroy ]
 
   # GET /admin/products

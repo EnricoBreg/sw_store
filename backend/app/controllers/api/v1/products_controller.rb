@@ -1,4 +1,4 @@
-class ProductsController < ApplicationController
+class Api::V1::ProductsController < Api::V1::BaseController
   # GET /products
   def index
     products = Product.all.order(name: :asc)
