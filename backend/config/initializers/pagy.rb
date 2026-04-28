@@ -13,7 +13,7 @@
 # Pagy::OPTIONS[:jsonapi]   = true   # Use JSON:API compliant URLs
 
 Pagy::OPTIONS[:overflow] = :empty_page
-Pagy::OPTIONS[:limit] = 10
+Pagy::OPTIONS[:limit] = 15
 Pagy::OPTIONS[:max_limit] = 30
 Pagy::OPTIONS[:data_keys] = %i[page previous next pages previous_url next_url]
 Pagy::OPTIONS.freeze
