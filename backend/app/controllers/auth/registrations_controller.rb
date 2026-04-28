@@ -1,4 +1,4 @@
-class Users::RegistrationsController < Devise::RegistrationsController
+class Auth::RegistrationsController < Devise::RegistrationsController
   include RackSessionsFix
   respond_to :json
 
