@@ -6,4 +6,24 @@ class User < ApplicationRecord
          :recoverable, :validatable, :jwt_authenticatable, jwt_revocation_strategy: self
 
   has_many :addresses, dependent: :destroy
+  has_one :cart, dependent: :destroy
+
+  after_create_commit :create_cart
+
+  validates :email, presence: true, uniqueness: true
+  validate :user_must_be_adult
+
+  private
+
+  def create_cart
+    Cart.create(user: self)
+  end
+
+  def user_must_be_adult
+    Rails.logger.debug "Validation user age: #{date_of_birth} #{date_of_birth > 18.years.ago.to_date}"
+
+    if date_of_birth.present? && date_of_birth > 18.years.ago.to_date
+      errors.add :date_of_birth, "Devi avere almeno 18 anni per registrarti."
+    end
+  end
 end

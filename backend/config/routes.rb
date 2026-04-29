@@ -37,6 +37,12 @@ Rails.application.routes.draw do
       #   Routes per utenti loggati (autenticazione richiesta)
       # ========================================================
       resources :addresses, module: :users
+      resource :cart, module: :users, only: [ :show ] do
+        collection do
+          post "add/:product_id", to: "carts#add_product"
+          delete "remove/:product_id", to: "carts#remove_product"
+        end
+      end
 
       # ========================================================
       #   Routes pubbliche per utenti non loggati
