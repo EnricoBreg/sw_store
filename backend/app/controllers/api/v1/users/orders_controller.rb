@@ -15,6 +15,7 @@ class Api::V1::Users::OrdersController < Api::V1::AuthenticatedController
 
   # GET /api/v1/orders/:id
   def show
+    render json: OrderSerializer.new(@order).serializable_hash[:data][:attributes], status: :ok
   end
 
   # POST /api/v1/orders
@@ -69,7 +70,7 @@ class Api::V1::Users::OrdersController < Api::V1::AuthenticatedController
     if @order.update(status: :cancelled)
       render json: { message: "Ordine cancellato con successo." }, status: :ok
     else
-      render json: { error: "Impossibile cancella l'ordine." }, status: :unprocessable_entity
+      render json: { error: "Impossibile annullare l'ordine." }, status: :unprocessable_entity
     end
   end
 
