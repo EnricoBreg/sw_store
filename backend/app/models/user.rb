@@ -11,7 +11,8 @@ class User < ApplicationRecord
   after_create_commit :create_cart
 
   validates :email, presence: true, uniqueness: true
-  validate :user_must_be_adult
+  validates :date_of_birth, presence: true
+  validate :user_must_be_adult, if: -> { date_of_birth.present? }
 
   private
 
