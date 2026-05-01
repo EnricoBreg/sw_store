@@ -40,6 +40,7 @@ Rails.application.routes.draw do
       resource :cart, module: :users, only: [ :show ] do
         resources :items, controller: "cart_items", only: [ :create, :update, :destroy ], param: :product_id
       end
+      resources :orders, module: :users, only: [ :show, :create, :update, :destroy ]
 
       # ========================================================
       #   Routes pubbliche per utenti non loggati
