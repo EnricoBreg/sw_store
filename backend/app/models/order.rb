@@ -35,6 +35,6 @@ class Order < ApplicationRecord
 
   # Metodo per verificare se l'ordine è ancora modificabile.
   def editable?
-    pending? || !cancelled? || !refunded?
+    pending? || paid?
   end
 end
