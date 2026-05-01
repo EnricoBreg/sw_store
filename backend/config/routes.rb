@@ -31,6 +31,7 @@ Rails.application.routes.draw do
         resources :products
         resources :categories
         resources :users, except: [ :create ] # La creazione degli utenti avviene tramite registrazione, non da admin
+        resources :orders, except: [ :create ]
       end
 
       # ========================================================
