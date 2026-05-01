@@ -3,7 +3,8 @@ class Api::V1::Users::CartsController < Api::V1::AuthenticatedController
 
   # GET /api/v1/cart
   def show
-    render json: current_user.cart, status: :ok
+    # render json: current_user.cart, status: :ok
+    render json: CartSerializer.new(current_user.cart).serializable_hash[:data][:attributes], status: :ok
   end
 
   def add_product
