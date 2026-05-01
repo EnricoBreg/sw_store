@@ -38,10 +38,7 @@ Rails.application.routes.draw do
       # ========================================================
       resources :addresses, module: :users
       resource :cart, module: :users, only: [ :show ] do
-        collection do
-          post "add/:product_id", to: "carts#add_product"
-          delete "remove/:product_id", to: "carts#remove_product"
-        end
+        resources :items, controller: "cart_items", only: [ :create, :update, :destroy ], param: :product_id
       end
 
       # ========================================================

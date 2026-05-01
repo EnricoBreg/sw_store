@@ -5,8 +5,8 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :validatable, :jwt_authenticatable, jwt_revocation_strategy: self
 
-  has_many :addresses, dependent: :destroy
   has_one :cart, dependent: :destroy
+  has_many :addresses, dependent: :destroy
 
   after_create_commit :create_cart
 

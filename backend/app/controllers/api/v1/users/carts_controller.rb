@@ -1,6 +1,7 @@
-class Api::V1::CartsController < Api::V1::AuthenticatedController
+class Api::V1::Users::CartsController < Api::V1::AuthenticatedController
   before_action :set_product, only: [ :add_product, :remove_product ]
 
+  # GET /api/v1/cart
   def show
     render json: current_user.cart, status: :ok
   end
