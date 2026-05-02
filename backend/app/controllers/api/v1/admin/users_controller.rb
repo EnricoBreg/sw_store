@@ -9,32 +9,47 @@ class Api::V1::Admin::UsersController < Api::V1::AdminController
 
     @pagy, @users = pagy(users, page: params[:page], items: params[:limit])
 
-    render json: {
-      data: @users,
+    render_success(
+      data: serialize_collection(@users, UserSerializer),
       meta: @pagy.data_hash
-    }, status: :ok
+    )
   end
 
   # GET /admin/users/:id
   def show
-    render json: @user, status: :ok
+    render_success(
+      data: serialize_resource(@user, UserSerializer),
+    )
   end
 
   # PUT /admin/users/:id
   def update
     if @user.update(user_params)
-      render json: @user, status: :ok
+      render_success(
+        message: "Utente #{@user.id} aggiornato con successo",
+        data: serialize_resource(@user, UserSerializer),
+      )
     else
-      render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
+      render_error(
+        message: "Errore nell'aggiornamento dell'utente #{@user.id}.",
+        errors: @user.errors.full_messages,
+        status: :unprocessable_entity
+      )
     end
   end
 
   # DELETE /admin/users/:id
   def destroy
     if @user.destroy
-      render json: { message: "Utente eliminato con successo" }, status: :ok
+      render_success(
+        message: "Utente #{@user.id} eliminato con successo.",
+      )
     else
-      render json: { error: "Impossibile eliminare l'utente" }, status: :unprocessable_entity
+      render_error(
+        message: "Errore nell'eliminazione dell'utente #{@user.id}.",
+        errors: @user.errors.full_messages,
+        status: :unprocessable_entity
+      )
     end
   end
 

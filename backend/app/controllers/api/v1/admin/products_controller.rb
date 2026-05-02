@@ -11,15 +11,17 @@ class Api::V1::Admin::ProductsController < Api::V1::AdminController
     # Pagy accetta la query e il parametro della pagina dalla request
     @pagy, @products = pagy(products, page: params[:page], items: params[:limit])
 
-    render json: {
-      data: @products,
+    render_success(
+      data: serialize_collection(@products, ProductSerializer),
       meta: @pagy.data_hash # Generazione automatica dei campi: page, last, count, etc.
-    }
+    )
   end
 
   # GET /admin/products/1
   def show
-    render json: @product
+    render_success(
+      data: serialize_resource(@product, ProductSerializer)
+    )
   end
 
   # POST /admin/products
@@ -27,24 +29,44 @@ class Api::V1::Admin::ProductsController < Api::V1::AdminController
     @product = Product.new(product_params)
 
     if @product.save
-      render json: @product, status: :created
+      render_success(
+        message: "Prodotto #{@product.name} creato con successo",
+        data: serialize_resource(@product, ProductSerializer),
+        status: :created
+      )
     else
-      render json: @product.errors, status: :unprocessable_content
+      render_error(
+        message: "Errore nella creazione del nuovo prodotto.",
+        errors: @product.errors.full_messages,
+        status: :unprocessable_entity
+      )
     end
   end
 
   # PATCH/PUT /admin/products/1
   def update
     if @product.update(product_params)
-      render json: @product
+      render_success(
+        message: "Prodotto aggiornato con successo",
+        data: serialize_resource(@product, ProductSerializer),
+        status: :created
+      )
     else
-      render json: @product.errors, status: :unprocessable_content
+      render_error(
+        message: "Errore nella creazione del nuovo prodotto.",
+        errors: @product.errors.full_messages,
+        status: :unprocessable_entity
+      )
     end
   end
 
   # DELETE /admin/products/1
   def destroy
     @product.destroy!
+    render_success(
+      message: "Prodotto #{@product.name} eliminato con successo.",
+      status: :ok
+    )
   end
 
   private

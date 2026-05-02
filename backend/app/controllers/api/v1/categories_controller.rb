@@ -5,14 +5,16 @@ class Api::V1::CategoriesController < Api::V1::BaseController
 
     @pagy, @categories = pagy(categories, page: params[:page], items: params[:limit])
 
-    render json: {
-      data: @categories,
+    render_success(
+      data: serialize_collection(@categories, CategorySerializer),
       meta: @pagy.data_hash
-    }
+    )
   end
 
   def show
     @category = Category.find(params[:id])
-    render json: @category
+    render_success(
+      data: serialize_resource(@category, CategorySerializer)
+    )
   end
 end

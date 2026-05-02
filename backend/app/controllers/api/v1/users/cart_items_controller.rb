@@ -19,9 +19,17 @@ class Api::V1::Users::CartItemsController < Api::V1::AuthenticatedController
     end
 
     if @cart_item.save
-      render json: @cart_item, status: :created
+      render_success(
+        message: "Prodotto #{@product.name} aggiunto al carrello con successo",
+        data: @cart_item,
+        status: :created
+      )
     else
-      render json: { error: "Errore durante l'aggiunta del prodotto al carrello: #{@cart_item.errors.full_messages.to_sentence}" }, status: :unprocessable_entity
+      render_error(
+        message: "Errore durante l'aggiunta del prodotto #{@product.name} al carrello.",
+        errors: @cart_item.errors.full_messages,
+        status: :unprocessable_entity
+      )
     end
   end
 
@@ -30,34 +38,54 @@ class Api::V1::Users::CartItemsController < Api::V1::AuthenticatedController
 
     @cart_item = @cart.cart_items.find_by(product_id: @product.id)
     if @cart_item.nil?
-      render json: { error: "Il prodotto non è presente nel carrello." }, status: :not_found
+      render_error(
+        message: "Il prodotto #{@cart_item.product.name} non è presente nel carrello.",
+        status: :not_found
+      )
       return
     end
 
     if quantity <= 0
       @cart_item.destroy
-      render json: { message: "Il prodotto è stato rimosso dal carrello." }, status: :ok
+      render_success(
+        message: "Il prodotto #{@cart_item.product.name} è stato rimosso dal carrello.",
+      )
       return
     end
 
     if @cart_item.update(quantity: quantity)
-      render json: @cart_item, status: :ok
+      render_success(
+        message: "La quantità del prodotto #{@cart_item.product.name} è stata aggiornata con successo.",
+        data: serialize_resource(@cart_item, CartItemSerializer)
+      )
     else
-      render json: { error: "Errore durante l'aggiornamento del prodotto nel carrello: #{@cart_item.errors.full_messages.to_sentence}" }, status: :unprocessable_entity
+      render_error(
+        message: "Errore durante l'aggiornamento del prodotto #{@cart_item.product.name} nel carrello.",
+        errors: @cart_item.errors.full_messages,
+        status: :unprocessable_entity
+      )
     end
   end
 
   def destroy
     @cart_item = @cart.cart_items.find_by(product_id: @product.id)
     if @cart_item.nil?
-      render json: { error: "Il prodotto non è presente nel carrello." }, status: :not_found
-
+      render_error(
+        message: "Il prodotto #{@cart_item.product.name} non è presente nel carrello.",
+        status: :not_found
+      )
     end
 
     if @cart_item.destroy
-      render json: { message: "Il prodotto è stato rimosso dal carrello." }, status: :ok
+      render_success(
+        message: "Il prodotto #{@cart_item.product.name} è stato rimosso dal carrello.",
+      )
     else
-      render json: { error: "Errore durante la rimozione del prodotto dal carrello." }, status: :unprocessable_entity
+      render_error(
+        message: "Errore durante la rimozione del prodotto #{@cart_item.product.name} dal carrello.",
+        errors: @cart_item.errors.full_messages,
+        status: :unprocessable_entity
+      )
     end
   end
 

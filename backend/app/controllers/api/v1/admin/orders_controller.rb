@@ -6,8 +6,6 @@ class Api::V1::Admin::OrdersController < Api::V1::AdminController
     orders = Order.all.order(created_at: :desc)
     orders = orders.where(status: params[:status]) if params[:status].present?
 
-    Rails.logger.debug "\n\n#{params[:status]} - #{params[:created_after]} - #{params[:created_before]}"
-
     if params[:created_after].present? && params[:created_before].present?
       created_after = Time.parse(params[:created_after]).beginning_of_day
       created_before = Time.parse(params[:created_before]).end_of_day
@@ -22,32 +20,48 @@ class Api::V1::Admin::OrdersController < Api::V1::AdminController
 
     @pagy, @orders = pagy(orders, page: params[:page], items: params[:limit])
 
-    render json: {
-      data: @orders.map { |order| OrderSerializer.new(order).serializable_hash[:data][:attributes] },
-      meta: @pagy.data_hash
-    }, status: :ok
+    render_success(
+      data: serialize_collection(@orders, OrderSerializer),
+      meta: @pagy.data_hash,
+    )
   end
 
   # GET /admin/orders/:id
   def show
-    render json: OrderSerializer.new(@order).serializable_hash[:data][:attributes], status: :ok
+    render_success(
+      data: serialize_resource(@order, OrderSerializer),
+    )
   end
 
   # PUT /admin/orders/:id
   def update
     if @order.update(order_params)
-      render json: OrderSerializer.new(@order).serializable_hash[:data][:attributes], status: :ok
+      render_success(
+        message: "Ordine #{@order.id} aggiornato con successo.",
+        data: serialize_resource(@order, OrderSerializer),
+      )
     else
-      render json: { errors: @order.errors.full_messages }, status: :unprocessable_entity
+      render_error(
+        message: "Errore nell'aggiornamento dell'ordine (#{@order.id}).",
+        errors: @order.errors.full_messages,
+        status: :unprocessable_entity
+      )
     end
   end
 
   # DELETE /admin/orders/:id
   def destroy
     if @order.update(status: "cancelled")
-      render json: { message: "Ordine annullato con successo" }, status: :ok
+      render_success(
+        message: "Ordine #{@order.id} annullato con successo",
+        data: serialize_resource(@order, OrderSerializer),
+      )
     else
-      render json: { error: "Impossibile annullare l'ordine" }, status: :unprocessable_entity
+      render_error(
+        message: "Errore nell'annullamento dell'ordine (#{@order.id}).",
+        errors: @order.errors.full_messages,
+        status: :unprocessable_entity
+      )
     end
   end
 

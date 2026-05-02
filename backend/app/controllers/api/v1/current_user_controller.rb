@@ -1,7 +1,9 @@
 class Api::V1::CurrentUserController < Api::V1::AuthenticatedController
   # GET /auth/me
   def show
-    render json: UserSerializer.new(current_user).serializable_hash[:data][:attributes]
+    render_success(
+      data: serialize_resource(current_user, UserSerializer)
+    )
   end
 
   # PUT /auth/me
@@ -9,7 +11,7 @@ class Api::V1::CurrentUserController < Api::V1::AuthenticatedController
     # Se l'utente durante la modifica dei suoi dati, fornisce la password,
     # allora si aggiorna anche quella, altrimenti si procede con un normale update.
     # Devise mette a disposizione un helper update_with_password, per gestire
-    # facilmente il cambio password
+    # facilmente il cambio password.
 
     update_successfull = if user_params[:password].present?
       current_user.update_with_password(user_params)
@@ -18,23 +20,31 @@ class Api::V1::CurrentUserController < Api::V1::AuthenticatedController
     end
 
     if update_successfull
-      render json: UserSerializer.new(current_user).serializable_hash[:data][:attributes], status: :ok
+      render_success(
+        message: "Dati utente aggiornati con successo",
+        data: serialize_resource(current_user, UserSerializer)
+      )
     else
-      render json: {
-        status: {
-          code: 400,
-          errors: current_user.errors.full_messages
-        }
-      }, status: :unprocessable_entity
+      render_error(
+        message: "Errore nell'aggiornamento dei dati utente.",
+        errors: current_user.errors.full_messages,
+        status: :unprocessable_entity
+      )
     end
   end
 
   # DELETE /auth/me
   def destroy
     if current_user.destroy
-      render json: { message: "Account eliminato con successo." }, status: :ok
+      render_success(
+        message: "Account eliminato con successo.",
+      )
     else
-      render json: { message: "Impossibile eliminare l'account" }, status: :unprocessable_entity
+      render_error(
+        message: "Errore nell'eliminazione dell'account.",
+        errors: current_user.errors.full_messages,
+        status: :unprocessable_entity
+      )
     end
   end
 

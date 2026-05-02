@@ -6,16 +6,18 @@ class Api::V1::ProductsController < Api::V1::BaseController
 
     @pagy, @products = pagy(products, page: params[:page], items: params[:limit])
 
-    render json: {
-      data: @products,
+    render_success(
+      data: serialize_collection(@products, ProductSerializer),
       meta: @pagy.data_hash
-    }
+    )
   end
 
   # GET /products/id
   def show
     @product = Product.find(params[:id])
-    render json: @product
+    render_success(
+      data: serialize_resource(@product, ProductSerializer)
+    )
   end
 
   private

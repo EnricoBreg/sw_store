@@ -9,48 +9,65 @@ class Api::V1::Admin::CategoriesController < Api::V1::AdminController
 
     @pagy, @categories = pagy(categories, page: params[:page], items: params[:limit])
 
-    render json: {
-      data: @categories,
+    render_success(
+      data: serialize_collection(@categories, CategorySerializer),
       meta: @pagy.data_hash
-    }
+    )
   end
 
   # GET /admin/categories/:id
   def show
-    if @category.nil?
-      render json: { error: "Categoria non trovata" }, status: :not_found
-    else
-      render json: @category, status: :ok
-    end
+    render_success(
+      data: serialize_resource(@category, CategorySerializer)
+    )
   end
 
   # POST /admin/categories
   def create
     @category = Category.new(category_params)
     if @category.save
-      render json: @category, status: :created
+      # render json: @category, status: :created
+      render_success(
+        message: "Categoria #{@category.name} creata con successo.",
+        data: serialize_resource(@category, CategorySerializer),
+        status: :created
+      )
     else
-      render json: @category.errors, status: :unprocessable_content
+      # render json: @category.errors, status: :unprocessable_content
+      render_error(
+        message: "Errore nella creazione della categoria #{@category.name}",
+        errors: @category.errors.full_messages,
+        status: :unprocessable_entity
+      )
     end
   end
 
   # PUT /admin/categories/:id
   def update
     if @category.update(category_params)
-      render json: @category, status: :ok
+      # render json: @category, status: :ok
+      render_success(
+        message: "Categoria #{@category.name} aggiornata con successo.",
+        data: serialize_resource(@category, CategorySerializer),
+        status: :ok
+      )
     else
-      render json: @category.errors.full_messages, status: :unprocessable_entity
+      # render json: @category.errors.full_messages, status: :unprocessable_entity
+      render_error(
+        message: "Errore nell'aggiornamento della categoria #{@category.name}",
+        errors: @category.errors.full_messages,
+        status: :unprocessable_entity
+      )
     end
   end
 
   # DELETE /admin/categories/:id
   def destroy
-    if @category.nil?
-      render json: { error: "Categoria non trovata" }, status: :not_found
-    else
-      @category.destroy!
-      head :no_content
-    end
+    @category.destroy!
+    render_success(
+      message: "Categoria #{@category.name} eliminata con successo.",
+      status: :ok
+    )
   end
 
   private

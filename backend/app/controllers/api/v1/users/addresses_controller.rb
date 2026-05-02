@@ -4,30 +4,48 @@ class Api::V1::Users::AddressesController < Api::V1::AuthenticatedController
   def index
     addresses = current_user.addresses.order(nickname: :asc)
     @pagy, @addresses = pagy(addresses, page: params[:page], items: params[:limit])
-    render json: {
-      data: @addresses,
+
+    render_success(
+      data: serialize_collection(@addresses, AddressSerializer),
       meta: @pagy.data_hash
-    }
+    )
   end
 
   def show
-    render json: @address
+    render_success(
+      data: serialize_resource(@address, AddressSerializer)
+    )
   end
 
   def create
     @address = current_user.addresses.new(address_params)
     if @address.save
-      render json: @address, status: :created
+      render_success(
+        message: "Indirizzo creato con successo",
+        data: serialize_resource(@address, AddressSerializer),
+        status: :created
+      )
     else
-      render json: @address.errors, status: :unprocessable_content
+      render_error(
+        message: "Errore nella creazione del nuovo indirizzo.",
+        errors: @address.errors.full_messages,
+        status: :unprocessable_entity
+      )
     end
   end
 
   def update
     if @address.update(address_params)
-      render json: @address
+      render_success(
+        message: "Indirizzo aggiornato con successo",
+        data: serialize_resource(@address, AddressSerializer),
+      )
     else
-      render json: @address.errors, status: :unprocessable_content
+      render_error(
+        message: "Errore nell'aggiornamento dell'indirizzo.",
+        errors: @address.errors.full_messages,
+        status: :unprocessable_entity
+      )
     end
   end
 
@@ -35,7 +53,11 @@ class Api::V1::Users::AddressesController < Api::V1::AuthenticatedController
     if @address.destroy
       head :no_content
     else
-      render json: @address.errors, status: :unprocessable_content
+      render_error(
+        message: "Errore nell'eliminazione dell'indirizzo.",
+        errors: @address.errors.full_messages,
+        status: :unprocessable_entity
+      )
     end
   end
 

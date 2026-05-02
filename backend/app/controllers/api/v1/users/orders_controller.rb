@@ -7,15 +7,17 @@ class Api::V1::Users::OrdersController < Api::V1::AuthenticatedController
 
     @pagy, @orders = pagy(orders, page: params[:page], items: params[:limit])
 
-    render json: {
-      data: @orders.map { |order| OrderSerializer.new(order).serializable_hash[:data][:attributes] },
+    render_success(
+      data: serialize_collection(@orders, OrderSerializer),
       meta: @pagy.data_hash
-    }, status: :ok
+    )
   end
 
   # GET /api/v1/orders/:id
   def show
-    render json: OrderSerializer.new(@order).serializable_hash[:data][:attributes], status: :ok
+    render_success(
+      data: serialize_resource(@order, OrderSerializer)
+    )
   end
 
   # POST /api/v1/orders
@@ -23,7 +25,9 @@ class Api::V1::Users::OrdersController < Api::V1::AuthenticatedController
     cart = current_user.cart
 
     if cart.empty?
-      render json: { error: "Il carrello è vuoto. Impossibile proseguire con il checkout" }, status: :unprocessable_entity
+      render_error(
+        message: "Il carrello è vuoto. Impossibile proseguire con il checkout",
+      )
       return
     end
 
@@ -48,18 +52,33 @@ class Api::V1::Users::OrdersController < Api::V1::AuthenticatedController
       cart.cart_items.destroy_all
     end
 
-    render json: OrderSerializer.new(@order).serializable_hash[:data][:attributes], status: :created
+    render_success(
+      message: "Ordine #{@order.id} creato con successo",
+      data: serialize_resource(@order, OrderSerializer),
+      status: :created
+    )
 
   rescue ActiveRecord::RecordInvalid => err
-    render json: { error: "Checkout fallito: #{err.message}" }, status: :unprocessable_entity
+    render_error(
+      message: "Errore durante il checkout dell'ordine #{@order.id}: #{err.message}",
+      errors: @order.errors.full_messages,
+      status: :unprocessable_entity
+    )
   end
 
   # PUT /api/v1/orders/:id
   def update
     if @order.update(order_params)
-      render json: OrderSerializer.new(@order).serializable_hash[:data][:attributes], status: :ok
+      render_success(
+        message: "Ordine #{@order.id} aggiornato con successo",
+        data: serialize_resource(@order, OrderSerializer)
+      )
     else
-      render json: { errors: @order.errors.full_messages }, status: :unprocessable_entity
+      render_error(
+        message: "Errore durante l'aggiornamento dell'ordine #{@order.id}.",
+        errors: @order.errors.full_messages,
+        status: :unprocessable_entity
+      )
     end
   end
 
@@ -68,9 +87,15 @@ class Api::V1::Users::OrdersController < Api::V1::AuthenticatedController
     # Per il delete, si considera solamente la cancellazione soft dell'ordine, impostando lo status a "cancelled".
     # In questo modo, si mantiene comunque traccia dell'ordine e dei suoi item, evitando di cancellare dati importanti.
     if @order.update(status: :cancelled)
-      render json: { message: "Ordine cancellato con successo." }, status: :ok
+      render_success(
+        message: "Ordine #{@order.id} cancellato con successo.",
+      )
     else
-      render json: { error: "Impossibile annullare l'ordine." }, status: :unprocessable_entity
+      render_error(
+        message: "Errore durante l'annullamento dell'ordine #{@order.id}.",
+        errors: @order.errors.full_messages,
+        status: :unprocessable_entity
+      )
     end
   end
 
