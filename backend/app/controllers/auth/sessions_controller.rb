@@ -1,19 +1,15 @@
 class Auth::SessionsController < Devise::SessionsController
   include RackSessionsFix
+  include ApiResponses
   respond_to :json
 
   private
 
   def respond_with(current_user, _opts = {})
-    render json: {
-      status: {
-        code: 200,
-        message: "Ti sei loggato con successo.",
-        data: {
-          user: UserSerializer.new(current_user).serializable_hash[:data][:attributes]
-        }
-      }
-    }, status: :ok
+    render_success(
+      message: :logged_in,
+      data: UserSerializer.new(current_user).serializable_hash[:data][:attributes]
+    )
   end
 
   # Uso di *_args per evitare eventuali errori in chiamata da parte della libreria devise
@@ -25,15 +21,14 @@ class Auth::SessionsController < Devise::SessionsController
 
       # Non serve fare la decodifica del token JWT, devise ha già popolato l'helper current_user
       if current_user
-        render json: {
-          status: 200,
-          message: "You logged out successfully."
-        }, status: :ok
+        render_success(
+          message: :logged_out
+        )
       else
-        render json: {
-          status: 401,
-          message: "Impossibile trovare una sessione attiva."
-        }, status: :unauthorized
+        render_error(
+          message: :not_logged_in,
+          status: :unauthorized
+        )
       end
     # end
   end

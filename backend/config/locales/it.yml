@@ -1,0 +1,151 @@
+it:
+  common_timestamps: &common_timestamps
+    created_at: "Aggiunto il"
+    updated_at: "Data ultimo aggiornamento"
+
+  common_addresses: &common_addresses
+    street: "Via/Viale"
+    city: "Città"
+    zip_code: "CAP"
+    country: "Stato"
+
+  activerecord:
+    # Traduzioni dei nomi dei modelli
+    models:
+      address: "Indirizzo"
+      cart: "Carrello"
+      cart_item: "Articolo"
+      category: "Categoria"
+      order: "Ordine"
+      order_item: "Articolo"
+      product: "Prodotto"
+      user: "Utente"
+
+  # Traduzione dei nome degli attributi
+    attributes:
+
+      address:
+        <<: *common_addresses
+        nickname: "Nickname"
+
+      cart:
+        user: "Riferimento all'utente"
+        user_id: "Riferimento all'utente"
+
+      cart_item:
+        quantity: "Quantità"
+        unit_price: "Prezzo unitario"
+        cart: "Carrello"
+        cart_id: "Carrello"
+        product: "Prodotto"
+        product_id: "Prodotto"
+    
+      category:
+        name: "Nome"
+        description: "Descrizione"
+    
+      order: 
+        <<: *common_addresses
+        <<: *common_timestamps
+        total_amount: "Totale"
+        status: "Stato"
+        user: "Utente"
+        user_id: "Utente"
+    
+      order_item:
+        discount_percentage: "Sconto"
+        quantity: "Quantità"
+        unit_price: "Prezzo unitario"
+        order: "Riferimento all'ordine"
+        order_id: "Riferimento all'ordine"
+        product: "Prodotto"
+        product_id: "Prodotto"
+
+      product:
+        <<: *common_timestamps
+        name: "Nome"
+        description: "Descrizione"
+        discount_percentage: "Sconto"
+        image_url: "URL immagine"
+        price: "Prezzo"
+        stock_quantity: "Quantità magazzino"
+        active: "Disponibile"
+        category: "Categoria"
+        category_id: "Categoria"
+
+      user:
+        admin: "Amministratore"
+        first_name: "Nome"
+        last_name: "Cognome"
+        email: "Indirizzo email"
+        password: "Password"
+        date_of_birth: "Data di nascita"
+        number: "Numero di telefono"
+        created_at: "Data iscrizione"
+        updated_at: "Data ultimo aggiornamento"
+  
+  api:
+    errors: 
+      not_found: "La risorsa richiesta non è stata trovata."
+      forbidden: "Non hai i permessi necessari per compiere l'azione richiesta."
+      unauthorized: "Devi autenticarti per procedere."
+      parameters_missing: "Alcuni parametri non sono stati trovati."
+      internal_server_error: "Si è verificato un errore interno al server."
+
+    messages:
+      address_created_successfully: "Indirizzo %{nickname} creato con successo."
+      address_create_error: "Errore nella creazione del nuovo indirizzo."
+      address_updated_successfully: "Indirizzo %{nickname} aggiornato con successo."
+      address_update_error: "Errore durante l'aggiornamento dell'indirizzo %{nickname}."
+      address_deleted_successfully: "Indirizzo %{nickname} cancellato con successo."
+      address_delete_error: "Errore durante l'eliminazione dell'indirizzo %{nickname}."
+
+      added_to_cart: "Prodotto %{name} aggiunto al carrello con successo."
+      add_to_cart_error: "Errore durante l'aggiunta del prodotto %{name} al carrello."
+      removed_from_cart: "Prodotto %{name} rimosso dal carrello con successo."
+      remove_from_cart_error: "Errore durante la rimozione del prodotto %{name} dal carrello."
+      cart_updated: "Carrello aggiornato con successo."
+      cart_empty: "Il tuo carrello è vuoto."
+      product_not_in_cart: "Il prodotto %{name} non è presente nel carrello."
+      quantity_updated: "Quantità del prodotto %{name} aggiornata con successo."
+      quantity_update_error: "Errore durante l'aggiornamento della quantità del prodotto %{name}."
+
+      checkout_successful: "Checkout completato con successo. Il tuo ordine è stato creato."
+      checkout_error: "Errore durante il processo di checkout. Per favore, riprova più tardi."
+      checkout_empty_cart: "Il tuo carrello è vuoto. Aggiungi prodotti al carrello prima di procedere al checkout."
+
+      category_created_successfully: "Categoria %{name} creata con successo."
+      category_create_error: "Errore nella creazione della nuova categoria."
+      category_updated_successfully: "Categoria %{name} aggiornata con successo."
+      category_update_error: "Errore durante l'aggiornamento della categoria."
+      category_deleted_successfully: "Categoria %{name} cancellata con successo."
+
+      product_created_successfully: "Prodotto %{name} creato con successo" 
+      product_create_error: "Errore nella creazione del nuovo prodotto."
+      product_updated_successfully: "Prodotto %{name} aggiornato con successo."
+      product_update_error: "Errore durante l'aggiornamento del prodotto."
+      product_deleted_successfully: "Prodotto %{name} cancellato con successo."
+
+      order_created_successfully: "Ordine %{id} creato con successo."
+      order_create_error: "Errore nella creazione del nuovo ordine."
+      order_updated_successfully: "Ordine %{id} aggiornato con successo."
+      order_update_error: "Errore durante l'aggiornamento dell'ordine %{id}."
+      order_deleted_successfully: "Ordine %{id} cancellato con successo."
+      order_delete_error: "Errore durante l'eliminazione dell'ordine %{id}."
+
+      user_updated_successfully: "Utente %{name} aggiornato con successo."
+      user_update_error: "Errore durante l'aggiornamento dell'utente %{name}."
+      user_deleted_successfully: "Utente %{name} eliminato con successo."
+      user_delete_error: "Errore durante l'eliminazione dell'utente %{name}."
+
+      info_updated_successfully: "Informazioni aggiornate con successo."
+      info_update_error: "Errore durante l'aggiornamento delle informazioni. Riprova più tardi."
+      account_deleted_successfully: "Il tuo account è stato eliminato con successo."
+      account_delete_error: "Errore durante l'eliminazione del tuo account. Riprova più tardi."
+
+      logged_in: "Ti sei autenticato con successo."
+      logged_out: "Sessione conclusa."
+      not_logged_in: "Impossibile trovare una sessione attiva."
+      signed_up: "Ti sei registrato con successo."
+      signed_up_failed: "Errore durante la registrazione."
+

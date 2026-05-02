@@ -37,12 +37,12 @@ class Api::V1::Admin::OrdersController < Api::V1::AdminController
   def update
     if @order.update(order_params)
       render_success(
-        message: "Ordine #{@order.id} aggiornato con successo.",
+        message: I18n.t("api.messages.order_updated_successfully", id: @order.id),
         data: serialize_resource(@order, OrderSerializer),
       )
     else
       render_error(
-        message: "Errore nell'aggiornamento dell'ordine (#{@order.id}).",
+        message: I18n.t("api.messages.order_update_error", id: @order.id),
         errors: @order.errors.full_messages,
         status: :unprocessable_entity
       )
@@ -53,12 +53,12 @@ class Api::V1::Admin::OrdersController < Api::V1::AdminController
   def destroy
     if @order.update(status: "cancelled")
       render_success(
-        message: "Ordine #{@order.id} annullato con successo",
+        message: I18n.t("api.messages.order_deleted_successfully", id: @order.id),
         data: serialize_resource(@order, OrderSerializer),
       )
     else
       render_error(
-        message: "Errore nell'annullamento dell'ordine (#{@order.id}).",
+        message: I18n.t("api.messages.order_update_error", id: @order.id),
         errors: @order.errors.full_messages,
         status: :unprocessable_entity
       )

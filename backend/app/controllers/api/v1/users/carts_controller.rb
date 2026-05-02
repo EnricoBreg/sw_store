@@ -12,12 +12,12 @@ class Api::V1::Users::CartsController < Api::V1::AuthenticatedController
     current_user.cart.add(@product)
     if current_user.cart.save
       render_success(
-        message: "Prodotto #{@product.name} aggiunto al carrello con successo",
+        message: I18n.t("api.messages.added_to_cart", name: @product.name),
         data: serialize_resource(current_user.cart, CartSerializer)
       )
     else
       render_error(
-        message: "Errore durante l'aggiunta del prodotto #{@product.name} al carrello.",
+        message: I18n.t("api.messages.add_to_cart_error", name: @product.name),
         errors: current_user.cart.errors.full_messages,
         status: :unprocessable_entity
       )
@@ -28,12 +28,12 @@ class Api::V1::Users::CartsController < Api::V1::AuthenticatedController
     current_user.cart.remove(@product)
     if current_user.cart.save
       render_success(
-        message: "Prodotto #{@product.name} rimosso dal carrello con successo",
+        message: I18n.t("api.messages.removed_from_cart", name: @product.name),
         data: serialize_resource(current_user.cart, CartSerializer)
       )
     else
       render_error(
-        message: "Errore durante la rimozione del prodotto #{@product.name} dal carrello.",
+        message: I18n.t("api.messages.remove_from_cart_error", name: @product.name),
         errors: current_user.cart.errors.full_messages,
         status: :unprocessable_entity
       )

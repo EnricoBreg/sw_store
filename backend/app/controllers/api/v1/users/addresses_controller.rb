@@ -21,13 +21,13 @@ class Api::V1::Users::AddressesController < Api::V1::AuthenticatedController
     @address = current_user.addresses.new(address_params)
     if @address.save
       render_success(
-        message: "Indirizzo creato con successo",
+        message: I18n.t("api.messages.address_created_successfully", nickname: @address.nickname),
         data: serialize_resource(@address, AddressSerializer),
         status: :created
       )
     else
       render_error(
-        message: "Errore nella creazione del nuovo indirizzo.",
+        message: :address_create_error,
         errors: @address.errors.full_messages,
         status: :unprocessable_entity
       )
@@ -37,12 +37,12 @@ class Api::V1::Users::AddressesController < Api::V1::AuthenticatedController
   def update
     if @address.update(address_params)
       render_success(
-        message: "Indirizzo aggiornato con successo",
+        message: I18n.t("api.messages.address_updated_successfully", nickname: @address.nickname),
         data: serialize_resource(@address, AddressSerializer),
       )
     else
       render_error(
-        message: "Errore nell'aggiornamento dell'indirizzo.",
+        message: I18n.t("api.messages.address_update_error", nickname: @address.nickname),
         errors: @address.errors.full_messages,
         status: :unprocessable_entity
       )
@@ -51,10 +51,12 @@ class Api::V1::Users::AddressesController < Api::V1::AuthenticatedController
 
   def destroy
     if @address.destroy
-      head :no_content
+      render_success(
+        message: I18n.t("api.messages.address_deleted_successfully", nickname: @address.nickname),
+      )
     else
       render_error(
-        message: "Errore nell'eliminazione dell'indirizzo.",
+        message: I18n.t("api.messages.address_delete_error", nickname: @address.nickname),
         errors: @address.errors.full_messages,
         status: :unprocessable_entity
       )

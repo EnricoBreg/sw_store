@@ -30,13 +30,13 @@ class Api::V1::Admin::ProductsController < Api::V1::AdminController
 
     if @product.save
       render_success(
-        message: "Prodotto #{@product.name} creato con successo",
+        message: I18n.t("api.messages.product_created_successfully", name: @product.name),
         data: serialize_resource(@product, ProductSerializer),
         status: :created
       )
     else
       render_error(
-        message: "Errore nella creazione del nuovo prodotto.",
+        message: :product_create_error,
         errors: @product.errors.full_messages,
         status: :unprocessable_entity
       )
@@ -47,13 +47,13 @@ class Api::V1::Admin::ProductsController < Api::V1::AdminController
   def update
     if @product.update(product_params)
       render_success(
-        message: "Prodotto aggiornato con successo",
+        message: I18n.t("api.messages.product_updated_successfully", name: @product.name),
         data: serialize_resource(@product, ProductSerializer),
         status: :created
       )
     else
       render_error(
-        message: "Errore nella creazione del nuovo prodotto.",
+        message: :product_update_error,
         errors: @product.errors.full_messages,
         status: :unprocessable_entity
       )
@@ -64,7 +64,7 @@ class Api::V1::Admin::ProductsController < Api::V1::AdminController
   def destroy
     @product.destroy!
     render_success(
-      message: "Prodotto #{@product.name} eliminato con successo.",
+      message: I18n.t("api.messages.product_deleted_successfully", name: @product.name),
       status: :ok
     )
   end

@@ -28,14 +28,14 @@ class Api::V1::Admin::CategoriesController < Api::V1::AdminController
     if @category.save
       # render json: @category, status: :created
       render_success(
-        message: "Categoria #{@category.name} creata con successo.",
+        message: I18n.t("api.messages.category_created_successfully", name: @category.name),
         data: serialize_resource(@category, CategorySerializer),
         status: :created
       )
     else
       # render json: @category.errors, status: :unprocessable_content
       render_error(
-        message: "Errore nella creazione della categoria #{@category.name}",
+        message: :category_create_error,
         errors: @category.errors.full_messages,
         status: :unprocessable_entity
       )
@@ -45,16 +45,14 @@ class Api::V1::Admin::CategoriesController < Api::V1::AdminController
   # PUT /admin/categories/:id
   def update
     if @category.update(category_params)
-      # render json: @category, status: :ok
       render_success(
-        message: "Categoria #{@category.name} aggiornata con successo.",
+        message: I18n.t("api.messages.category_created_successfully", name: @category.name),
         data: serialize_resource(@category, CategorySerializer),
         status: :ok
       )
     else
-      # render json: @category.errors.full_messages, status: :unprocessable_entity
       render_error(
-        message: "Errore nell'aggiornamento della categoria #{@category.name}",
+        message: :category_update_error,
         errors: @category.errors.full_messages,
         status: :unprocessable_entity
       )
@@ -65,7 +63,7 @@ class Api::V1::Admin::CategoriesController < Api::V1::AdminController
   def destroy
     @category.destroy!
     render_success(
-      message: "Categoria #{@category.name} eliminata con successo.",
+      message: I18n.t("api.messages.category_deleted_successfully", name: @category.name),
       status: :ok
     )
   end

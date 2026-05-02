@@ -26,7 +26,7 @@ class Api::V1::Users::OrdersController < Api::V1::AuthenticatedController
 
     if cart.empty?
       render_error(
-        message: "Il carrello è vuoto. Impossibile proseguire con il checkout",
+        message: :checkout_empty_cart,
       )
       return
     end
@@ -53,14 +53,14 @@ class Api::V1::Users::OrdersController < Api::V1::AuthenticatedController
     end
 
     render_success(
-      message: "Ordine #{@order.id} creato con successo",
+      message: I18n.t("api.messages.checkout_successful", id: @order.id),
       data: serialize_resource(@order, OrderSerializer),
       status: :created
     )
 
   rescue ActiveRecord::RecordInvalid => err
     render_error(
-      message: "Errore durante il checkout dell'ordine #{@order.id}: #{err.message}",
+      message: :checkout_error,
       errors: @order.errors.full_messages,
       status: :unprocessable_entity
     )
@@ -70,12 +70,12 @@ class Api::V1::Users::OrdersController < Api::V1::AuthenticatedController
   def update
     if @order.update(order_params)
       render_success(
-        message: "Ordine #{@order.id} aggiornato con successo",
+        message: I18n.t("api.messages.order_updated_successfully", id: @order.id),
         data: serialize_resource(@order, OrderSerializer)
       )
     else
       render_error(
-        message: "Errore durante l'aggiornamento dell'ordine #{@order.id}.",
+        message: I18n.t("api.messages.order_update_error", id: @order.id),
         errors: @order.errors.full_messages,
         status: :unprocessable_entity
       )
@@ -88,11 +88,11 @@ class Api::V1::Users::OrdersController < Api::V1::AuthenticatedController
     # In questo modo, si mantiene comunque traccia dell'ordine e dei suoi item, evitando di cancellare dati importanti.
     if @order.update(status: :cancelled)
       render_success(
-        message: "Ordine #{@order.id} cancellato con successo.",
+        message: I18n.t("api.messages.order_deleted_successfully", id: @order.id),
       )
     else
       render_error(
-        message: "Errore durante l'annullamento dell'ordine #{@order.id}.",
+        message: I18n.t("api.messages.order_delete_error", id: @order.id),
         errors: @order.errors.full_messages,
         status: :unprocessable_entity
       )

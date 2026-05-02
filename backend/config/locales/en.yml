@@ -28,4 +28,133 @@
 #       enabled: "ON"
 
 en:
-  hello: "Hello world"
+  common_timestamps: &common_timestamps
+    created_at: "Added on"
+    updated_at: "Last updated on"
+
+  common_addresses: &common_addresses
+    street: "Street address"
+    city: "City"
+    zip_code: "Postal code"
+    country: "Country"
+
+  activerecord:
+    models:
+      address: "Address"
+      cart: "Cart"
+      cart_item: "Cart Item"
+      category: "Category"
+      order: "Order"
+      order_item: "Order Item"
+      product: "Product"
+      user: "User"
+
+    attributes:
+      address:
+        <<: *common_addresses
+        nickname: "Nickname"
+    
+      cart_item:
+        quantity: "Quantity"
+        unit_price: "Unit price"
+    
+      category:
+        name: "Name"
+        description: "Description"
+    
+      order: 
+        <<: *common_addresses
+        <<: *common_timestamps
+        total_amount: "Total amount"
+        status: "Status"
+    
+      order_item:
+        discount_percentage: "Discount"
+        quantity: "Quantity"
+        unit_price: "Unit price"
+
+      product:
+        <<: *common_timestamps
+        name: "Name"
+        description: "Description"
+        discount_percentage: "Discount"
+        image_url: "Image URL"
+        price: "Price"
+        stock_quantity: "Stock quantity"
+        active: "Available"
+
+      user:
+        admin: "Administrator"
+        first_name: "First name"
+        last_name: "Last name"
+        email: "Email address"
+        password: "Password"
+        date_of_birth: "Date of birth"
+        number: "Phone number"
+        created_at: "Joined on"
+        updated_at: "Last profile update"
+
+  api:
+    errors:
+      not_found: "The requested resource was not found."
+      forbidden: "You do not have the necessary permissions to perform the requested action."
+      unauthorized: "You must authenticate to proceed."
+      parameters_missing: "Some parameters were not found."
+      internal_server_error: "An internal server error occurred."
+
+    messages:
+      address_created_successfully: "Address %{nickname} created successfully."
+      address_create_error: "Error during the creation of the new address."
+      address_updated_successfully: "Address %{nickname} updated successfully."
+      address_update_error: "Error during the update of the address %{nickname}."
+      address_deleted_successfully: "Address %{nickname} deleted successfully."
+      address_delete_error: "Error during the deletion of the address %{nickname}."
+
+      added_to_cart: "Product %{name} added to cart successfully."
+      add_to_cart_error: "Error during the addition of the product %{name} to the cart."
+      removed_from_cart: "Product %{name} removed from cart successfully."
+      remove_from_cart_error: "Error during the removal of the product %{name} from the cart."
+      cart_updated: "Cart updated successfully."
+      cart_empty: "Your cart is now empty."
+      product_not_in_cart: "Product %{name} is not in the cart."
+      quantity_updated: "Quantity of product %{name} updated successfully." 
+      quantity_update_error: "Error during the update of the quantity for product %{name}."
+
+      checkout_successful: "Checkout completed successfully. Your order %{id} is being processed."
+      checkout_error: "Error during the checkout process. Please try again."
+      checkout_empty_cart: "Your cart is empty. Please add products to your cart before checking out."
+
+      category_created_successfully: "Category %{name} created successfully."
+      category_create_error: "Error during the creation of the new category."
+      category_updated_successfully: "Category %{name} updated successfully."
+      category_update_error: "Error during the update of the category."
+      category_deleted_successfully: "Category %{name} deleted successfully."
+
+      product_created_successfully: "Product %{name} created successfully." 
+      product_create_error: "Error during the creation of the new product."
+      product_updated_successfully: "Product %{name} updated successfully."
+      product_update_error: "Error during the update of the product."
+      product_deleted_successfully: "Product %{name} deleted successfully."
+
+      order_created_successfully: "Order %{id} created successfully."
+      order_create_error: "Error during the creation of the new order."
+      order_updated_successfully: "Order %{id} updated successfully."
+      order_update_error: "Error during the update of the order %{id}."
+      order_deleted_successfully: "Order %{id} deleted successfully."
+      order_delete_error: "Error during the deletion of the order %{id}."
+
+      user_updated_successfully: "User %{name} updated successfully."
+      user_update_error: "Error during the update of the user %{name}."
+      user_deleted_successfully: "User %{name} deleted successfully."
+      user_delete_error: "Error during the deletion of the user %{name}."
+
+      info_updated_successfully: "Information updated successfully."
+      info_update_error: "Error during the update of the information. Please try again later."
+      account_deleted_successfully: "Your account has been deleted successfully."
+      account_delete_error: "Error during the deletion of your account. Please try again later."
+
+      logged_in: "You logged in successfully."
+      logged_out: "You logged out."
+      not_logged_in: "No active session found."
+      signed_up: "You signed up successfully."
+      signed_up_failed: "Errore during sign up."

@@ -8,7 +8,7 @@ class Api::V1::BaseController < ApplicationController
 
   def render_not_found(exception)
     render_error(
-      message: "Risorsa non trovata",
+      message: :not_found,
       errors: [ exception.message ],
       status: :not_found
     )
@@ -16,7 +16,7 @@ class Api::V1::BaseController < ApplicationController
 
   def render_parameters_missing(exception)
     render_error(
-      message: "Parametri mancanti",
+      message: :parameters_missing,
       errors: [ exception.message ],
       status: :unprocessable_entity
     )

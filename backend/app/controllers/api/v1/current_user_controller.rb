@@ -21,12 +21,12 @@ class Api::V1::CurrentUserController < Api::V1::AuthenticatedController
 
     if update_successfull
       render_success(
-        message: "Dati utente aggiornati con successo",
+        message: :info_updated_successfully,
         data: serialize_resource(current_user, UserSerializer)
       )
     else
       render_error(
-        message: "Errore nell'aggiornamento dei dati utente.",
+        message: :info_update_error,
         errors: current_user.errors.full_messages,
         status: :unprocessable_entity
       )
@@ -37,11 +37,11 @@ class Api::V1::CurrentUserController < Api::V1::AuthenticatedController
   def destroy
     if current_user.destroy
       render_success(
-        message: "Account eliminato con successo.",
+        message: :account_deleted_successfully,
       )
     else
       render_error(
-        message: "Errore nell'eliminazione dell'account.",
+        message: :account_delete_error,
         errors: current_user.errors.full_messages,
         status: :unprocessable_entity
       )

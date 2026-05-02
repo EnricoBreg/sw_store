@@ -26,12 +26,12 @@ class Api::V1::Admin::UsersController < Api::V1::AdminController
   def update
     if @user.update(user_params)
       render_success(
-        message: "Utente #{@user.id} aggiornato con successo",
+        message: I18n.t("api.messages.user_updated_successfully", name: "#{@user.first_name} #{@user.last_name}"),
         data: serialize_resource(@user, UserSerializer),
       )
     else
       render_error(
-        message: "Errore nell'aggiornamento dell'utente #{@user.id}.",
+        message: I18n.t("api.messages.user_update_error", name: "#{@user.first_name} #{@user.last_name}"),
         errors: @user.errors.full_messages,
         status: :unprocessable_entity
       )
@@ -42,11 +42,11 @@ class Api::V1::Admin::UsersController < Api::V1::AdminController
   def destroy
     if @user.destroy
       render_success(
-        message: "Utente #{@user.id} eliminato con successo.",
+        message: I18n.t("api.messages.user_deleted_successfully", name: "#{@user.first_name} #{@user.last_name}"),
       )
     else
       render_error(
-        message: "Errore nell'eliminazione dell'utente #{@user.id}.",
+        message: I18n.t("api.messages.user_delete_error", name: "#{@user.first_name} #{@user.last_name}"),
         errors: @user.errors.full_messages,
         status: :unprocessable_entity
       )
