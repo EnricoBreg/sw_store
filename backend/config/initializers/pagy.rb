@@ -15,7 +15,7 @@
 Pagy::OPTIONS[:overflow] = :empty_page
 Pagy::OPTIONS[:limit] = 15
 Pagy::OPTIONS[:max_limit] = 30
-Pagy::OPTIONS[:data_keys] = %i[page previous next pages previous_url next_url]
+Pagy::OPTIONS[:data_keys] = %i[count page previous next pages previous_url next_url]
 Pagy::OPTIONS.freeze
 
 ############ JS and CSS Resources ##########################################################
