@@ -7,11 +7,11 @@
 
 Rails.application.config.middleware.insert_before 0, Rack::Cors do
   allow do
-    origins "*/*" # Any origins: TODO: da sostituire una volta in produzione con l'origine vera
+    origins "http://localhost:4200" # Any origins: TODO: da sostituire una volta in produzione con l'origine vera
 
     resource "*",
       headers: :any,
-      methods: [:get, :post, :put, :patch, :delete, :options, :head],
-      expose: [:Authorization]
+      methods: [ :get, :post, :put, :patch, :delete, :options, :head ],
+      expose: [ :Authorization ]
   end
 end
