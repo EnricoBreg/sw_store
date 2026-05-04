@@ -5,7 +5,7 @@ import { ProductsService } from '../../core/services/products.service';
 import Product from '../../core/models/product';
 import { PaginationMeta } from '../../core/models/api-types';
 import { MatProgressSpinner } from "@angular/material/progress-spinner";
-import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatIconButton } from "@angular/material/button"
 import { MatIcon } from "@angular/material/icon";
 
@@ -31,8 +31,8 @@ import { MatIcon } from "@angular/material/icon";
         </div>
       </mat-sidenav>
       <mat-sidenav-content>
-        <section>
-          <h1 class="text-2xl font-bold text-gray-900">Our Products</h1>
+        <section class="p-6">
+          <h1 class="text-3xl font-bold text-gray-900">Our Products</h1>
 
           @if (isLoading()) {
             <div>
@@ -46,19 +46,19 @@ import { MatIcon } from "@angular/material/icon";
             </div>
           }
 
-          <div class="responsive-grid">
+          <div class="responsive-grid mt-4">
             @for (product of products(); track product.id) {
               <div
-                class="w-72 bg-white shadow-md rounded-xl duration-500 hover:scale-102 hover:shadow-xl"
+                class="w-72 bg-white shadow-md rounded-xl duration-500 hover:scale-102 hover:shadow-lg"
               >
                 <div>
                   <img
-                    [src]="product.image_url"
+                    [src]="product.image_url || 'assets/no_image_500x500.png'"
                     alt="Product"
                     class="h-80 w-72 object-cover rounded-t-xl"
+                    (error)="handleImageError($event)"
                   />
                   <div class="px-4 py-3 w-72">
-                    <!-- <span class="text-gray-400 mr-3 uppercase text-xs">Brand</span> -->
                     <p class="text-lg font-bold text-black truncate block capitalize">
                       {{ product.name }}
                     </p>
@@ -82,10 +82,12 @@ import { MatIcon } from "@angular/material/icon";
           </div>
 
           <mat-paginator
-            [length]="pagination()?.count"
-            [pageSize]="10"
+            [length]="pagination()?.count || 0"
+            [pageSize]="pagination()?.limit || 10"
+            [pageIndex]="(pagination()?.page || 1) - 1"
             [pageSizeOptions]="[5, 10, 30]"
             aria-label="Seleziona pagina"
+            (page)="onPageEvent($event)"
           >
           </mat-paginator>
         </section>
@@ -106,10 +108,10 @@ export default class ProductsGrid {
     this.loadProducts();
   }
 
-  loadProducts(page: number = 1) {
+  loadProducts(page: number = 0, limit = 10) {
     this.isLoading.set(true);
 
-    this.service.list(page).subscribe({
+    this.service.list(page, limit).subscribe({
       next: (response) => {
         this.products.set(response.data);
         this.pagination.set(response.meta || null);
@@ -117,8 +119,21 @@ export default class ProductsGrid {
       },
       error: (err) => {
         this.errorMessage.set(err?.error.message || 'Errore nel caricamento dei prodotti.');
+        console.log(err);
         this.isLoading.set(false);
       },
     });
+  }
+
+  onPageEvent(event: PageEvent) {
+    const backendPage = event.pageIndex + 1;
+    const backendLimit = event.pageSize;
+
+    this.loadProducts(backendPage, backendLimit);
+  }
+
+  handleImageError(error: Event) {
+    const imgElement = event?.target as HTMLImageElement;
+    imgElement.src = "assets/no_image_500x500.png";
   }
 }

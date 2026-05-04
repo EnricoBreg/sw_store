@@ -8,6 +8,7 @@ export interface ApiResponse<T> {
 
 export interface PaginationMeta {
   count: number;
+  limit: number;
   page: number;
   next: number;
   prev: number;
