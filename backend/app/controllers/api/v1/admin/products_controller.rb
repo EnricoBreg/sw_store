@@ -8,8 +8,11 @@ class Api::V1::Admin::ProductsController < Api::V1::AdminController
     products = search_by_name(products) if params[:q].present?
     products = products.where(category_id: params[:category_id]) if params[:category_id].present?
 
+    page_param = params[:page].to_i
+    current_page = page_param > 0 ? page_param : 0
+
     # Pagy accetta la query e il parametro della pagina dalla request
-    @pagy, @products = pagy(products, page: params[:page], items: params[:limit])
+    @pagy, @products = pagy(products, page: current_page + 1, items: params[:limit])
 
     render_success(
       data: serialize_collection(@products, ProductSerializer),
