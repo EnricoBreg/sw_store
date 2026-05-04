@@ -76,7 +76,7 @@ class Api::V1::Admin::ProductsController < Api::V1::AdminController
   end
 
   def product_params
-    params.expect(product: [ :name, :description, :price, :discount_percentage, :stock_quantity, :active, :category_id ])
+    params.expect(product: [ :name, :description, :price, :discount_percentage, :stock_quantity, :active, :category_id, :image ])
   end
 
   def search_by_name(scope)

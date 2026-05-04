@@ -1,9 +1,13 @@
-test:
+common_settings: &common_settings
   service: Disk
+  public: true
+
+test:
+  <<: *common_settings
   root: <%= Rails.root.join("tmp/storage") %>
 
 local:
-  service: Disk
+  <<: *common_settings
   root: <%= Rails.root.join("storage") %>
 
 # Use bin/rails credentials:edit to set the AWS secrets (as aws:access_key_id|secret_access_key)
