@@ -7,6 +7,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatIconButton } from "@angular/material/button"
 import { MatIcon } from "@angular/material/icon";
 import ApiPaginator from '../../components/api-paginator/api-paginator';
+import Spinner from '../../components/spinner/spinner';
 
 @Component({
   selector: 'app-products-grid',
@@ -15,12 +16,12 @@ import ApiPaginator from '../../components/api-paginator/api-paginator';
     MatSidenavContent,
     MatSidenav,
     CategoriesList,
-    MatProgressSpinner,
     MatPaginatorModule,
     MatIconButton,
     MatIcon,
-    ApiPaginator
-  ],
+    ApiPaginator,
+    Spinner
+],
   template: `
     <mat-sidenav-container class="mt-2">
       <mat-sidenav mode="side" opened="true">
@@ -31,13 +32,11 @@ import ApiPaginator from '../../components/api-paginator/api-paginator';
         </div>
       </mat-sidenav>
       <mat-sidenav-content>
-        <section class="p-6">
+        <section class="p-6 relative">
           <h1 class="text-3xl font-bold text-gray-900">Our Products</h1>
 
           @if (isLoading()) {
-            <div>
-              <mat-spinner></mat-spinner>
-            </div>
+            <app-spinner />
           }
 
           @if (errorMessage()) {
@@ -84,9 +83,9 @@ import ApiPaginator from '../../components/api-paginator/api-paginator';
           <div class="mt-5">
             <app-api-paginator
               [meta]="pagination()"
-              (pageChangeEvent)="onPageChangeEvent($event)" />
+              (pageChangeEvent)="onPageChangeEvent($event)"
+            />
           </div>
-
         </section>
       </mat-sidenav-content>
     </mat-sidenav-container>
@@ -105,12 +104,12 @@ export default class ProductsGrid {
     this.productsService.loadProducts();
   }
 
-  onPageChangeEvent(event: { page: number; limit: number; }) {
+  onPageChangeEvent(event: { page: number; limit: number }) {
     this.productsService.loadProducts(event.page, event.limit);
   }
 
   handleImageError(event: Event) {
     const imgElement = event?.target as HTMLImageElement;
-    imgElement.src = "assets/no_image_500x500.png";
+    imgElement.src = 'assets/no_image_500x500.png';
   }
 }
