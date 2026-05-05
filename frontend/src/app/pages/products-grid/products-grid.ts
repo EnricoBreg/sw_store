@@ -1,11 +1,9 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatSidenavContainer, MatSidenavContent, MatSidenav } from "@angular/material/sidenav"
 import CategoriesList from '../../components/categories-list/categories-list';
 import { ProductsService } from '../../core/services/products.service';
-import Product from '../../core/models/product';
-import { PaginationMeta } from '../../core/models/api-types';
 import { MatProgressSpinner } from "@angular/material/progress-spinner";
-import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatIconButton } from "@angular/material/button"
 import { MatIcon } from "@angular/material/icon";
 import ApiPaginator from '../../components/api-paginator/api-paginator';
@@ -96,37 +94,19 @@ import ApiPaginator from '../../components/api-paginator/api-paginator';
   styles: ``,
 })
 export default class ProductsGrid {
-  private service = inject(ProductsService);
+  private productsService = inject(ProductsService);
 
-  products = signal<Product[]>([]);
-  pagination = signal<PaginationMeta | null>(null);
-  isLoading = signal<boolean>(false);
-  errorMessage = signal<string | null>(null);
+  products = this.productsService.products;
+  pagination = this.productsService.paginationMeta;
+  isLoading = this.productsService.isLoading;
+  errorMessage = this.productsService.error;
 
   ngOnInit() {
-    this.loadProducts();
-  }
-
-  loadProducts(page: number = 1, limit = 10) {
-    this.isLoading.set(true);
-
-    this.service.list(page, limit).subscribe({
-      next: (response) => {
-        this.products.set(response.data);
-        this.pagination.set(response.meta || null);
-        this.isLoading.set(false);
-      },
-      error: (err) => {
-        this.errorMessage.set(`${err?.error.error} - ${err?.error.exception}` || 'Errore nel caricamento dei prodotti.');
-        console.log(err);
-        this.isLoading.set(false);
-      },
-    });
+    this.productsService.loadProducts();
   }
 
   onPageChangeEvent(event: { page: number; limit: number; }) {
-    console.log("event", event);
-    this.loadProducts(event.page, event.limit);
+    this.productsService.loadProducts(event.page, event.limit);
   }
 
   handleImageError(event: Event) {

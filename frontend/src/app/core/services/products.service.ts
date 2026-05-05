@@ -1,30 +1,34 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import Product from '../models/product';
-import { ApiResponse } from '../models/api-types';
+import { ProductsApiService } from '../http/products-api.service';
+import { ProductsStore } from '../state/products.store';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ProductsService {
-  private readonly baseUrl = "http://localhost:3000/api/v1/products";
-  private readonly http = inject(HttpClient);
+  private api = inject(ProductsApiService);
+  private store = inject(ProductsStore);
 
-  list(page: number = 1, perPage: number = 10): Observable<ApiResponse<Product[]>> {
-    const params = new HttpParams()
-      .set("page", page)
-      .set("limit", perPage);
+  // Esposizione dei signals in modo trasparente al componente che li userà
+  products = this.store.items;
+  paginationMeta = this.store.meta;
+  isLoading = this.store.isLoading;
+  error = this.store.error;
 
-    return this.http.get<ApiResponse<Product[]>>(this.baseUrl, {
-      params,
-      headers: {
-        "Accept-Language": "it"
-      }
-    })
-  }
+  loadProducts(page: number = 1, perPage: number = 10) {
+    this.store.setLoading();
 
-  get(id: number): Observable<ApiResponse<Product>> {
-    return this.http.get<ApiResponse<Product>>(`${this.baseUrl}/${id}`)
+    this.api.getProducts(page, perPage).subscribe({
+      next: (response) => {
+        // Popolamento dello store con i dati di risposta e di paginazione
+        this.store.setSuccess(response.data, response.meta!);
+      },
+      error: (err) => {
+        // Gestione del messaggio di errore qualora si verifichi
+        const msg =
+          `${err?.error.error} - ${err?.error.exception}` || 'Errore nel caricamento dei prodotti.';
+        this.store.setError(msg);
+      },
+    });
   }
 }
