@@ -15,6 +15,9 @@
           "style": "scss",
           "skipTests": true,
           "exportDefault": true
+        },
+        "@schematics/angular:service": {
+          "skipTests": true
         }
       },
       "root": "",
