@@ -11,10 +11,19 @@ export class ProductsApiService {
   private readonly http = inject(HttpClient);
   private readonly url = '/products';
 
-  getProducts(page = 1, limit = 1): Observable<ApiResponse<Product[]>> {
-    const params = new HttpParams()
+  getProducts(page = 1, limit = 10, categoryId?: number): Observable<ApiResponse<Product[]>> {
+    let params = new HttpParams()
       .set("page", page)
       .set("limit", limit);
+
+    console.log("Category: ", categoryId);
+
+    if (categoryId) {
+      console.log("Seeeetttt")
+      params = params.set('category_id', categoryId);
+    } 
+
+    console.log(params);
 
     return this.http.get<ApiResponse<Product[]>>(this.url, { params });
   } 

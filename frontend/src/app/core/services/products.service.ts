@@ -15,10 +15,10 @@ export class ProductsService {
   isLoading = this.store.isLoading;
   error = this.store.error;
 
-  loadProducts(page: number = 1, perPage: number = 10) {
+  loadProducts(page: number = 1, perPage: number = 10, categoryId?: number) {
     this.store.setLoading();
 
-    this.api.getProducts(page, perPage).subscribe({
+    this.api.getProducts(page, perPage, categoryId).subscribe({
       next: (response) => {
         // Popolamento dello store con i dati di risposta e di paginazione
         this.store.setSuccess(response.data, response.meta!);

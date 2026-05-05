@@ -8,6 +8,7 @@ import { MatIconButton } from "@angular/material/button"
 import { MatIcon } from "@angular/material/icon";
 import ApiPaginator from '../../components/api-paginator/api-paginator';
 import Spinner from '../../components/spinner/spinner';
+import { CategoriesService } from '../../core/services/categories.service';
 
 @Component({
   selector: 'app-products-grid',
@@ -20,15 +21,15 @@ import Spinner from '../../components/spinner/spinner';
     MatIconButton,
     MatIcon,
     ApiPaginator,
-    Spinner
-],
+    Spinner,
+  ],
   template: `
     <mat-sidenav-container class="mt-2">
       <mat-sidenav mode="side" opened="true">
         <div class="p-6">
           <h3 class="text-lg font-semibold text-gray-900">Categories</h3>
 
-          <app-categories-list />
+          <app-categories-list (categorySelectEvent)="onCategorySelection($event)" />
         </div>
       </mat-sidenav>
       <mat-sidenav-content>
@@ -94,7 +95,9 @@ import Spinner from '../../components/spinner/spinner';
 })
 export default class ProductsGrid {
   private productsService = inject(ProductsService);
-
+  private categoriesService = inject(CategoriesService);
+  
+  selectedCategory = this.categoriesService.selected;
   products = this.productsService.products;
   pagination = this.productsService.paginationMeta;
   isLoading = this.productsService.isLoading;
@@ -105,7 +108,11 @@ export default class ProductsGrid {
   }
 
   onPageChangeEvent(event: { page: number; limit: number }) {
-    this.productsService.loadProducts(event.page, event.limit);
+    this.productsService.loadProducts(event.page, event.limit, this.selectedCategory()?.id);
+  }
+
+  onCategorySelection(event: { id?: number, name?: string }) {
+    this.productsService.loadProducts(this.pagination()?.page, this.pagination()?.limit, event.id);
   }
 
   handleImageError(event: Event) {
