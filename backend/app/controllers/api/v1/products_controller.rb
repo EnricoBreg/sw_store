@@ -4,10 +4,7 @@ class Api::V1::ProductsController < Api::V1::BaseController
     products = Product.all.order(name: :asc)
     products = search_by_name(products) if params[:q].present?
 
-    page_param = params[:page].to_i
-    current_page = page_param > 0 ? page_param : 0
-
-    @pagy, @products = pagy(products, page: current_page + 1, items: params[:limit])
+    @pagy, @products = pagy(products, page: params[:page], items: params[:limit])
 
     render_success(
       data: serialize_collection(@products, ProductSerializer),
