@@ -8,6 +8,7 @@ import { MatProgressSpinner } from "@angular/material/progress-spinner";
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatIconButton } from "@angular/material/button"
 import { MatIcon } from "@angular/material/icon";
+import ApiPaginator from '../../components/api-paginator/api-paginator';
 
 @Component({
   selector: 'app-products-grid',
@@ -20,6 +21,7 @@ import { MatIcon } from "@angular/material/icon";
     MatPaginatorModule,
     MatIconButton,
     MatIcon,
+    ApiPaginator
   ],
   template: `
     <mat-sidenav-container class="mt-2">
@@ -81,15 +83,12 @@ import { MatIcon } from "@angular/material/icon";
             }
           </div>
 
-          <mat-paginator
-            [length]="pagination()?.count || 0"
-            [pageSize]="pagination()?.limit || 10"
-            [pageIndex]="(pagination()?.page || 1) - 1"
-            [pageSizeOptions]="[5, 10, 30]"
-            aria-label="Seleziona pagina"
-            (page)="onPageEvent($event)"
-          >
-          </mat-paginator>
+          <div class="mt-5">
+            <app-api-paginator
+              [meta]="pagination()"
+              (pageChangeEvent)="onPageChangeEvent($event)" />
+          </div>
+
         </section>
       </mat-sidenav-content>
     </mat-sidenav-container>
@@ -108,7 +107,7 @@ export default class ProductsGrid {
     this.loadProducts();
   }
 
-  loadProducts(page: number = 0, limit = 10) {
+  loadProducts(page: number = 1, limit = 10) {
     this.isLoading.set(true);
 
     this.service.list(page, limit).subscribe({
@@ -118,21 +117,19 @@ export default class ProductsGrid {
         this.isLoading.set(false);
       },
       error: (err) => {
-        this.errorMessage.set(err?.error.message || 'Errore nel caricamento dei prodotti.');
+        this.errorMessage.set(`${err?.error.error} - ${err?.error.exception}` || 'Errore nel caricamento dei prodotti.');
         console.log(err);
         this.isLoading.set(false);
       },
     });
   }
 
-  onPageEvent(event: PageEvent) {
-    const backendPage = event.pageIndex + 1;
-    const backendLimit = event.pageSize;
-
-    this.loadProducts(backendPage, backendLimit);
+  onPageChangeEvent(event: { page: number; limit: number; }) {
+    console.log("event", event);
+    this.loadProducts(event.page, event.limit);
   }
 
-  handleImageError(error: Event) {
+  handleImageError(event: Event) {
     const imgElement = event?.target as HTMLImageElement;
     imgElement.src = "assets/no_image_500x500.png";
   }
