@@ -45,5 +45,10 @@ module Backend
     config.i18n.available_locales = [ :it, :en ]
     config.i18n.default_locale = :it
     config.i18n.load_path += Dir[Rails.root.join("config", "locales", "**", "*.{rb,yml}")]
+
+    # Middleware per gestire i cookie, necessari per Devise e Omniauth
+    # Vedi: https://stackoverflow.com/questions/38424133/getting-error-omniauthnosessionerror-with-rails-5-api
+    config.middleware.use ActionDispatch::Cookies
+    config.middleware.use ActionDispatch::Session::CookieStore
   end
 end

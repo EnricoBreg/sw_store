@@ -40,6 +40,10 @@ gem "rack-cors"
 ## Dipendenze per authentication (Devise + JWT)
 gem "devise", "~> 5.0"
 gem "devise-jwt"
+gem "omniauth"
+gem "omniauth-google-oauth2"
+# gem "omniauth-rails_csrf_protection"
+
 gem "jsonapi-serializer"
 
 # Paginazione con Pagy. Vedi https://ddnexus.github.io/pagy/guides/quick-start/

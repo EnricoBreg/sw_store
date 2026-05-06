@@ -3,15 +3,16 @@ Rails.application.routes.draw do
   #   Routes per authenticazione e registrazione
   # ========================================================
   devise_for :users,
-    path: "api/v1/auth",
+    path: "api/v1",
     path_names: {
-      sign_in: "login",
-      sign_out: "logout",
-      registration: "signup"
+      sign_in: "auth/login",
+      sign_out: "auth/logout",
+      registration: "auth/signup"
     },
     controllers: {
       sessions: "auth/sessions",
-      registrations: "auth/registrations"
+      registrations: "auth/registrations",
+      omniauth_callbacks: "auth/omniauth_callbacks"
     }
 
   namespace :api, defaults: { format: :json } do
