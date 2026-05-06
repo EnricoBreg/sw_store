@@ -16,14 +16,9 @@ export class ProductsApiService {
       .set("page", page)
       .set("limit", limit);
 
-    console.log("Category: ", categoryId);
-
     if (categoryId) {
-      console.log("Seeeetttt")
       params = params.set('category_id', categoryId);
     } 
-
-    console.log(params);
 
     return this.http.get<ApiResponse<Product[]>>(this.url, { params });
   } 
