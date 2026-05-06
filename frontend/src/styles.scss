@@ -40,6 +40,10 @@ body {
   height: 100%;
 }
 
+mat-form-field {
+  width: 100%;
+}
+
 .elevated {
   box-shadow: var(--mat-sys-level2);
 }

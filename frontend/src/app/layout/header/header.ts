@@ -7,7 +7,7 @@ import { RouterLink } from '@angular/router';
   selector: 'app-header',
   imports: [MatToolbar, HeaderActions, RouterLink],
   template: ` 
-    <mat-toolbar class="w-full elevated py-2">
+    <mat-toolbar class="relative z-10 w-full elevated py-2">
       <div class="max-w-[1200px] mx-auto w-full flex items-center justify-between">
         <a routerLink="/">{{ title() }}</a>
 
