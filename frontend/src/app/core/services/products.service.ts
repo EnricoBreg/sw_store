@@ -11,11 +11,13 @@ export class ProductsService {
 
   // Esposizione dei signals in modo trasparente al componente che li userà
   #products = signal<Product[]>([]);
+  #product = signal<Product | null>(null);
   #paginationMeta = signal<PaginationMeta | undefined>(undefined);
   #isLoading = signal<boolean>(false);
   #error = signal<string | undefined>(undefined);
 
   products = this.#products.asReadonly();
+  product = this.#product.asReadonly();
   paginationMeta = this.#paginationMeta.asReadonly();
   isLoading = this.#isLoading.asReadonly();
   error = this.#error.asReadonly();
@@ -38,5 +40,22 @@ export class ProductsService {
         this.#isLoading.set(false);
       },
     });
+  }
+
+  getById(productId: number) {
+    this.#isLoading.set(true);
+
+    this.api.getById(productId).subscribe({
+      next: (response) => {
+        this.#product.set(response.data);
+        this.#isLoading.set(false);
+      },
+      error: (err) => {
+        const msg =
+          `${err?.error.error} - ${err?.error.exception}` || "Errore nel caricamento dei prodotti.";
+        this.#error.set(msg);
+        this.#isLoading.set(false);
+      }
+    })
   }
 }

@@ -2,13 +2,11 @@ import { Component, inject } from '@angular/core';
 import { MatSidenavContainer, MatSidenavContent, MatSidenav } from "@angular/material/sidenav"
 import CategoriesList from '../../components/categories-list/categories-list';
 import { ProductsService } from '../../core/services/products.service';
-import { MatProgressSpinner } from "@angular/material/progress-spinner";
 import { MatPaginatorModule } from '@angular/material/paginator';
-import { MatIconButton } from "@angular/material/button"
-import { MatIcon } from "@angular/material/icon";
 import ApiPaginator from '../../components/api-paginator/api-paginator';
 import Spinner from '../../components/spinner/spinner';
 import { CategoriesService } from '../../core/services/categories.service';
+import ProductCard from '../../components/product-card/product-card';
 
 @Component({
   selector: 'app-products-grid',
@@ -18,11 +16,10 @@ import { CategoriesService } from '../../core/services/categories.service';
     MatSidenav,
     CategoriesList,
     MatPaginatorModule,
-    MatIconButton,
-    MatIcon,
     ApiPaginator,
     Spinner,
-  ],
+    ProductCard
+],
   template: `
     <mat-sidenav-container class="mt-2">
       <mat-sidenav mode="side" opened="true">
@@ -48,36 +45,7 @@ import { CategoriesService } from '../../core/services/categories.service';
 
           <div class="responsive-grid mt-4">
             @for (product of products(); track product.id) {
-              <div
-                class="w-72 bg-white shadow-md rounded-xl duration-500 hover:scale-102 hover:shadow-lg"
-              >
-                <div>
-                  <img
-                    [src]="product.image_url || 'assets/no_image_500x500.png'"
-                    alt="Product"
-                    class="h-80 w-72 object-cover rounded-t-xl"
-                    (error)="handleImageError($event)"
-                  />
-                  <div class="px-4 py-3 w-72">
-                    <p class="text-lg font-bold text-black truncate block capitalize">
-                      {{ product.name }}
-                    </p>
-                    <div class="flex items-center">
-                      <p class="text-lg font-semibold text-black cursor-auto my-3">
-                        €{{ product.price }}
-                      </p>
-                      <!-- <del>
-                        <p class="text-sm text-gray-600 cursor-auto ml-2">$199</p>
-                      </del> -->
-                      <div class="ml-auto">
-                        <button matIconButton>
-                          <mat-icon>add_shopping_cart</mat-icon>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <app-product-card [product]="product" />
             }
           </div>
 
@@ -113,10 +81,5 @@ export default class ProductsGrid {
 
   onCategorySelection(event: { id?: number, name?: string }) {
     this.productsService.loadProducts(this.pagination()?.page, this.pagination()?.limit, event.id);
-  }
-
-  handleImageError(event: Event) {
-    const imgElement = event?.target as HTMLImageElement;
-    imgElement.src = 'assets/no_image_500x500.png';
   }
 }

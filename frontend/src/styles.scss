@@ -44,6 +44,17 @@ mat-form-field {
   width: 100%;
 }
 
+mat-sidenav {
+  @include mat.sidenav-overrides(
+      (
+        container-width: 250px,
+        container-shape: 0px,
+        container-background-color: white,
+        container-divider-color: var(--mat-sys-outline-variant)
+      )
+  )
+};
+
 .elevated {
   box-shadow: var(--mat-sys-level2);
 }

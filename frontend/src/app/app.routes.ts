@@ -18,4 +18,8 @@ export const routes: Routes = [
     path: "products",
     loadComponent: () => import("./pages/products-grid/products-grid")
   },
+  { 
+    path: "product/:productId",
+    loadComponent: () => import("./pages/product-detail/product-detail")
+  },
 ];
