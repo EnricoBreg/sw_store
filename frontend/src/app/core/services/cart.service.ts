@@ -57,13 +57,13 @@ export class CartService {
 
       const unitPrice = product.price * (1 - product.discount_percentage / 100.0);
 
-      const existingItem = c.items.find(i => i.product_id === product.id);
+      const existingItem = c.items.find(i => i.product.id === product.id);
 
       let updatedItems: CartItem[];
 
       if (existingItem) {
         updatedItems = c.items.map(item =>
-          item.product_id === product.id
+          item.product.id === product.id
           ? {
               ...item, quantity: item.quantity + quantity
             }
@@ -71,7 +71,7 @@ export class CartService {
         );
       } else {
         const newCartItem: CartItem = {
-          product_id: product.id,
+          product,
           quantity,
           unit_price: unitPrice,
         };
