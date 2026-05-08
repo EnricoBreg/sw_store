@@ -5,9 +5,11 @@ import { RouterLink } from "@angular/router";
 import { AuthService } from '../../core/services/auth-service';
 import { MatMenuItem, MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
 import { MatDivider } from "@angular/material/divider";
+import { MatBadgeModule } from "@angular/material/badge";
+import { CartService } from '../../core/services/cart.service';
 
 @Component({
-  selector: 'app-header-actions',
+  selector: "app-header-actions",
   imports: [
     MatIconButton,
     MatIcon,
@@ -17,10 +19,11 @@ import { MatDivider } from "@angular/material/divider";
     MatMenuItem,
     MatMenuTrigger,
     MatDivider,
+    MatBadgeModule,
   ],
   template: `
     <div class="flex items-center gap-2">
-      <button matIconButton>
+      <button matIconButton [matBadge]="cartItemCount()">
         <mat-icon>shopping_cart</mat-icon>
       </button>
 
@@ -51,4 +54,7 @@ import { MatDivider } from "@angular/material/divider";
 })
 export class HeaderActions {
   readonly authService = inject(AuthService);
+  readonly cartService = inject(CartService);
+
+  cartItemCount = this.cartService.cartItemCount;
 }

@@ -2,6 +2,7 @@ import { inject, Injectable, signal } from '@angular/core';
 import { AuthApiService } from '../http/auth-api.service';
 import { Router } from '@angular/router';
 import { AuthStore } from '../state/auth.store';
+import { CartService } from './cart.service';
 
 @Injectable({
   providedIn: 'root',
@@ -10,6 +11,7 @@ export class AuthService {
   private api = inject(AuthApiService);
   private store = inject(AuthStore);
   private router = inject(Router);
+  private cartService = inject(CartService);
 
   #isLoading = signal<boolean>(false);
   #error = signal<string | undefined>(undefined);
@@ -31,6 +33,8 @@ export class AuthService {
 
         if (user && token) {
           this.store.setAuth(user!, token!);
+          // caricamento del carrello al login dell'utente
+          this.cartService.loadCart();
           this.router.navigate(['/']);
         }
       },

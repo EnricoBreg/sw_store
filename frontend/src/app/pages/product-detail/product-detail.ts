@@ -1,16 +1,20 @@
-import { Component, inject, input } from "@angular/core";
+import { Component, inject, input, signal } from "@angular/core";
 import { ProductsService } from "../../core/services/products.service";
 import { handleImageError } from "../../core/utils";
 import InstockBadge from "../../components/instock-badge/instock-badge";
 import ProductPrice from "../../components/product-price/product-price";
 import Spinner from "../../components/spinner/spinner";
+import { MatIcon } from "@angular/material/icon";
+import { MatIconButton, MatAnchor } from "@angular/material/button";
+import { CartService } from "../../core/services/cart.service";
 
 @Component({
   selector: "app-product-detail",
-  imports: [InstockBadge, ProductPrice, Spinner],
+  imports: [InstockBadge, ProductPrice, Spinner, MatIconButton, MatIcon, MatAnchor],
   template: `
-    <div class="max-w-[1200px] mx-auto mt-12 bg-white rounded-xl border border-1 flex flex-col md:flex-row elevated">
-      
+    <div
+      class="max-w-[1200px] mx-auto mt-12 bg-white rounded-xl border border-1 flex flex-col md:flex-row elevated"
+    >
       @if (isLoading()) {
         <app-spinner />
       }
@@ -35,12 +39,49 @@ import Spinner from "../../components/spinner/spinner";
           <app-instock-badge [stockQuantity]="product!.stock_quantity" />
           <h1 class="text-2xl font-semibold mt-5">{{ product?.name }}</h1>
 
-          <p class="text-gray-600 mt-6">
+          <p class="text-gray-600 text-lg mt-6">
             {{ product?.description }}
           </p>
 
-          <div class="mt-6">
-            <app-product-price [product]="product!" className="text-2xl" />
+          <p class="mt-4 text-sm text-gray-400">
+            Disponibità: {{ product.stock_quantity }} pezzo/i.
+          </p>
+
+          <div class="mt-6 flex flex-col md:flex-row item-center justify-end">
+            <div class="flex-1">
+              <app-product-price [product]="product!" className="text-2xl" />
+            </div>
+
+            <div class="flex-1 flex items-center justify-end gap-3">
+              @if (product.stock_quantity > 0) {
+                <button
+                  matIconButton
+                  [disabled]="selectedQuantity() === 1"
+                  (click)="decrementQuantity()"
+                >
+                  <mat-icon>remove</mat-icon>
+                </button>
+                <span class="text-lg border-1 rounded-lg py-2 px-4 border-color-gray-500">{{
+                  selectedQuantity()
+                }}</span>
+                <button
+                  matIconButton
+                  [disabled]="selectedQuantity() === product.stock_quantity"
+                  (click)="incrementQuantity()"
+                >
+                  <mat-icon>add</mat-icon>
+                </button>
+
+                <button matButton="filled" (click)="addToCart()">
+                  <mat-icon>add_shopping_cart</mat-icon>
+                  Aggiungi al carrello
+                </button>
+              } @else {
+                <p class="text-gray-800">
+                  Prodotto non più dispobile. Ti avviseremo quando tornerà in stock.
+                </p>
+              }
+            </div>
           </div>
         </section>
       }
@@ -51,14 +92,36 @@ import Spinner from "../../components/spinner/spinner";
 export default class ProductDetail {
   productId = input<number>();
 
-  private service = inject(ProductsService);
-  product = this.service.product;
-  isLoading = this.service.isLoading;
-  error = this.service.error;
+  private productsService = inject(ProductsService);
+  private cartService = inject(CartService);
+
+  product = this.productsService.product;
+  isLoading = this.productsService.isLoading;
+  error = this.productsService.error;
+
+  selectedQuantity = signal<number>(1);
 
   protected readonly handleImageError = handleImageError;
 
   ngOnInit() {
-    this.service.getById(this.productId()!);
+    this.productsService.getById(this.productId()!);
+  }
+
+  decrementQuantity() {
+    if (this.selectedQuantity() === 0) {
+      return;
+    }
+    this.selectedQuantity.update(() => this.selectedQuantity() - 1);
+  }
+
+  incrementQuantity() {
+    if (this.selectedQuantity() === this.product()?.stock_quantity) {
+      return;
+    }
+    this.selectedQuantity.update(() => this.selectedQuantity() + 1);
+  }
+
+  addToCart() {
+    this.cartService.addToCart(this.product()!, this.selectedQuantity());
   }
 }
