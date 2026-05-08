@@ -1,33 +1,41 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { ProductsApiService } from '../http/products-api.service';
-import { ProductsStore } from '../state/products.store';
+import Product from '../models/product';
+import { PaginationMeta } from '../models/api-types';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ProductsService {
   private api = inject(ProductsApiService);
-  private store = inject(ProductsStore);
 
   // Esposizione dei signals in modo trasparente al componente che li userà
-  products = this.store.items;
-  paginationMeta = this.store.meta;
-  isLoading = this.store.isLoading;
-  error = this.store.error;
+  #products = signal<Product[]>([]);
+  #paginationMeta = signal<PaginationMeta | undefined>(undefined);
+  #isLoading = signal<boolean>(false);
+  #error = signal<string | undefined>(undefined);
+
+  products = this.#products.asReadonly();
+  paginationMeta = this.#paginationMeta.asReadonly();
+  isLoading = this.#isLoading.asReadonly();
+  error = this.#error.asReadonly();
 
   loadProducts(page: number = 1, perPage: number = 10, categoryId?: number) {
-    this.store.setLoading();
+    this.#isLoading.set(true);
 
     this.api.getProducts(page, perPage, categoryId).subscribe({
       next: (response) => {
         // Popolamento dello store con i dati di risposta e di paginazione
-        this.store.setSuccess(response.data, response.meta!);
+        this.#products.set(response.data);
+        this.#paginationMeta.set(response.meta);
+        this.#isLoading.set(false);
       },
       error: (err) => {
         // Gestione del messaggio di errore qualora si verifichi
         const msg =
           `${err?.error.error} - ${err?.error.exception}` || 'Errore nel caricamento dei prodotti.';
-        this.store.setError(msg);
+        this.#error.set(msg);
+        this.#isLoading.set(false);
       },
     });
   }

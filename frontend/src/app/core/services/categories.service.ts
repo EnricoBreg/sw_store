@@ -1,34 +1,48 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { CategoriesApiService } from '../http/categories-api.service';
-import { CategoriesStore } from '../state/categories.store';
+import Category from '../models/category';
+import { PaginationMeta } from '../models/api-types';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CategoriesService {
   private api = inject(CategoriesApiService);
-  private store = inject(CategoriesStore);
 
-  selected = this.store.selected;
-  categories = this.store.items;
-  paginationMeta = this.store.meta;
-  isLoading = this.store.isLoading;
-  error = this.store.error;
+  #categories = signal<Category[]>([]);
+  #selected = signal<Category | undefined>(undefined);
+  #paginationMeta = signal<PaginationMeta | undefined>(undefined);
+  #isLoading = signal<boolean>(false);
+  #error = signal<string | undefined>(undefined);
+
+  categories = this.#categories.asReadonly();
+  selected = this.#selected.asReadonly();
+  isLoading = this.#isLoading.asReadonly();
+  error = this.#error.asReadonly();
 
   loadCategories(page: number = 1, perPage: number = 10) {
-    this.store.setLoading();
+    this.#isLoading.set(true);
 
     this.api.getCategories(page, perPage).subscribe({
       next: (response) => {
         // Popolamento dello store con i dati di risposta e di paginazione
-        this.store.setSuccess(response.data, response.meta!);
+        this.#categories.set(response.data);
+        this.#paginationMeta.set(response.meta);
+        this.#isLoading.set(false);
       },
       error: (err) => {
         // Gestione del messaggio di errore qualora si verifichi
         const msg =
-          `${err?.error.error} - ${err?.error.exception}` || 'Errore nel caricamento delle categorie.';
-        this.store.setError(msg);
+          `${err?.error.error} - ${err?.error.exception}` ||
+          'Errore nel caricamento delle categorie.';
+        this.#error.set(msg);
+        this.#isLoading.set(false);
       },
     });
+  }
+
+  setSelectedCategory(category?: number) {
+    const selectedCategory = this.#categories().find((c) => c.id === category);
+    this.#selected.set(selectedCategory);
   }
 }

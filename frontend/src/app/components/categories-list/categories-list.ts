@@ -3,7 +3,6 @@ import { Component, inject, input, output, signal } from '@angular/core';
 import { MatNavList, MatListItem, MatListItemTitle } from "@angular/material/list"
 import { CategoriesService } from '../../core/services/categories.service';
 import Spinner from '../spinner/spinner';
-import { CategoriesStore } from '../../core/state/categories.store';
 
 @Component({
   selector: 'app-categories-list',
@@ -47,12 +46,10 @@ import { CategoriesStore } from '../../core/state/categories.store';
 export default class CategoriesList {
   categorySelectEvent = output<{ id?: number; name?: string }>();
 
-  private store = inject(CategoriesStore);
   private categoriesService = inject(CategoriesService);
 
   selectedCategory = this.categoriesService.selected;
   categories = this.categoriesService.categories;
-  pagination = this.categoriesService.paginationMeta;
   isLoading = this.categoriesService.isLoading;
   errorMessage = this.categoriesService.error;
 
@@ -61,7 +58,7 @@ export default class CategoriesList {
   }
 
   onCategorySelectEvent(event: { id?: number; name?: string }) {
-    this.store.setSelected(event?.id);
+    this.categoriesService.setSelectedCategory(event?.id);
     this.categorySelectEvent.emit({
       id: event.id,
       name: event.name,

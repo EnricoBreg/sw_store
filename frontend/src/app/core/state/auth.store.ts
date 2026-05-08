@@ -1,42 +1,37 @@
-import { computed, Injectable, signal } from '@angular/core';
 import { User } from '../models/user';
+import { computed, effect, Injectable, signal } from '@angular/core';
 
-interface AuthState {
-  authenticated: boolean;
-  jwtToken?: string;
-  user?: User;
-  isLoading: boolean;
-  error?: string;
+export interface AuthState {
+  user: User | null;
+  jwtToken: string | null;
 }
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root"
 })
 export class AuthStore {
-  private state = signal<AuthState>({
-    authenticated: false,
-    isLoading: false
-  });
+  #initialState: AuthState = !!localStorage.getItem('sw-store')
+    ? JSON.parse(localStorage.getItem('sw-store')!)
+    : { user: null, jwtToken: null };
 
-  readonly authenticated = computed(() => this.state().authenticated);
-  readonly user = computed(() => this.state().user);
-  readonly jwtToken = computed(() => this.state().jwtToken)
-  readonly isLoading = computed(() => this.state().isLoading);
-  readonly error = computed(() => this.state().error);
+  readonly #state = signal<AuthState>(this.#initialState);
 
-  setAuthenticatedUser(user: User, jwtToken?: string) {
-    this.state.update(s => ({ user, jwtToken, isLoading: false, authenticated: true }));
+  readonly user = computed(() => this.#state().user);
+  readonly jwtToken = computed(() => this.#state().jwtToken);
+  readonly isAuthenticated = computed(() => !!this.#state().user);
+
+  constructor() {
+    // sincronizzazione dello stato con il localStorage ogni qualvolta lo stato cambi
+    effect(() => {
+      localStorage.setItem('sw-store', JSON.stringify(this.#state()));
+    });
   }
 
-  setLoading() {
-    this.state.update(s => ({ ...s, isLoading: false, error: undefined }));
+  setAuth(user: User, token: string) {
+    this.#state.update((s) => ({ ...s, user, jwtToken: token }));
   }
 
-  setError(error: string) {
-    this.state.update(s => ({...s, authenticated: false, isLoading: false, error}))
-  }
-
-  logout() {
-    this.state.update(s => ({ user: undefined, jwtToken: undefined, authenticated: false, isLoading: false }))
+  clearAuth() {
+    this.#state.update((s) => ({ ...s, user: null, jwtToken: null }));
   }
 }

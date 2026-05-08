@@ -1,7 +1,7 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { AuthApiService } from '../http/auth-api.service';
-import { AuthStore } from '../state/auth.store';
 import { Router } from '@angular/router';
+import { AuthStore } from '../state/auth.store';
 
 @Injectable({
   providedIn: 'root',
@@ -11,34 +11,58 @@ export class AuthService {
   private store = inject(AuthStore);
   private router = inject(Router);
 
-  authenticated = this.store.authenticated;
-  user = this.store.user;
-  jwtToken = this.store.jwtToken;
-  isLoading = this.store.isLoading;
-  error = this.store.error;
-  
+  #isLoading = signal<boolean>(false);
+  #error = signal<string | undefined>(undefined);
+
+  readonly authenticated = this.store.isAuthenticated;
+  readonly user = this.store.user;
+  readonly jwtToken = this.store.jwtToken;
+  readonly isLoading = this.#isLoading.asReadonly();
+  readonly error = this.#error.asReadonly();
+
   signIn(email: string, password: string) {
-    this.store.setLoading();
+    this.#isLoading.set(true);
 
     this.api.login(email, password).subscribe({
       next: (response) => {
-        this.store.setAuthenticatedUser(response.data);
-        this.router.navigate(["/"]);
+        const authHeader = response.headers.get("Authorization");
+        const token = authHeader ? authHeader.replace("Bearer ", "") : undefined;
+        const user = response.body?.data;
+
+        if (user && token) {
+          this.store.setAuth(user!, token!);
+          this.router.navigate(['/']);
+        }
       },
       error: (err) => {
-        const msg = `${err?.error.error}` || "Credenziali errate, riprova di nuovo."
-        this.store.setError(msg);
-      }
-    })
+        console.error("Login failed: ", err);
+        const msg = `${err?.error.error}` || 'Credenziali errate, riprova di nuovo.';
+        this.#error.set(msg);
+      },
+    });
   }
 
   signOut() {
-    
+    this.api.logout().subscribe({
+      next: (response) => {
+        console.log(response.message);
+        this.store.clearAuth();
+        this.router.navigate(["/login"]);
+      },
+      error: (err) => {
+        console.error("Login failed: ", err);
+        const msg = `${err?.error.error}` || "Nessun sessione valida trovata.";
+        this.#error.set(msg);
+        this.router.navigate(["/login"]);
+      },
+    });
   }
 
-  loadCurrentUser() {}
+  getCurrentUserInfo(jwtToken: string) {
+    const user = this.api.getCurrentUserInfo(jwtToken);
+  }
 
   saveToken(jwtToken: string) {
-    localStorage.setItem("token-sw-store", jwtToken);
+    localStorage.setItem('token-sw-store', jwtToken);
   }
 }
