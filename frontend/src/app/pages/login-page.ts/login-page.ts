@@ -22,7 +22,7 @@ import { AuthService } from '../../core/services/auth-service';
     MatSuffix,
   ],
   template: `
-    <div class="w-full h-screen bg-gray-100 overflow-auto flex items-center ">
+    <div class="w-full h-screen overflow-auto flex items-center ">
       <div class="max-w-[500px] mx-auto bg-white p-8 elevated rounded-xl space-y-4">
         <div>
           <h2 class="text-2xl">Accedi al tuo account</h2>
