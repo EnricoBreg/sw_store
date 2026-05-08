@@ -21,7 +21,7 @@ class Api::V1::Users::CartItemsController < Api::V1::AuthenticatedController
     if @cart_item.save
       render_success(
         message: I18n.t("api.messages.added_to_cart", name: product.name),
-        data: @cart_item,
+        data: serialize_resource(@cart, CartSerializer),
         status: :created
       )
     else
@@ -49,6 +49,7 @@ class Api::V1::Users::CartItemsController < Api::V1::AuthenticatedController
       @cart_item.destroy
       render_success(
         message: I18n.t("api.messages.product_removed_from_cart", name: @product.name),
+        data: serialize_resource(@cart, CartSerializer)
       )
       return
     end
@@ -56,7 +57,7 @@ class Api::V1::Users::CartItemsController < Api::V1::AuthenticatedController
     if @cart_item.update(quantity: quantity)
       render_success(
         message: I18n.t("api.messages.quantity_updated", name: @product.name),
-        data: serialize_resource(@cart_item, CartItemSerializer)
+        data: serialize_resource(@cart, CartSerializer)
       )
     else
       render_error(
@@ -79,6 +80,7 @@ class Api::V1::Users::CartItemsController < Api::V1::AuthenticatedController
     if @cart_item.destroy
       render_success(
         message: I18n.t("api.messages.removed_from_cart", name: @product.name),
+        data: serialize_resource(@cart, CartSerializer)
       )
     else
       render_error(
