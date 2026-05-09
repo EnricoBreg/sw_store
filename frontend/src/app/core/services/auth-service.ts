@@ -3,15 +3,25 @@ import { AuthApiService } from '../http/auth-api.service';
 import { Router } from '@angular/router';
 import { AuthStore } from '../state/auth.store';
 import { CartService } from './cart.service';
+import { Toaster } from './toaster';
+
+export interface SignUpData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  passwordConfirmation: string;
+}
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class AuthService {
   private api = inject(AuthApiService);
   private store = inject(AuthStore);
   private router = inject(Router);
   private cartService = inject(CartService);
+  private toaster = inject(Toaster);
 
   #isLoading = signal<boolean>(false);
   #error = signal<string | undefined>(undefined);
@@ -35,13 +45,60 @@ export class AuthService {
           this.store.setAuth(user!, token!);
           // caricamento del carrello al login dell'utente
           this.cartService.loadCart();
-          this.router.navigate(['/']);
+          this.router.navigate(["/"]);
         }
       },
       error: (err) => {
         console.error("Login failed: ", err);
-        const msg = `${err?.error.error}` || 'Credenziali errate, riprova di nuovo.';
+        const msg = `${err?.error.error}` || "Credenziali errate, riprova di nuovo.";
         this.#error.set(msg);
+      },
+    });
+  }
+
+  oAuthSignIn(token: string) {
+    this.api.getCurrentUserInfo(token).subscribe({
+      next: (response) => {
+        const user = response.data;
+
+        if (user && token) {
+          this.store.setAuth(user, token);
+          this.cartService.loadCart();
+          this.router.navigate(["/"]);
+        }
+      },
+      error: (error) => {
+        this.router.navigate(["/login"]);
+        this.toaster.error("Authenticazione OAuth fallita. Riprova.");
+      },
+    });
+  }
+
+  signUp(user: SignUpData) {
+    const { firstName, lastName, email, password, passwordConfirmation } = user;
+    const userRequest = {
+      first_name: firstName,
+      last_name: lastName,
+      email,
+      password,
+      passwordConfirmation
+    };
+    this.api.signUp(userRequest).subscribe({
+      next: (response) => {
+        const authHeader = response.headers.get("Authorization");
+        const token = authHeader ? authHeader.replace("Bearer ", "") : undefined;
+        const user = response.body?.data;
+
+        if (user && token) {
+          this.store.setAuth(user!, token!);
+          // caricamento del carrello alla registrazione dell'utente
+          this.cartService.loadCart();
+          this.router.navigate(["/"]);
+        }
+      },
+      error: (error) => {
+        this.router.navigate(["/login"]);
+        this.toaster.error("Registrazione non riuscita. Riprova.");
       },
     });
   }
@@ -49,7 +106,6 @@ export class AuthService {
   signOut() {
     this.api.logout().subscribe({
       next: (response) => {
-        console.log(response.message);
         this.store.clearAuth();
         this.router.navigate(["/login"]);
       },
@@ -60,13 +116,5 @@ export class AuthService {
         this.router.navigate(["/login"]);
       },
     });
-  }
-
-  getCurrentUserInfo(jwtToken: string) {
-    const user = this.api.getCurrentUserInfo(jwtToken);
-  }
-
-  saveToken(jwtToken: string) {
-    localStorage.setItem('token-sw-store', jwtToken);
   }
 }

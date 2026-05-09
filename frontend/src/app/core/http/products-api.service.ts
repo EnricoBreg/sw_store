@@ -9,7 +9,7 @@ import Product from '../models/product';
 })
 export class ProductsApiService {
   private readonly http = inject(HttpClient);
-  private readonly url = '/products';
+  private readonly url = 'products';
 
   getProducts(page = 1, limit = 10, categoryId?: number): Observable<ApiResponse<Product[]>> {
     let params = new HttpParams()

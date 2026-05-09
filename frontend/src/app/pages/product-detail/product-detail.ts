@@ -7,10 +7,12 @@ import Spinner from "../../components/spinner/spinner";
 import { MatIcon } from "@angular/material/icon";
 import { MatIconButton, MatAnchor } from "@angular/material/button";
 import { CartService } from "../../core/services/cart.service";
+import { AuthService } from "../../core/services/auth-service";
+import { RouterLink } from "@angular/router";
 
 @Component({
   selector: "app-product-detail",
-  imports: [InstockBadge, ProductPrice, Spinner, MatIconButton, MatIcon, MatAnchor],
+  imports: [InstockBadge, ProductPrice, Spinner, MatIconButton, MatIcon, MatAnchor, RouterLink],
   template: `
     <div
       class="max-w-[1200px] mx-auto mt-12 bg-white rounded-xl border border-1 flex flex-col md:flex-row elevated"
@@ -53,32 +55,38 @@ import { CartService } from "../../core/services/cart.service";
             </div>
 
             <div class="flex-1 flex items-center justify-end gap-3">
-              @if (product.stock_quantity > 0) {
-                <button
-                  matIconButton
-                  [disabled]="selectedQuantity() === 1"
-                  (click)="decrementQuantity()"
-                >
-                  <mat-icon>remove</mat-icon>
-                </button>
-                <span class="text-lg border-1 rounded-lg py-2 px-4 border-color-gray-500">{{
-                  selectedQuantity()
-                }}</span>
-                <button
-                  matIconButton
-                  [disabled]="selectedQuantity() === product.stock_quantity"
-                  (click)="incrementQuantity()"
-                >
-                  <mat-icon>add</mat-icon>
-                </button>
-
-                <button matButton="filled" (click)="addToCart()">
-                  <mat-icon>add_shopping_cart</mat-icon>
-                  Aggiungi al carrello
-                </button>
+              @if (authService.authenticated()) {
+                @if (product.stock_quantity > 0) {
+                  <button
+                    matIconButton
+                    [disabled]="selectedQuantity() === 1"
+                    (click)="decrementQuantity()"
+                  >
+                    <mat-icon>remove</mat-icon>
+                  </button>
+                  <span class="text-lg border-1 rounded-lg py-2 px-4 border-color-gray-500">{{
+                    selectedQuantity()
+                  }}</span>
+                  <button
+                    matIconButton
+                    [disabled]="selectedQuantity() === product.stock_quantity"
+                    (click)="incrementQuantity()"
+                  >
+                    <mat-icon>add</mat-icon>
+                  </button>
+  
+                  <button matButton="filled" (click)="addToCart()">
+                    <mat-icon>add_shopping_cart</mat-icon>
+                    Aggiungi al carrello
+                  </button>
+                } @else {
+                  <p class="text-gray-800">
+                    Prodotto non più dispobile. Ti avviseremo quando tornerà in stock.
+                  </p>
+                }
               } @else {
-                <p class="text-gray-800">
-                  Prodotto non più dispobile. Ti avviseremo quando tornerà in stock.
+                <p class="text-gray-700">
+                  <a class="text-blue-400 underline" routerLink="/login">Accedi</a> per aggiungere questo prodotto al tuo carrello! 
                 </p>
               }
             </div>
@@ -94,6 +102,7 @@ export default class ProductDetail {
 
   private productsService = inject(ProductsService);
   private cartService = inject(CartService);
+  readonly authService = inject(AuthService);
 
   product = this.productsService.product;
   isLoading = this.productsService.isLoading;

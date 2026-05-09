@@ -23,11 +23,11 @@ import { CartService } from '../../core/services/cart.service';
   ],
   template: `
     <div class="flex items-center gap-2">
-      <button matIconButton [matBadge]="cartItemCount()">
-        <mat-icon>shopping_cart</mat-icon>
-      </button>
-
       @if (authService.user(); as user) {
+        <button matIconButton [matBadge]="cartItemCount()">
+          <mat-icon>shopping_cart</mat-icon>
+        </button>
+
         <p class="text-sm">Ciao, {{ user.first_name }}</p>
         <button matIconButton [matMenuTriggerFor]="userMenu">
           <mat-icon>person</mat-icon>
@@ -45,8 +45,8 @@ import { CartService } from '../../core/services/cart.service';
           </button>
         </mat-menu>
       } @else {
-        <a matButton routerLink="/login">Sign In</a>
-        <a matButton="filled" routerLink="/sign-up">Sign Up</a>
+        <a matButton routerLink="/login">Accedi</a>
+        <a matButton="filled" routerLink="/sign-up">Registrati</a>
       }
     </div>
   `,

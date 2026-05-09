@@ -1,15 +1,16 @@
-import { Component, inject, signal } from '@angular/core';
-import { NonNullableFormBuilder } from '@angular/forms';
-import { MatButton, MatIconButton } from '@angular/material/button';
-import { MatDivider } from '@angular/material/divider';
-import { FormGroup, FormControl, ReactiveFormsModule } from '@angular/forms';
-import { MatFormField, MatPrefix, MatSuffix } from '@angular/material/select';
-import { MatInput } from '@angular/material/input';
-import { MatIcon } from '@angular/material/icon';
-import { AuthService } from '../../core/services/auth-service';
+import { Component, inject, signal } from "@angular/core";
+import { NonNullableFormBuilder } from "@angular/forms";
+import { MatButton, MatIconButton } from "@angular/material/button";
+import { MatDivider } from "@angular/material/divider";
+import { FormGroup, FormControl, ReactiveFormsModule } from "@angular/forms";
+import { MatFormField, MatPrefix, MatSuffix } from "@angular/material/select";
+import { MatInput } from "@angular/material/input";
+import { MatIcon } from "@angular/material/icon";
+import { AuthService } from "../../core/services/auth-service";
+import { RouterLink } from "@angular/router";
 
 @Component({
-  selector: 'app-login-page.ts',
+  selector: "app-login-page.ts",
   imports: [
     MatButton,
     MatDivider,
@@ -20,6 +21,7 @@ import { AuthService } from '../../core/services/auth-service';
     MatPrefix,
     MatIconButton,
     MatSuffix,
+    RouterLink,
   ],
   template: `
     <div class="w-full h-screen overflow-auto flex items-center ">
@@ -51,8 +53,16 @@ import { AuthService } from '../../core/services/auth-service';
               placeholder="Inserisci la tua password"
             />
             <mat-icon matPrefix>lock</mat-icon>
-            <button matSuffix matIconButton type="button" class="mr-2" (click)="passwordVisible.set(!passwordVisible())">
-              <mat-icon [fontIcon]="passwordVisible() ? 'visibility_off' : 'visibility_on'"></mat-icon>
+            <button
+              matSuffix
+              matIconButton
+              type="button"
+              class="mr-2"
+              (click)="passwordVisible.set(!passwordVisible())"
+            >
+              <mat-icon
+                [fontIcon]="passwordVisible() ? 'visibility_off' : 'visibility_on'"
+              ></mat-icon>
             </button>
           </mat-form-field>
 
@@ -60,7 +70,7 @@ import { AuthService } from '../../core/services/auth-service';
         </form>
 
         <div class="w-full flex flex-col justify-center items-center">
-          <span class="text-sm text-gray-500">oppure</span>
+          <span class="text-sm text-gray-500 mb-4">oppure</span>
           <button mat-stroked-button (click)="loginWithGoogle()" class="w-full">
             <div class="flex items-center justify-center gap-2">
               <img src="assets/google_favicon_2025.svg" class="w-5 h-5" alt="Google" />
@@ -68,6 +78,11 @@ import { AuthService } from '../../core/services/auth-service';
             </div>
           </button>
         </div>
+
+        <p class="text-gray-500 text-sm text-center">
+          Non hai ancora un account?
+          <a routerLink="/sign-up" class="text-blue-400 underline">Registrati ora</a>
+        </p>
       </div>
     </div>
   `,
@@ -77,11 +92,10 @@ export default class LoginPage {
   private fb = inject(NonNullableFormBuilder);
   private authService = inject(AuthService);
   readonly passwordVisible = signal(false);
-  
 
   signInForm = this.fb.group({
-    email: '',
-    password: '',
+    email: "",
+    password: "",
   });
 
   logInWithCredentials() {
@@ -95,9 +109,9 @@ export default class LoginPage {
   }
 
   loginWithGoogle() {
-    const url = 'http://localhost:3000/api/v1/auth/google_oauth2';
-    const form = document.createElement('form');
-    form.method = 'POST';
+    const url = "http://localhost:3000/api/v1/auth/google_oauth2";
+    const form = document.createElement("form");
+    form.method = "POST";
     form.action = url;
 
     document.body.appendChild(form);

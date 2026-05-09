@@ -10,7 +10,7 @@ import Product from '../models/product';
 })
 export class CategoriesApiService {
   private readonly http = inject(HttpClient);
-  private readonly url = '/categories';
+  private readonly url = 'categories';
 
   getCategories(page = 1, limit = 10): Observable<ApiResponse<Category[]>> {
     return this.http.get<ApiResponse<Category[]>>(this.url);

@@ -1,6 +1,7 @@
-import { Component, inject } from '@angular/core';
+import { Component, Inject, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth-service';
+import { Toaster } from '../../core/services/toaster';
 
 @Component({
   selector: 'app-auth-callback',
@@ -19,11 +20,8 @@ export default class AuthCallback {
       const error = params["error"];
 
       if (token) {
-        this.authService.saveToken(token);
-
-        this.router.navigate(["/"]);
+        this.authService.oAuthSignIn(token);
       } else if (error) {
-        console.log("Login OAuth fallito: ", error);
         this.router.navigate(["/login"])
       }
     });

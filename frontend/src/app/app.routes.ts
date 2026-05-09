@@ -11,6 +11,10 @@ export const routes: Routes = [
     loadComponent: () => import("./pages/login-page.ts/login-page")
   },
   {
+    path: "sign-up",
+    loadComponent: () => import("./pages/signup-page/signup-page")
+  },
+  {
     path: "oauth/callback",
     loadComponent: () => import("./pages/auth-callback/auth-callback")
   },

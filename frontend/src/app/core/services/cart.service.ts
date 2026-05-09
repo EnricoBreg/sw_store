@@ -3,6 +3,7 @@ import { CartApiService } from "../http/cart-api.service";
 import { Cart, CartItem } from "../models/cart";
 import Product from "../models/product";
 import { CartStore } from "../state/cart.store";
+import { Toaster } from "./toaster";
 
 @Injectable({
   providedIn: "root",
@@ -10,6 +11,7 @@ import { CartStore } from "../state/cart.store";
 export class CartService {
   private api = inject(CartApiService);
   private store = inject(CartStore);
+  private toaster = inject(Toaster);
 
   #cart = signal<Cart | null>(this.store.cart());
   #isLoading = signal<boolean>(false);
@@ -89,12 +91,15 @@ export class CartService {
     this.api.addToCart(product, quantity).subscribe({
       next: (response) => {
         this.#cart.set(response.data);
+        this.toaster.success("Prodotto aggiunto al tuo carrello"); 
       },
       error: (err) => {
         // Rollback allo stato precedente in caso di errore nella chiamata
         this.#cart.set(previouscart);
         const msg =
           `${err?.error?.error} - ${err?.error?.exception}` || "Errore aggiornamento carrello";
+        
+        this.toaster.error(msg); 
         this.#error.set(msg);
       }
     });

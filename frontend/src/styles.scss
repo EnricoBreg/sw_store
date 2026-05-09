@@ -5,8 +5,12 @@
 // components according to the Material 3 design spec.
 // Learn more about theming and how to use it for your application's
 // custom components at https://material.angular.dev/guide/theming
-@use '@angular/material' as mat;
+@use "@angular/material" as mat;
 @use "tailwindcss";
+/* Importing @ngxpert/hot-toast base styles. */
+@use "@ngxpert/hot-toast/styles";
+/* Importing @ngxpert/hot-toast material theme. */
+@use "@ngxpert/hot-toast/themes/material";
 
 html {
   height: 100%;
@@ -46,14 +50,14 @@ mat-form-field {
 
 mat-sidenav {
   @include mat.sidenav-overrides(
-      (
-        container-width: 250px,
-        container-shape: 0px,
-        container-background-color: white,
-        container-divider-color: var(--mat-sys-outline-variant)
-      )
-  )
-};
+    (
+      container-width: 250px,
+      container-shape: 0px,
+      container-background-color: white,
+      container-divider-color: var(--mat-sys-outline-variant),
+    )
+  );
+}
 
 .elevated {
   box-shadow: var(--mat-sys-level2);

@@ -1,4 +1,4 @@
-import { Component, computed, input } from "@angular/core";
+import { Component, computed, inject, input } from "@angular/core";
 import Product from "../../core/models/product";
 import { MatIcon } from "@angular/material/icon";
 import { MatIconButton } from "@angular/material/button";
@@ -6,6 +6,8 @@ import { RouterLink } from "@angular/router";
 import InstockBadge from "../instock-badge/instock-badge";
 import { handleImageError } from "../../core/utils";
 import ProductPrice from "../product-price/product-price";
+import { CartService } from "../../core/services/cart.service";
+import { AuthService } from "../../core/services/auth-service";
 
 @Component({
   selector: "app-product-card",
@@ -27,11 +29,13 @@ import ProductPrice from "../product-price/product-price";
           </h3>
           <div class="flex items-center">
             <app-product-price [product]="product()" />
-            <div class="ml-auto">
-              <button matIconButton>
-                <mat-icon>add_shopping_cart</mat-icon>
-              </button>
-            </div>
+            @if (authService.authenticated()) {
+              <div class="ml-auto">
+                <button matIconButton (click)="addToCart()">
+                  <mat-icon>add_shopping_cart</mat-icon>
+                </button>
+              </div>
+            }
           </div>
         </div>
       </div>
@@ -41,6 +45,8 @@ import ProductPrice from "../product-price/product-price";
 })
 export default class ProductCard {
   product = input.required<Product>();
+  authService = inject(AuthService);
+  private cartService = inject(CartService);
 
   protected readonly handleImageError = handleImageError;
 
@@ -53,4 +59,8 @@ export default class ProductCard {
   priceColorClass = computed(() =>
     this.product().discount_percentage > 0 ? "text-red-500" : "text-black",
   );
+
+  addToCart() {
+    this.cartService.addToCart(this.product(), 1);
+  }
 }

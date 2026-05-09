@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { MatSidenavContainer, MatSidenavContent, MatSidenav } from "@angular/material/sidenav"
 import CategoriesList from '../../components/categories-list/categories-list';
 import { ProductsService } from '../../core/services/products.service';
@@ -9,7 +9,7 @@ import { CategoriesService } from '../../core/services/categories.service';
 import ProductCard from '../../components/product-card/product-card';
 
 @Component({
-  selector: 'app-products-grid',
+  selector: "app-products-grid",
   imports: [
     MatSidenavContainer,
     MatSidenavContent,
@@ -18,8 +18,8 @@ import ProductCard from '../../components/product-card/product-card';
     MatPaginatorModule,
     ApiPaginator,
     Spinner,
-    ProductCard
-],
+    ProductCard,
+  ],
   template: `
     <mat-sidenav-container class="mt-2">
       <mat-sidenav mode="side" opened="true">
@@ -37,24 +37,30 @@ import ProductCard from '../../components/product-card/product-card';
             <app-spinner />
           }
 
-          @if (errorMessage()) {
+          @if (productsCount()) {
             <div class="text-red-500 text-lg">
               {{ errorMessage() }}
             </div>
           }
 
-          <div class="responsive-grid mt-4">
-            @for (product of products(); track product.id) {
-              <app-product-card [product]="product" />
-            }
-          </div>
+          @if (products().length) {
+            <div class="responsive-grid mt-4">
+              @for (product of products(); track product.id) {
+                <app-product-card [product]="product" />
+              }
+            </div>
 
-          <div class="mt-5">
-            <app-api-paginator
-              [meta]="pagination()"
-              (pageChangeEvent)="onPageChangeEvent($event)"
-            />
-          </div>
+            <div class="mt-5">
+              <app-api-paginator
+                [meta]="pagination()"
+                (pageChangeEvent)="onPageChangeEvent($event)"
+              />
+            </div>
+          } @else {
+            <div class="h-full">
+              <h3 class="text-lg text-gray-600">Nessun prodotto trovato per categoria🥺</h3>
+            </div>
+          }
         </section>
       </mat-sidenav-content>
     </mat-sidenav-container>
@@ -64,12 +70,14 @@ import ProductCard from '../../components/product-card/product-card';
 export default class ProductsGrid {
   private productsService = inject(ProductsService);
   private categoriesService = inject(CategoriesService);
-  
+
   selectedCategory = this.categoriesService.selected;
   products = this.productsService.products;
   pagination = this.productsService.paginationMeta;
   isLoading = this.productsService.isLoading;
   errorMessage = this.productsService.error;
+
+  productsCount = computed(() => this.products().length);
 
   ngOnInit() {
     this.productsService.loadProducts();
@@ -79,7 +87,7 @@ export default class ProductsGrid {
     this.productsService.loadProducts(event.page, event.limit, this.selectedCategory()?.id);
   }
 
-  onCategorySelection(event: { id?: number, name?: string }) {
+  onCategorySelection(event: { id?: number; name?: string }) {
     this.productsService.loadProducts(this.pagination()?.page, this.pagination()?.limit, event.id);
   }
 }

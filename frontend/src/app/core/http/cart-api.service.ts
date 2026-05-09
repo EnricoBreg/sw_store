@@ -10,8 +10,8 @@ import Product from "../models/product";
 })
 export class CartApiService {
   private readonly http = inject(HttpClient);
-  private readonly cartUrl = "/cart";
-  private readonly cartItemsUrl = "/cart/items"
+  private readonly cartUrl = "cart";
+  private readonly cartItemsUrl = "cart/items"
 
   loadCart(): Observable<ApiResponse<Cart>> {
     return this.http.get<ApiResponse<Cart>>(this.cartUrl);
