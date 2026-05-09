@@ -48,9 +48,9 @@ module Backend
 
     # Middleware per gestire i cookie, necessari per Devise e Omniauth
     # Vedi: https://stackoverflow.com/questions/38424133/getting-error-omniauthnosessionerror-with-rails-5-api
-    # Rimozione della riga sottostante perché crea problemi con devise-jwt e JTIMatcher, che richiedono una sessione per gestire il jti
-    # per OAuth non è necessario, basta solo il cookie store per la sessione, senza i cookie di autenticazione.
-    # config.middleware.use ActionDispatch::Cookies
+    # Attenzione: testando la chiamata di logout con un client come Postman o simili, il cookie di sessione non viene inviato, quindi la chiamata fallisce. Per testare correttamente la chiamata di logout, è necessario utilizzare un client che supporti i cookie, come ad esempio Insomnia o un browser.
+    # di conseguenza la chiamata fallisce, ma funziona correttamente.
+    config.middleware.use ActionDispatch::Cookies
     config.middleware.use ActionDispatch::Session::CookieStore
   end
 end
