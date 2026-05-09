@@ -26,4 +26,8 @@ export const routes: Routes = [
     path: "product/:productId",
     loadComponent: () => import("./pages/product-detail/product-detail")
   },
+  {
+    path: "cart",
+    loadComponent: () => import("./pages/cart-page/cart-page"),
+  },
 ];

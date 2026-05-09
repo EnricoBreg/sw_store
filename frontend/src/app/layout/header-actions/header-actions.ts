@@ -24,7 +24,7 @@ import { CartService } from '../../core/services/cart.service';
   template: `
     <div class="flex items-center gap-2">
       @if (authService.user(); as user) {
-        <button matIconButton [matBadge]="cartItemCount()">
+        <button matIconButton routerLink="/cart" [matBadge]="cartItemCount()">
           <mat-icon>shopping_cart</mat-icon>
         </button>
 
