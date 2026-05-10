@@ -14,15 +14,14 @@ import ViewPanel from "../../core/directives/view-panel/view-panel";
         <ng-content select="[checkoutItems]" />
       </div>
 
-      <div class="space-y-3 text-lg pt-4 border-t">
-        <div class="flex justify-between">
-          <span>Subtotale</span>
-          <!-- <span>{{ subtotal() | currency: "EUR" }}</span> -->
-        </div>
-
-        <div class="flex justify-between border-t pt-2 font-bold text-lg">
+      <div class="space-y-1 text-lg border-b pb-4">
+        <div class="flex justify-between pt-2 font-bold text-xl">
           <span>Totale</span>
-          <!-- <span>{{ total() | currency: "EUR" }}</span> -->
+          <span>{{ total() | currency: "EUR" }}</span>
+        </div>
+        <div class="flex justify-between text-sm text-gray-600">
+          <span>Di cui IVA (22%)</span>
+          <span>{{ tax() | currency: "EUR" }}</span>
         </div>
       </div>
 
@@ -34,17 +33,18 @@ import ViewPanel from "../../core/directives/view-panel/view-panel";
 export default class SummarizeOrder {
   readonly cartService = inject(CartService);
 
-  subtotal = computed(() => {
-    const subtotal = this.cartService
-      .cart()!
-      .items.reduce(
-        (acc, item) => acc + item.unit_price * (1 - item.product.discount_percentage / 100.0),
-        0.0,
-      );
+  private readonly cart = this.cartService.cart();
 
-    console.log("Subtotal: ", subtotal);
-    return this.cartService.cart()!.items.reduce((acc, item) => acc + (item.unit_price * (1 - item.product.discount_percentage / 100.0)), 0.0);
+  total = computed(() => {
+    if (!this.cart) return 0.0;
+    return this.cart.items.reduce(
+      (acc, item) => acc + item.unit_price * (1 - item.product.discount_percentage / 100.0),
+      0.0,
+    );
   });
 
-  total = computed(() => this.subtotal());
+  tax = computed(() => {
+    const subtotal = this.total() * 0.22;
+    return this.total() - subtotal;
+  });
 }
