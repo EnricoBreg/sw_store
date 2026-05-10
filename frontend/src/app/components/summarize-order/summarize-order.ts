@@ -38,13 +38,13 @@ export default class SummarizeOrder {
   total = computed(() => {
     if (!this.cart) return 0.0;
     return this.cart.items.reduce(
-      (acc, item) => acc + item.unit_price * (1 - item.product.discount_percentage / 100.0),
+      (acc, item) => acc + item.quantity * item.unit_price * (1 - item.product.discount_percentage / 100.0),
       0.0,
     );
   });
 
   tax = computed(() => {
-    const subtotal = this.total() * 0.22;
+    const subtotal = this.total() / 1.22;
     return this.total() - subtotal;
   });
 }
