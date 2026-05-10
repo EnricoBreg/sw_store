@@ -8,7 +8,7 @@ import { Component } from "@angular/core";
       <div class="max-w-[1200px] mx-auto grid md:grid-cols-3 items-start">
         <!-- Contatti -->
         <div>
-          <h4 class="text-xl font-bold">SW Store</h4>
+          <h4 class="lg:text-2xl font-bold">SW Store</h4>
           <span class="text-sm text-gray-400">Copyright 2026</span>
           <div class="mt-2 flex flex-col gap-4">
             <p class="text-lg font-semibold">Contatti</p>
