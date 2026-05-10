@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from "@angular/material/icon";
 import { RouterLink } from "@angular/router";
@@ -24,7 +24,12 @@ import { CartService } from '../../core/services/cart.service';
   template: `
     <div class="flex items-center gap-2">
       @if (authService.user(); as user) {
-        <button matIconButton routerLink="/cart" [matBadge]="cartItemCount()">
+        <button
+          matIconButton
+          routerLink="/cart"
+          [matBadge]="cartItemCount()"
+          [matBadgeHidden]="!cartItemCount()"
+        >
           <mat-icon>shopping_cart</mat-icon>
         </button>
 
