@@ -23,7 +23,7 @@ export const routes: Routes = [
     loadComponent: () => import("./pages/products-grid/products-grid")
   },
   { 
-    path: "product/:productId",
+    path: "products/:productId",
     loadComponent: () => import("./pages/product-detail/product-detail")
   },
   {

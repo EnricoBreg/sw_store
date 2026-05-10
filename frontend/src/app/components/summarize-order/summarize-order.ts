@@ -17,12 +17,12 @@ import ViewPanel from "../../core/directives/view-panel/view-panel";
       <div class="space-y-3 text-lg pt-4 border-t">
         <div class="flex justify-between">
           <span>Subtotale</span>
-          <span>{{ subtotal() | currency: "EUR" }}</span>
+          <!-- <span>{{ subtotal() | currency: "EUR" }}</span> -->
         </div>
 
         <div class="flex justify-between border-t pt-2 font-bold text-lg">
           <span>Totale</span>
-          <span>{{ total() | currency: "EUR" }}</span>
+          <!-- <span>{{ total() | currency: "EUR" }}</span> -->
         </div>
       </div>
 
@@ -35,7 +35,15 @@ export default class SummarizeOrder {
   readonly cartService = inject(CartService);
 
   subtotal = computed(() => {
-    return this.cartService.cart()?.items.reduce((acc, item) => acc + item.unit_price, 0);
+    const subtotal = this.cartService
+      .cart()!
+      .items.reduce(
+        (acc, item) => acc + item.unit_price * (1 - item.product.discount_percentage / 100.0),
+        0.0,
+      );
+
+    console.log("Subtotal: ", subtotal);
+    return this.cartService.cart()!.items.reduce((acc, item) => acc + (item.unit_price * (1 - item.product.discount_percentage / 100.0)), 0.0);
   });
 
   total = computed(() => this.subtotal());

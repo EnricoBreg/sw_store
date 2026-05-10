@@ -70,3 +70,12 @@ mat-sidenav {
   gap: 1rem;
 }
 
+.danger {
+  color: var(--mat-sys-error);
+}
+
+button[matIconButton].danger {
+  @include mat.icon-button-overrides((icon-color: var(--mat-sys-error),
+      state-layer-color: var(--mat-sys-error),
+    ));
+}

@@ -25,4 +25,8 @@ export class CartApiService {
       },
     });
   }
+
+  removeFromCart(product: Product): Observable<ApiResponse<Cart>> {
+    return this.http.delete<ApiResponse<Cart>>(`${this.cartItemsUrl}/${product.id}`);
+  }
 }

@@ -9,13 +9,15 @@ import { MatIconButton, MatAnchor } from "@angular/material/button";
 import { CartService } from "../../core/services/cart.service";
 import { AuthService } from "../../core/services/auth-service";
 import { RouterLink } from "@angular/router";
+import ViewPanel from "../../core/directives/view-panel/view-panel";
 
 @Component({
   selector: "app-product-detail",
-  imports: [InstockBadge, ProductPrice, Spinner, MatIconButton, MatIcon, MatAnchor, RouterLink],
+  imports: [InstockBadge, ProductPrice, Spinner, MatIconButton, MatIcon, MatAnchor, RouterLink, ViewPanel],
   template: `
     <div
-      class="max-w-[1200px] mx-auto mt-12 bg-white rounded-xl border border-1 flex flex-col md:flex-row elevated"
+      appViewPanel
+      class="max-w-[1200px] mx-auto mt-12 flex flex-col md:flex-row"
     >
       @if (isLoading()) {
         <app-spinner />

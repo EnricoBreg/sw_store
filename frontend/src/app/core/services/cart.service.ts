@@ -52,7 +52,7 @@ export class CartService {
 
   addToCart(product: Product, quantity = 1) {
 
-    const previouscart = this.#cart();
+    const previousCart = this.#cart();
 
     this.#cart.update((c) => {
       if (!c) return c;
@@ -95,12 +95,48 @@ export class CartService {
       },
       error: (err) => {
         // Rollback allo stato precedente in caso di errore nella chiamata
-        this.#cart.set(previouscart);
+        this.#cart.set(previousCart);
         const msg =
-          `${err?.error?.error} - ${err?.error?.exception}` || "Errore aggiornamento carrello";
+          `${err?.error?.error} - ${err?.error?.exception}` || "Errore durante aggiornamento del carrello";
         
         this.toaster.error(msg); 
         this.#error.set(msg);
+      }
+    });
+  }
+
+  removeFromCart(product: Product) {
+    const previousCart = this.#cart();
+
+    this.#cart.update((c) => {
+      if (!c) return c;
+
+      const existingItem = c.items.find((i) => i.product.id === product.id);
+      let updatedItems = [...c.items];
+
+      if (existingItem) {
+        updatedItems = c.items.filter(ci => ci.product.id !== product.id);
+      }
+
+      this.api.removeFromCart(product).subscribe({
+        next: (response) => {
+          this.#cart.set(response.data);
+          this.toaster.success("Prodotto rimosso dal tuo carrello");
+        },
+        error: (err) => {
+          this.#cart.set(previousCart);
+          const msg =
+            `${err?.error?.error} - ${err?.error?.exception}` || "Errore durante aggiornamento del carrello";
+
+          this.toaster.error(msg);
+          this.#error.set(msg);
+        }
+      })
+
+
+      return {
+        ...c,
+        items: updatedItems
       }
     });
   }
