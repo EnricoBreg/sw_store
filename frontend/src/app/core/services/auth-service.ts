@@ -107,6 +107,7 @@ export class AuthService {
     this.api.logout().subscribe({
       next: (response) => {
         this.store.clearAuth();
+        this.cartService.clearCart();
         this.router.navigate(["/login"]);
       },
       error: (err) => {

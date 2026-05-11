@@ -140,4 +140,12 @@ export class CartService {
       }
     });
   }
+
+  /**
+   * Metodo che si occupa solamente di svuotare il carrello senza fare una chiamata api.
+   * Usato principalmente quando l'utente effettua un logout.
+   */
+  clearCart() {
+    this.store.clearCart();
+  }
 }
