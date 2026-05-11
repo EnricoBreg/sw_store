@@ -43,6 +43,10 @@ import { CartService } from '../../core/services/cart.service';
             <span class="text-sm font-medium">{{ user.first_name }} {{ user.last_name }}</span>
             <span class="text-xs text-gray-500">{{ user.email }}</span>
           </div>
+          @if (user.admin) {
+            <mat-divider></mat-divider>
+            <button class="!min-h-[32px]" mat-menu-item routerLink="/admin">Area Admin</button>
+          }
           <mat-divider></mat-divider>
           <button class="!min-h-[32px]" mat-menu-item (click)="authService.signOut()">
             <mat-icon>logout</mat-icon>

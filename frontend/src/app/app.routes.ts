@@ -1,4 +1,6 @@
 import { Routes } from '@angular/router';
+import { adminGuard } from './core/guards/admin-guard';
+import { loggedInGuard } from './core/guards/logged-in-guard';
 
 export const routes: Routes = [
   {
@@ -8,11 +10,13 @@ export const routes: Routes = [
   },
   {
     path: "login",
-    loadComponent: () => import("./pages/login-page.ts/login-page")
+    loadComponent: () => import("./pages/login-page.ts/login-page"),
+    canActivate: [loggedInGuard]
   },
   {
     path: "sign-up",
-    loadComponent: () => import("./pages/signup-page/signup-page")
+    loadComponent: () => import("./pages/signup-page/signup-page"),
+    canActivate: [loggedInGuard]
   },
   {
     path: "oauth/callback",
@@ -30,4 +34,13 @@ export const routes: Routes = [
     path: "cart",
     loadComponent: () => import("./pages/cart-page/cart-page"),
   },
+  {
+    path: "admin",
+    loadComponent: () => import("./layout/admin-layout/admin-layout"),
+    canActivate: [adminGuard],
+    children: [
+      { path: "", redirectTo: "dashboard", pathMatch: 'full' },
+      { path: "dashboard", loadComponent: () => import("./pages/admin/dashboard-page/dashboard-page") }
+    ]
+  }
 ];

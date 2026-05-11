@@ -1,5 +1,5 @@
 import { Injectable, signal } from "@angular/core";
-import { NavigationEnd, NavigationError, NavigationStart, Router } from "@angular/router";
+import { NavigationCancel, NavigationEnd, NavigationError, NavigationStart, Router } from "@angular/router";
 
 @Injectable({
   providedIn: "root",
@@ -12,8 +12,14 @@ export class LoadingService {
 
   constructor(private router: Router) {
     router.events.subscribe(event => {
-      if (event instanceof NavigationStart) this.show();
-      if (event instanceof NavigationEnd || event instanceof NavigationError) this.hide();
+      if (event instanceof NavigationStart) {
+        this.show();
+      }
+      if (event instanceof NavigationEnd
+          || event instanceof NavigationError
+          || event instanceof NavigationCancel) {
+            this.hide();
+      }
     })
   }
 
