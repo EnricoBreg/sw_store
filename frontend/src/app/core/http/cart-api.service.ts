@@ -29,4 +29,12 @@ export class CartApiService {
   removeFromCart(product: Product): Observable<ApiResponse<Cart>> {
     return this.http.delete<ApiResponse<Cart>>(`${this.cartItemsUrl}/${product.id}`);
   }
+
+  updateQuantity(product: Product, quantity: number): Observable<ApiResponse<Cart>> {
+    return this.http.put<ApiResponse<Cart>>(`${this.cartItemsUrl}/${product.id}`, {
+      cart_item: {
+        quantity
+      }
+    });
+  }
 }

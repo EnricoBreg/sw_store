@@ -4,6 +4,8 @@ import { Cart, CartItem } from "../models/cart";
 import Product from "../models/product";
 import { CartStore } from "../state/cart.store";
 import { Toaster } from "./toaster";
+import { Observable } from "rxjs";
+import { ApiResponse } from "../models/api-types";
 
 @Injectable({
   providedIn: "root",
@@ -32,7 +34,6 @@ export class CartService {
   }
 
   loadCart() {
-
     this.api.loadCart().subscribe({
       next: (response) => {
         this.#cart.set(response.data);
@@ -46,7 +47,6 @@ export class CartService {
   }
 
   addToCart(product: Product, quantity = 1) {
-
     const previousCart = this.#cart();
 
     this.#cart.update((c) => {
@@ -54,17 +54,18 @@ export class CartService {
 
       const unitPrice = product.price * (1 - product.discount_percentage / 100.0);
 
-      const existingItem = c.items.find(i => i.product.id === product.id);
+      const existingItem = c.items.find((i) => i.product.id === product.id);
 
       let updatedItems: CartItem[];
 
       if (existingItem) {
-        updatedItems = c.items.map(item =>
+        updatedItems = c.items.map((item) =>
           item.product.id === product.id
-          ? {
-              ...item, quantity: item.quantity + quantity
-            }
-          : item
+            ? {
+                ...item,
+                quantity: item.quantity + quantity,
+              }
+            : item,
         );
       } else {
         const newCartItem: CartItem = {
@@ -76,7 +77,6 @@ export class CartService {
         updatedItems = [...c.items, newCartItem];
       }
 
-
       return {
         ...c,
         items: updatedItems,
@@ -86,17 +86,18 @@ export class CartService {
     this.api.addToCart(product, quantity).subscribe({
       next: (response) => {
         this.#cart.set(response.data);
-        this.toaster.success("Prodotto aggiunto al tuo carrello"); 
+        this.toaster.success("Prodotto aggiunto al tuo carrello");
       },
       error: (err) => {
         // Rollback allo stato precedente in caso di errore nella chiamata
         this.#cart.set(previousCart);
         const msg =
-          `${err?.error?.error} - ${err?.error?.exception}` || "Errore durante aggiornamento del carrello";
-        
-        this.toaster.error(msg); 
+          `${err?.error?.error} - ${err?.error?.exception}` ||
+          "Errore durante aggiornamento del carrello";
+
+        this.toaster.error(msg);
         this.#error.set(msg);
-      }
+      },
     });
   }
 
@@ -110,7 +111,7 @@ export class CartService {
       let updatedItems = [...c.items];
 
       if (existingItem) {
-        updatedItems = c.items.filter(ci => ci.product.id !== product.id);
+        updatedItems = c.items.filter((ci) => ci.product.id !== product.id);
       }
 
       this.api.removeFromCart(product).subscribe({
@@ -121,24 +122,56 @@ export class CartService {
         error: (err) => {
           this.#cart.set(previousCart);
           const msg =
-            `${err?.error?.error} - ${err?.error?.exception}` || "Errore durante aggiornamento del carrello";
+            `${err?.error?.error} - ${err?.error?.exception}` ||
+            "Errore durante aggiornamento del carrello";
 
           this.toaster.error(msg);
           this.#error.set(msg);
-        }
-      })
-
+        },
+      });
 
       return {
         ...c,
-        items: updatedItems
-      }
+        items: updatedItems,
+      };
+    });
+  }
+
+  updateCartItemQuantity(cartItem: CartItem, newQuantity: number) {
+    const previousCart = this.#cart();
+
+    this.#cart.update((c) => {
+      if (!c) return c;
+
+      let ci = c.items.find((i) => i.product.id === cartItem.product.id);
+
+      const updatedItems = c.items.map((ci) =>
+        ci.product.id === cartItem.product.id ? { ...ci, quantity: newQuantity } : ci,
+      );
+
+      if (!ci) return c;
+      ci = { ...ci, quantity: newQuantity };
+
+      this.api.updateQuantity(cartItem.product, ci.quantity).subscribe({
+        next: (_) => {
+          this.toaster.success("Quantità del prodotto aggiornata con successo.");
+        },
+        error: (err) => {
+          this.#cart.set(previousCart);
+          this.toaster.error("Errore durante l'aggiornamento della quantità.");
+        },
+      });
+
+      return {
+        ...c,
+        items: updatedItems,
+      };
     });
   }
 
   /**
    * Metodo che si occupa solamente di svuotare il carrello senza fare una chiamata api.
-   * Usato principalmente quando l'utente effettua un logout.
+   * Usato principalmente quando l'utente effettua un logout, o la sessione è scaduta.
    */
   clearCart() {
     this.store.clearCart();

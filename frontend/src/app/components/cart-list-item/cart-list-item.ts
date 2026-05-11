@@ -8,10 +8,11 @@ import { MatIconButton } from "@angular/material/button";
 import ProductPrice from "../product-price/product-price";
 import { CartService } from "../../core/services/cart.service";
 import { RouterLink } from "@angular/router";
+import QuantitySelector from "../quantity-selector/quantity-selector";
 
 @Component({
   selector: "app-cart-list-item",
-  imports: [CurrencyPipe, MatIconButton, MatIcon, ProductPrice, RouterLink],
+  imports: [CurrencyPipe, MatIconButton, MatIcon, ProductPrice, RouterLink, QuantitySelector],
   template: `
     @let product = cartItem().product;
 
@@ -23,20 +24,24 @@ import { RouterLink } from "@angular/router";
           class="w-24 h-24 rounded-lg object-cover"
         />
         <div>
-          <a [routerLink]="['/products', product.id ]">
+          <a [routerLink]="['/products', product.id]">
             <div class="text-gray-900 text-lg font-semibold underline">{{ product.name }}</div>
           </a>
           <app-product-price [product]="product" />
         </div>
       </div>
 
-      
       <div class="flex flex-col items-end gap-4">
         <div>
           <!-- TODO: Inserire il selettore della quantità -->
-          <span class="text-lg border-1 rounded-lg py-2 px-4 border-color-gray-500">
+          <!-- <span class="text-lg border-1 rounded-lg py-2 px-4 border-color-gray-500">
             {{ cartItem().quantity }}
-          </span>
+          </span> -->
+          <app-quantity-selector
+            [currentQuantity]="cartItem().quantity"
+            [maxQuantity]="cartItem().product.stock_quantity"
+            (quantityChange)="onQuantityChange($event)"
+          />
         </div>
         <div class="text-right font-semibold text-lg">
           {{ total() | currency: "EUR" }}
@@ -44,11 +49,7 @@ import { RouterLink } from "@angular/router";
       </div>
 
       <div class="flex -me-3 justify-end">
-        <button
-          matIconButton
-          class="danger"
-          (click)="cartService.removeFromCart(product)"
-        >
+        <button matIconButton class="danger" (click)="cartService.removeFromCart(product)">
           <mat-icon>delete</mat-icon>
         </button>
       </div>
@@ -69,4 +70,8 @@ export default class CartListItem {
       this.cartItem().quantity
     ).toFixed(2),
   );
+
+  onQuantityChange(newQuantity: number) {
+    this.cartService.updateCartItemQuantity(this.cartItem(), newQuantity);
+  }
 }
