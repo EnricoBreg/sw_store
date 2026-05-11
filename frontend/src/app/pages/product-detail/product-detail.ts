@@ -9,16 +9,22 @@ import { CartService } from "../../core/services/cart.service";
 import { AuthService } from "../../core/services/auth-service";
 import { RouterLink } from "@angular/router";
 import ViewPanel from "../../core/directives/view-panel/view-panel";
+import QuantitySelector from "../../components/quantity-selector/quantity-selector";
 
 @Component({
   selector: "app-product-detail",
-  imports: [InstockBadge, ProductPrice, MatIconButton, MatIcon, MatAnchor, RouterLink, ViewPanel],
+  imports: [
+    InstockBadge,
+    ProductPrice,
+    MatIconButton,
+    MatIcon,
+    MatAnchor,
+    RouterLink,
+    ViewPanel,
+    QuantitySelector,
+  ],
   template: `
-    <div
-      appViewPanel
-      class="max-w-[1200px] mx-auto mt-12 flex flex-col md:flex-row"
-    >
-
+    <div appViewPanel class="max-w-[1200px] mx-auto mt-12 flex flex-col md:flex-row">
       @if (error()) {
         <div class="text-red-500 text-lg">
           {{ error() }}
@@ -47,47 +53,34 @@ import ViewPanel from "../../core/directives/view-panel/view-panel";
             Disponibità: {{ product.stock_quantity }} pezzo/i.
           </p>
 
-          <div class="mt-6 flex flex-col md:flex-row item-center justify-end">
-            <div class="flex-1">
-              <app-product-price [product]="product!" className="text-2xl" />
-            </div>
+          <div class="mt-6">
+            <app-product-price [product]="product!" className="text-2xl" />
+          </div>
 
-            <div class="flex-1 flex items-center justify-end gap-3">
-              @if (authService.authenticated()) {
-                @if (product.stock_quantity > 0) {
-                  <button
-                    matIconButton
-                    [disabled]="selectedQuantity() === 1"
-                    (click)="decrementQuantity()"
-                  >
-                    <mat-icon>remove</mat-icon>
-                  </button>
-                  <span class="text-lg border-1 rounded-lg py-2 px-4 border-color-gray-500">{{
-                    selectedQuantity()
-                  }}</span>
-                  <button
-                    matIconButton
-                    [disabled]="selectedQuantity() === product.stock_quantity"
-                    (click)="incrementQuantity()"
-                  >
-                    <mat-icon>add</mat-icon>
-                  </button>
-  
-                  <button matButton="filled" (click)="addToCart()">
-                    <mat-icon>add_shopping_cart</mat-icon>
-                    Aggiungi al carrello
-                  </button>
-                } @else {
-                  <p class="text-gray-800">
-                    Prodotto non più dispobile. Ti avviseremo quando tornerà in stock.
-                  </p>
-                }
+          <div class="mt-4 flex items-center gap-3">
+            @if (authService.authenticated()) {
+              @if (product.stock_quantity > 0) {
+                <app-quantity-selector
+                  [currentQuantity]="1"
+                  [maxQuantity]="product.stock_quantity"
+                  (quantityChange)="selectedQuantity.update((v) => v + $event)"
+                />
+
+                <button matButton="filled" (click)="addToCart()">
+                  <mat-icon>add_shopping_cart</mat-icon>
+                  Aggiungi al carrello
+                </button>
               } @else {
-                <p class="text-gray-700">
-                  <a class="text-blue-400 underline" routerLink="/login">Accedi</a> per aggiungere questo prodotto al tuo carrello! 
+                <p class="text-gray-800">
+                  Prodotto non più dispobile. Ti avviseremo quando tornerà in stock.
                 </p>
               }
-            </div>
+            } @else {
+              <p class="text-gray-700">
+                <a class="text-blue-400 underline" routerLink="/login">Accedi</a> per aggiungere
+                questo prodotto al tuo carrello!
+              </p>
+            }
           </div>
         </section>
       }
