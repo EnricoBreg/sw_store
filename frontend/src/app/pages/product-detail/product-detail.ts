@@ -4,7 +4,7 @@ import { handleImageError } from "../../core/utils";
 import InstockBadge from "../../components/instock-badge/instock-badge";
 import ProductPrice from "../../components/product-price/product-price";
 import { MatIcon } from "@angular/material/icon";
-import { MatIconButton, MatAnchor } from "@angular/material/button";
+import { MatAnchor } from "@angular/material/button";
 import { CartService } from "../../core/services/cart.service";
 import { AuthService } from "../../core/services/auth-service";
 import { RouterLink } from "@angular/router";
@@ -16,13 +16,12 @@ import QuantitySelector from "../../components/quantity-selector/quantity-select
   imports: [
     InstockBadge,
     ProductPrice,
-    MatIconButton,
     MatIcon,
     MatAnchor,
     RouterLink,
     ViewPanel,
-    QuantitySelector,
-  ],
+    QuantitySelector
+],
   template: `
     <div appViewPanel class="max-w-[1200px] mx-auto mt-12 flex flex-col md:flex-row">
       @if (error()) {
