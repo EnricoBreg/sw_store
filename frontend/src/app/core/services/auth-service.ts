@@ -115,4 +115,9 @@ export class AuthService {
       },
     });
   }
+
+  clearAuth() {
+    this.store.clearAuth();
+    this.cartService.clearCart();
+  }
 }

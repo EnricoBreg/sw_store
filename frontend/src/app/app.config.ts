@@ -8,12 +8,13 @@ import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from "@angular/material/form-field";
 import { ApiHeadersInterceptor } from "./core/http/interceptors/api-headers-interceptor";
 import { provideHotToastConfig } from "@ngxpert/hot-toast";
 import { LoadingInterceptor } from "./core/http/interceptors/loading-interceptor";
+import { authInterceptor } from "./core/http/interceptors/auth-interceptor";
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes, withComponentInputBinding(), withViewTransitions()),
-    provideHttpClient(withInterceptors([LoadingInterceptor, ApiInterceptor, ApiHeadersInterceptor])),
+    provideHttpClient(withInterceptors([LoadingInterceptor, authInterceptor, ApiInterceptor, ApiHeadersInterceptor])),
     provideHotToastConfig(),
     {
       provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
