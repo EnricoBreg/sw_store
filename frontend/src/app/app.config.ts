@@ -15,7 +15,10 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes, withComponentInputBinding(), withViewTransitions()),
     provideHttpClient(withInterceptors([LoadingInterceptor, authInterceptor, ApiInterceptor, ApiHeadersInterceptor])),
-    provideHotToastConfig(),
+    provideHotToastConfig({
+      stacking: "depth",
+      visibleToasts: 3
+    }),
     {
       provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
       useValue: {
