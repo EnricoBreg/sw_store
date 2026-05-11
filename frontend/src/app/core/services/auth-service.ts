@@ -23,17 +23,14 @@ export class AuthService {
   private cartService = inject(CartService);
   private toaster = inject(Toaster);
 
-  #isLoading = signal<boolean>(false);
   #error = signal<string | undefined>(undefined);
 
   readonly authenticated = this.store.isAuthenticated;
   readonly user = this.store.user;
   readonly jwtToken = this.store.jwtToken;
-  readonly isLoading = this.#isLoading.asReadonly();
   readonly error = this.#error.asReadonly();
 
   signIn(email: string, password: string) {
-    this.#isLoading.set(true);
 
     this.api.login(email, password).subscribe({
       next: (response) => {

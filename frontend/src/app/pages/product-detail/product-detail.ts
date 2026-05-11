@@ -3,7 +3,6 @@ import { ProductsService } from "../../core/services/products.service";
 import { handleImageError } from "../../core/utils";
 import InstockBadge from "../../components/instock-badge/instock-badge";
 import ProductPrice from "../../components/product-price/product-price";
-import Spinner from "../../components/spinner/spinner";
 import { MatIcon } from "@angular/material/icon";
 import { MatIconButton, MatAnchor } from "@angular/material/button";
 import { CartService } from "../../core/services/cart.service";
@@ -13,15 +12,12 @@ import ViewPanel from "../../core/directives/view-panel/view-panel";
 
 @Component({
   selector: "app-product-detail",
-  imports: [InstockBadge, ProductPrice, Spinner, MatIconButton, MatIcon, MatAnchor, RouterLink, ViewPanel],
+  imports: [InstockBadge, ProductPrice, MatIconButton, MatIcon, MatAnchor, RouterLink, ViewPanel],
   template: `
     <div
       appViewPanel
       class="max-w-[1200px] mx-auto mt-12 flex flex-col md:flex-row"
     >
-      @if (isLoading()) {
-        <app-spinner />
-      }
 
       @if (error()) {
         <div class="text-red-500 text-lg">
@@ -107,7 +103,6 @@ export default class ProductDetail {
   readonly authService = inject(AuthService);
 
   product = this.productsService.product;
-  isLoading = this.productsService.isLoading;
   error = this.productsService.error;
 
   selectedQuantity = signal<number>(1);

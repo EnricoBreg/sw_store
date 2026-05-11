@@ -1,17 +1,13 @@
 import { TitleCasePipe } from '@angular/common';
-import { Component, inject, input, output, signal } from '@angular/core';
+import { Component, inject, output } from '@angular/core';
 import { MatNavList, MatListItem, MatListItemTitle } from "@angular/material/list"
 import { CategoriesService } from '../../core/services/categories.service';
-import Spinner from '../spinner/spinner';
 
 @Component({
   selector: 'app-categories-list',
-  imports: [MatNavList, MatListItem, MatListItemTitle, TitleCasePipe, Spinner],
+  imports: [MatNavList, MatListItem, MatListItemTitle, TitleCasePipe],
   template: `
     <div>
-      @if (isLoading()) {
-        <app-spinner />
-      }
 
       @if (errorMessage()) {
         <div class="text-red-500 text-lg">
@@ -50,7 +46,6 @@ export default class CategoriesList {
 
   selectedCategory = this.categoriesService.selected;
   categories = this.categoriesService.categories;
-  isLoading = this.categoriesService.isLoading;
   errorMessage = this.categoriesService.error;
 
   ngOnInit() {

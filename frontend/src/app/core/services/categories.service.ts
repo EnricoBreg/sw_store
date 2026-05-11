@@ -12,23 +12,19 @@ export class CategoriesService {
   #categories = signal<Category[]>([]);
   #selected = signal<Category | undefined>(undefined);
   #paginationMeta = signal<PaginationMeta | undefined>(undefined);
-  #isLoading = signal<boolean>(false);
   #error = signal<string | undefined>(undefined);
 
   categories = this.#categories.asReadonly();
   selected = this.#selected.asReadonly();
-  isLoading = this.#isLoading.asReadonly();
   error = this.#error.asReadonly();
 
   loadCategories(page: number = 1, perPage: number = 10) {
-    this.#isLoading.set(true);
 
     this.api.getCategories(page, perPage).subscribe({
       next: (response) => {
         // Popolamento dello store con i dati di risposta e di paginazione
         this.#categories.set(response.data);
         this.#paginationMeta.set(response.meta);
-        this.#isLoading.set(false);
       },
       error: (err) => {
         // Gestione del messaggio di errore qualora si verifichi
@@ -36,7 +32,6 @@ export class CategoriesService {
           `${err?.error.error} - ${err?.error.exception}` ||
           'Errore nel caricamento delle categorie.';
         this.#error.set(msg);
-        this.#isLoading.set(false);
       },
     });
   }

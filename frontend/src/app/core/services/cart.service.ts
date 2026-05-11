@@ -14,11 +14,9 @@ export class CartService {
   private toaster = inject(Toaster);
 
   #cart = signal<Cart | null>(this.store.cart());
-  #isLoading = signal<boolean>(false);
   #error = signal<string | undefined>(undefined);
 
   cart = this.#cart.asReadonly();
-  isLoading = this.#isLoading.asReadonly();
   error = this.#error.asReadonly();
 
   cartItemCount = computed(() => this.#cart()?.items.length ?? 0);
@@ -34,18 +32,15 @@ export class CartService {
   }
 
   loadCart() {
-    this.#isLoading.set(true);
 
     this.api.loadCart().subscribe({
       next: (response) => {
         this.#cart.set(response.data);
-        this.#isLoading.set(false);
       },
       error: (err) => {
         const msg =
           `${err?.error.error} - ${err?.error.exception}` || "Errore nel caricamento dei prodotti.";
         this.#error.set(msg);
-        this.#isLoading.set(false);
       },
     });
   }

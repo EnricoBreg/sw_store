@@ -13,48 +13,40 @@ export class ProductsService {
   #products = signal<Product[]>([]);
   #product = signal<Product | null>(null);
   #paginationMeta = signal<PaginationMeta | undefined>(undefined);
-  #isLoading = signal<boolean>(false);
   #error = signal<string | undefined>(undefined);
 
   products = this.#products.asReadonly();
   product = this.#product.asReadonly();
   paginationMeta = this.#paginationMeta.asReadonly();
-  isLoading = this.#isLoading.asReadonly();
   error = this.#error.asReadonly();
 
   loadProducts(page: number = 1, perPage: number = 10, categoryId?: number) {
-    this.#isLoading.set(true);
 
     this.api.getProducts(page, perPage, categoryId).subscribe({
       next: (response) => {
         // Popolamento dello store con i dati di risposta e di paginazione
         this.#products.set(response.data);
         this.#paginationMeta.set(response.meta);
-        this.#isLoading.set(false);
       },
       error: (err) => {
         // Gestione del messaggio di errore qualora si verifichi
         const msg =
           `${err?.error.error} - ${err?.error.exception}` || 'Errore nel caricamento dei prodotti.';
         this.#error.set(msg);
-        this.#isLoading.set(false);
       },
     });
   }
 
   getById(productId: number) {
-    this.#isLoading.set(true);
 
     this.api.getById(productId).subscribe({
       next: (response) => {
         this.#product.set(response.data);
-        this.#isLoading.set(false);
       },
       error: (err) => {
         const msg =
           `${err?.error.error} - ${err?.error.exception}` || "Errore nel caricamento dei prodotti.";
         this.#error.set(msg);
-        this.#isLoading.set(false);
       }
     })
   }

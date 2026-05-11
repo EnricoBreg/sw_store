@@ -4,7 +4,6 @@ import CategoriesList from '../../components/categories-list/categories-list';
 import { ProductsService } from '../../core/services/products.service';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import ApiPaginator from '../../components/api-paginator/api-paginator';
-import Spinner from '../../components/spinner/spinner';
 import { CategoriesService } from '../../core/services/categories.service';
 import ProductCard from '../../components/product-card/product-card';
 
@@ -17,7 +16,6 @@ import ProductCard from '../../components/product-card/product-card';
     CategoriesList,
     MatPaginatorModule,
     ApiPaginator,
-    Spinner,
     ProductCard,
   ],
   template: `
@@ -32,10 +30,6 @@ import ProductCard from '../../components/product-card/product-card';
       <mat-sidenav-content>
         <section class="p-6 relative">
           <h1 class="text-3xl font-bold text-gray-900">Our Products</h1>
-
-          @if (isLoading()) {
-            <app-spinner />
-          }
 
           @if (productsCount()) {
             <div class="text-red-500 text-lg">
@@ -74,7 +68,6 @@ export default class ProductsGrid {
   selectedCategory = this.categoriesService.selected;
   products = this.productsService.products;
   pagination = this.productsService.paginationMeta;
-  isLoading = this.productsService.isLoading;
   errorMessage = this.productsService.error;
 
   productsCount = computed(() => this.products().length);
