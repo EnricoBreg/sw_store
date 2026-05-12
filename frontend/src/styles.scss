@@ -79,3 +79,8 @@ button[matIconButton].danger {
       state-layer-color: var(--mat-sys-error),
     ));
 }
+
+.full-height-layout {
+  /* height: 100% */
+  height: calc(100vh - 64px);
+}

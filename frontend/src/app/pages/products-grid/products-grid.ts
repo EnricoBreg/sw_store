@@ -19,7 +19,7 @@ import ProductCard from '../../components/product-card/product-card';
     ProductCard,
   ],
   template: `
-    <mat-sidenav-container class="mt-2">
+    <mat-sidenav-container class="mt-2 full-height-layout">
       <mat-sidenav mode="side" opened="true">
         <div class="p-6">
           <h3 class="text-lg font-semibold text-gray-900">Categories</h3>
