@@ -55,6 +55,18 @@ export const routes: Routes = [
         path: "dashboard",
         loadComponent: () => import("./pages/admin/dashboard-page/dashboard-page"),
       },
+      {
+        path: "users",
+        loadComponent: () => import("./pages/admin/users/users-page/users-page"),
+      },
+      {
+        path: "products",
+        loadComponent: () => import("./pages/admin/products/products-page/products-page"),
+      },
+      {
+        path: "orders",
+        loadComponent: () => import("./pages/admin/orders/orders-page/orders-page"),
+      },
     ],
   },
   {
