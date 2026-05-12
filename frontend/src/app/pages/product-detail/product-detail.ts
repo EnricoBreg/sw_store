@@ -62,7 +62,7 @@ import QuantitySelector from "../../components/quantity-selector/quantity-select
                 <app-quantity-selector
                   [currentQuantity]="1"
                   [maxQuantity]="product.stock_quantity"
-                  (quantityChange)="selectedQuantity.update((v) => v + $event)"
+                  (quantityChange)="selectedQuantity.update((_) => $event)"
                 />
 
                 <button matButton="filled" (click)="addToCart()">

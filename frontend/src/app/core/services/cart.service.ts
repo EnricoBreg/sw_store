@@ -4,8 +4,7 @@ import { Cart, CartItem } from "../models/cart";
 import Product from "../models/product";
 import { CartStore } from "../state/cart.store";
 import { Toaster } from "./toaster";
-import { Observable } from "rxjs";
-import { ApiResponse } from "../models/api-types";
+import { debounceTime, Subject, switchMap, tap } from "rxjs";
 
 @Injectable({
   providedIn: "root",
@@ -17,6 +16,11 @@ export class CartService {
 
   #cart = signal<Cart | null>(this.store.cart());
   #error = signal<string | undefined>(undefined);
+  #updateQtySubject = new Subject<{
+    cartItem: CartItem;
+    newQuantity: number;
+    previousCart: Cart | null;
+  }>();
 
   cart = this.#cart.asReadonly();
   error = this.#error.asReadonly();
@@ -31,6 +35,26 @@ export class CartService {
         this.store.setCart(cart);
       }
     });
+
+    this.#updateQtySubject
+      .pipe(
+        // attesa di 500ms tra un click e l'altro
+        debounceTime(500),
+
+        // Viene considerata solamente l'ultima richiesta e vengono ignorate quelle precedenti
+        switchMap(({ cartItem, newQuantity, previousCart }) =>
+          this.api.updateQuantity(cartItem.product, newQuantity).pipe(
+            tap({
+              next: () => this.toaster.success("Quantità aggiornata."),
+              error: (err) => {
+                this.#cart.set(previousCart);
+                this.toaster.error("Errore durante l'aggiornamento");
+              },
+            }),
+          ),
+        ),
+      )
+      .subscribe();
   }
 
   loadCart() {
@@ -138,35 +162,19 @@ export class CartService {
   }
 
   updateCartItemQuantity(cartItem: CartItem, newQuantity: number) {
+    console.log("newQuantity", newQuantity);
+
     const previousCart = this.#cart();
 
     this.#cart.update((c) => {
       if (!c) return c;
-
-      let ci = c.items.find((i) => i.product.id === cartItem.product.id);
-
       const updatedItems = c.items.map((ci) =>
         ci.product.id === cartItem.product.id ? { ...ci, quantity: newQuantity } : ci,
       );
-
-      if (!ci) return c;
-      ci = { ...ci, quantity: newQuantity };
-
-      this.api.updateQuantity(cartItem.product, ci.quantity).subscribe({
-        next: (_) => {
-          this.toaster.success("Quantità del prodotto aggiornata con successo.");
-        },
-        error: (err) => {
-          this.#cart.set(previousCart);
-          this.toaster.error("Errore durante l'aggiornamento della quantità.");
-        },
-      });
-
-      return {
-        ...c,
-        items: updatedItems,
-      };
+      return { ...c, items: updatedItems };
     });
+
+    this.#updateQtySubject.next({ cartItem, newQuantity, previousCart });
   }
 
   /**
