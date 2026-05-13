@@ -3,6 +3,12 @@ import { User } from "../models/user";
 import { AdminUsersApiService } from "../http/admin-users-api.service";
 import { PaginationMeta } from "../models/api-types";
 
+export interface UsersQuery {
+  searchTerm?: string;
+  orderBy?: string;
+  orderDirection?: string;
+}
+
 @Injectable({
   providedIn: "root",
 })
@@ -17,8 +23,8 @@ export class UsersService {
   paginationMeta = this.#paginationMeta.asReadonly();
   error = this.#error.asReadonly();
 
-  getUsers(page: number = 1, perPage: number = 10, searchTerm?: string) {
-    this.api.getUsers(page, perPage, searchTerm).subscribe({
+  getUsers(page: number = 1, perPage: number = 10, searchQuery?: UsersQuery) {
+    this.api.getUsers(page, perPage, searchQuery).subscribe({
       next: (response) => {
         this.#users.set(response.data);
         this.#paginationMeta.set(response.meta);

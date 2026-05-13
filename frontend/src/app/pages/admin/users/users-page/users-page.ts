@@ -2,7 +2,7 @@ import { AfterViewInit, Component, computed, inject, signal, ViewChild } from "@
 import { MatPaginator, MatPaginatorModule } from "@angular/material/paginator";
 import { MatTable, MatTableDataSource, MatTableModule } from "@angular/material/table";
 import { User } from "../../../../core/models/user";
-import { UsersService } from "../../../../core/services/users.service";
+import { UsersQuery, UsersService } from "../../../../core/services/users.service";
 import ApiPaginator from "../../../../components/api-paginator/api-paginator";
 import { MatInput, MatFormField, MatLabel, MatHint } from "@angular/material/input";
 import { FormControl, ReactiveFormsModule, ɵInternalFormsSharedModule } from "@angular/forms";
@@ -11,6 +11,7 @@ import { MatIcon } from "@angular/material/icon";
 import { MatAnchor, MatIconButton } from "@angular/material/button";
 import { MatMenuModule } from "@angular/material/menu";
 import { MatCheckbox } from "@angular/material/checkbox";
+import {MatSort, Sort, MatSortModule, MatSortHeader} from '@angular/material/sort';
 
 @Component({
   selector: "app-users-page",
@@ -25,7 +26,10 @@ import { MatCheckbox } from "@angular/material/checkbox";
     MatHint,
     MatMenuModule,
     MatCheckbox,
-    MatIconButton
+    MatIconButton,
+    MatSortHeader,
+    MatSortModule,
+    MatSort,
 ],
   template: `
     <div class="space-y-6">
@@ -64,21 +68,21 @@ import { MatCheckbox } from "@angular/material/checkbox";
             }
           </mat-menu>
         </div>
-        <table mat-table [dataSource]="users()">
+        <table mat-table [dataSource]="users()" matSort (matSortChange)="onSortChange($event)">
           <ng-container matColumnDef="id">
             <th mat-header-cell *matHeaderCellDef>ID</th>
             <td mat-cell *matCellDef="let user">{{ user.id }}</td>
           </ng-container>
           <ng-container matColumnDef="first_name">
-            <th mat-header-cell *matHeaderCellDef>Nome</th>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Ordina per nome">Nome</th>
             <td mat-cell *matCellDef="let user">{{ user.first_name }}</td>
           </ng-container>
           <ng-container matColumnDef="last_name">
-            <th mat-header-cell *matHeaderCellDef>Cognome</th>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Ordina per cognome">Cognome</th>
             <td mat-cell *matCellDef="let user">{{ user.last_name }}</td>
           </ng-container>
           <ng-container matColumnDef="email">
-            <th mat-header-cell *matHeaderCellDef>Email</th>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Ordina per email">Email</th>
             <td mat-cell *matCellDef="let user">{{ user.email }}</td>
           </ng-container>
           <ng-container matColumnDef="admin">
@@ -116,6 +120,7 @@ export default class UsersPage {
   usersCount = computed(() => this.users().length);
 
   searchControl = new FormControl("");
+  searchQuery = signal<UsersQuery>({});
 
   private destroy$ = new Subject<void>();
 
@@ -129,9 +134,10 @@ export default class UsersPage {
         distinctUntilChanged(), // effettua una chiamata solo se il testo digitato è effettivamente cambiato
         takeUntil(this.destroy$), // per evitare memory leak quando si cambia pagina
       )
-      .subscribe((searchTerm) =>
-        this.service.getUsers(1, this.pagination()?.limit, searchTerm || ""),
-      );
+      .subscribe((searchTerm) => {
+        this.searchQuery.update((sq) => ({ ...sq, searchTerm }));
+        this.service.getUsers(1, this.pagination()?.limit, this.searchQuery());
+      });
   }
 
   onPageChangeEvent(event: { page: number; limit: number }) {
@@ -142,5 +148,11 @@ export default class UsersPage {
     this.visibleColumns.update((current) =>
       current.includes(key) ? current.filter((k) => k !== key) : [...current, key],
     );
+  }
+
+  onSortChange(event: { active: string, direction: string }) {
+    console.log("Event", event);
+    this.searchQuery.update(sq => ({ ...sq, orderBy: event.active, orderDirection: event.direction }))
+    this.service.getUsers(this.pagination()?.page, this.pagination()?.limit, this.searchQuery())
   }
 }
