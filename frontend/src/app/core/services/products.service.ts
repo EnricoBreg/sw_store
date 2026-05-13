@@ -3,6 +3,13 @@ import { ProductsApiService } from '../http/products-api.service';
 import Product from '../models/product';
 import { PaginationMeta } from '../models/api-types';
 
+export interface ProductsQuery {
+  searchTerm?: string;
+  categoryId?: number;
+  orderBy?: string;
+  orderDirection?: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -20,9 +27,9 @@ export class ProductsService {
   paginationMeta = this.#paginationMeta.asReadonly();
   error = this.#error.asReadonly();
 
-  loadProducts(page: number = 1, perPage: number = 10, categoryId?: number) {
+  loadProducts(page: number = 1, perPage: number = 10, searchQuery?: ProductsQuery) {
 
-    this.api.getProducts(page, perPage, categoryId).subscribe({
+    this.api.getProducts(page, perPage, searchQuery).subscribe({
       next: (response) => {
         // Popolamento dello store con i dati di risposta e di paginazione
         this.#products.set(response.data);

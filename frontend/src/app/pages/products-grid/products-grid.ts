@@ -1,7 +1,7 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { MatSidenavContainer, MatSidenavContent, MatSidenav } from "@angular/material/sidenav"
 import CategoriesList from '../../components/categories-list/categories-list';
-import { ProductsService } from '../../core/services/products.service';
+import { ProductsQuery, ProductsService } from '../../core/services/products.service';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import ApiPaginator from '../../components/api-paginator/api-paginator';
 import { CategoriesService } from '../../core/services/categories.service';
@@ -77,10 +77,11 @@ export default class ProductsGrid {
   }
 
   onPageChangeEvent(event: { page: number; limit: number }) {
-    this.productsService.loadProducts(event.page, event.limit, this.selectedCategory()?.id);
+    this.productsService.loadProducts(event.page, event.limit, { categoryId: this.selectedCategory()?.id });
   }
 
   onCategorySelection(event: { id?: number; name?: string }) {
-    this.productsService.loadProducts(this.pagination()?.page, this.pagination()?.limit, event.id);
+    const categoryId = event.id;
+    this.productsService.loadProducts(this.pagination()?.page, this.pagination()?.limit, { categoryId });
   }
 }

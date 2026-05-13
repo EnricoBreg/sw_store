@@ -1,17 +1,15 @@
-import { AfterViewInit, Component, computed, inject, signal, ViewChild } from "@angular/core";
-import { MatPaginator, MatPaginatorModule } from "@angular/material/paginator";
-import { MatTable, MatTableDataSource, MatTableModule } from "@angular/material/table";
-import { User } from "../../../../core/models/user";
+import { Component, computed, inject, signal } from "@angular/core";
+import { MatTableModule } from "@angular/material/table";
 import { UsersQuery, UsersService } from "../../../../core/services/users.service";
 import ApiPaginator from "../../../../components/api-paginator/api-paginator";
 import { MatInput, MatFormField, MatLabel, MatHint } from "@angular/material/input";
-import { FormControl, ReactiveFormsModule, ɵInternalFormsSharedModule } from "@angular/forms";
+import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { debounceTime, distinctUntilChanged, map, Subject, takeUntil } from "rxjs";
 import { MatIcon } from "@angular/material/icon";
-import { MatAnchor, MatIconButton } from "@angular/material/button";
+import { MatIconButton } from "@angular/material/button";
 import { MatMenuModule } from "@angular/material/menu";
 import { MatCheckbox } from "@angular/material/checkbox";
-import {MatSort, Sort, MatSortModule, MatSortHeader} from '@angular/material/sort';
+import {MatSort, MatSortModule, MatSortHeader} from '@angular/material/sort';
 
 @Component({
   selector: "app-users-page",

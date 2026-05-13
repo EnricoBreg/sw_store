@@ -3,6 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiResponse } from '../models/api-types';
 import Product from '../models/product';
+import { ProductsQuery } from '../services/products.service';
 
 @Injectable({
   providedIn: 'root',
@@ -11,14 +12,27 @@ export class ProductsApiService {
   private readonly http = inject(HttpClient);
   private readonly url = 'products';
 
-  getProducts(page = 1, limit = 10, categoryId?: number): Observable<ApiResponse<Product[]>> {
+  getProducts(page = 1, limit = 10, query?: ProductsQuery): Observable<ApiResponse<Product[]>> {
     let params = new HttpParams()
       .set("page", page)
       .set("limit", limit);
 
-    if (categoryId) {
-      params = params.set('category_id', categoryId);
-    } 
+    if (query) {
+      const { searchTerm, categoryId, orderBy, orderDirection } = query;
+
+      if (searchTerm) {
+        params = params.set("q", searchTerm);
+      }
+      if (categoryId) {
+        params = params.set('category_id', categoryId);
+      }
+      if (orderBy) {
+        params = params.set("order_by", orderBy);
+      }
+      if (orderDirection) {
+        params = params.set("order_direction", orderDirection);
+      }
+    }
 
     return this.http.get<ApiResponse<Product[]>>(this.url, { params });
   } 
