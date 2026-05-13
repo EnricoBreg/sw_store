@@ -4,7 +4,13 @@ class Api::V1::Admin::UsersController < Api::V1::AdminController
   # GET /admin/users
   def index
     # TODO: implementare filtri
-    users = User.all.order(last_name: :asc, first_name: :asc)
+    if params[:order_by].present?
+      order_by = params[:order_by]
+      order_direction = params[:order_direction] || "asc"
+      users = User.all.order("#{order_by} #{order_direction}")
+    else
+      users = User.all.order(last_name: :asc, first_name: :asc)
+    end
     users = serach_by_name(users) if params[:q].present?
 
     @pagy, @users = pagy(users, page: params[:page], items: params[:limit])
