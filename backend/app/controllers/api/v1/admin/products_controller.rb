@@ -4,7 +4,13 @@ class Api::V1::Admin::ProductsController < Api::V1::AdminController
   # GET /admin/products
   def index
     # TODO: implementare filtri
-    products = Product.all.order(created_at: :desc)
+    if params[:order_by].present?
+      order_by = params[:order_by]
+      order_direction = params[:order_direction] || "asc"
+      products = Product.all.order("#{order_by} #{order_direction}")
+    else
+      products = Product.all.order(created_at: :desc)
+    end
     products = search_by_name(products) if params[:q].present?
     products = products.where(category_id: params[:category_id]) if params[:category_id].present?
 
