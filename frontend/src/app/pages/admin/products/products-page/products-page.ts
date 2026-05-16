@@ -7,13 +7,14 @@ import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { debounceTime, distinctUntilChanged, map, Subject, takeUntil } from "rxjs";
 import { MatIcon } from "@angular/material/icon";
 import { MatIconButton, MatAnchor } from "@angular/material/button";
-import { MatMenuModule } from "@angular/material/menu";
+import { MatMenuItem, MatMenuModule, MatMenuTrigger } from "@angular/material/menu";
 import { MatCheckbox } from "@angular/material/checkbox";
-import {MatSort, MatSortModule, MatSortHeader} from '@angular/material/sort';
+import { MatSort, MatSortModule, MatSortHeader } from "@angular/material/sort";
 import { ProductsService } from "../../../../core/services/products.service";
 import { CurrencyPipe } from "@angular/common";
 import { handleImageError } from "../../../../core/utils";
 import { RouterLink } from "@angular/router";
+import { MatDivider } from "@angular/material/divider";
 
 @Component({
   selector: "app-products-page",
@@ -34,6 +35,10 @@ import { RouterLink } from "@angular/router";
     CurrencyPipe,
     MatAnchor,
     RouterLink,
+    MatMenuModule,
+    MatMenuItem,
+    MatMenuTrigger,
+    MatDivider,
   ],
   template: `
     <div class="space-y-4">
@@ -109,7 +114,27 @@ import { RouterLink } from "@angular/router";
             >
               Nome
             </th>
-            <td mat-cell *matCellDef="let product">{{ product.name }}</td>
+            <td mat-cell *matCellDef="let product">
+              <span
+                class="text-lg font-semibold hover:underline cursor-pointer"
+                [matMenuTriggerFor]="productMenu"
+                >{{ product.name }}</span
+              >
+              <mat-menu #productMenu="matMenu" xPosition="before">
+                <div class="flex flex-col px-3 min-w-[200px]">
+                  <span class="text-sm font-medium">Azioni rapide</span>
+                </div>
+                <mat-divider></mat-divider>
+                <a class="!min-h-[32px]" mat-menu-item [routerLink]="[product.id]">
+                  <mat-icon>visibility</mat-icon>
+                  Vedi
+                </a>
+                <a class="!min-h-[32px]" mat-menu-item [routerLink]="[product.id, 'edit']">
+                  <mat-icon>edit</mat-icon>
+                  Modifica
+                </a>
+              </mat-menu>
+            </td>
           </ng-container>
           <ng-container matColumnDef="description">
             <th

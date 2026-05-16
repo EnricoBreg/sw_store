@@ -1,4 +1,4 @@
-import { Component, inject, input, OnInit } from "@angular/core";
+import { Component, effect, inject, input, OnInit } from "@angular/core";
 import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
 import { MatButton } from "@angular/material/button";
 import { MatCheckbox } from "@angular/material/checkbox";
@@ -126,7 +126,7 @@ import { AdminProductsService } from "../../core/services/admin-products.service
   styles: ``,
 })
 export default class ProductForm implements OnInit {
-  product = input<Product | undefined>();
+  product = input<Product | null | undefined>();
 
   private readonly categoriesService = inject(CategoriesService);
   private readonly productsService = inject(AdminProductsService);
@@ -136,6 +136,7 @@ export default class ProductForm implements OnInit {
   readonly isLoading = this.loadingService.isLoading;
 
   selectedFileName: string = "";
+  existingImageUrl: string | undefined = undefined;
 
   private readonly fb = inject(FormBuilder);
   readonly productForm = this.fb.group({
@@ -146,10 +147,34 @@ export default class ProductForm implements OnInit {
       discountPercentage: [0, [Validators.required]],
       stockQuantity: [1, [Validators.required, Validators.min(0)]],
       active: [true, [Validators.required]],
-      category: [null, [Validators.required]],
+      category: [null as number | null, [Validators.required]],
       image: [null as File | null],
     }),
   });
+
+  constructor() {
+    // Uso di effect() per fa si che il signal 'product' venga intercettato correttamente
+    // nel caso in cui venga passato dal padre tramite una chiamata asincrona.
+    effect(() => {
+      const currentProduct = this.product();
+
+      if (currentProduct) {
+        this.productForm.patchValue({
+          product: {
+            name: currentProduct.name,
+            description: currentProduct.description,
+            price: currentProduct.price,
+            active: currentProduct.active,
+            discountPercentage: currentProduct.discount_percentage || 0,
+            stockQuantity: currentProduct.stock_quantity || 0,
+            category: currentProduct.category.id,
+          }
+        });
+
+        this.existingImageUrl = currentProduct.image_url;
+      }
+    });
+  }
 
   onFileSelected(event: Event) {
     const element = event.target as HTMLInputElement;
