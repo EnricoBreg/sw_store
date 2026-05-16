@@ -1,7 +1,7 @@
 class ProductSerializer
   include JSONAPI::Serializer
 
-  attributes :id, :name, :description, :discount_percentage, :price, :stock_quantity
+  attributes :id, :name, :description, :discount_percentage, :price, :stock_quantity, :active
 
   attribute :image_url do |product|
     product.image.attached? ? Rails.application.routes.url_helpers.url_for(product.image) : nil
