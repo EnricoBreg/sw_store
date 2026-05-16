@@ -8,5 +8,6 @@ export default interface Product {
   discount_percentage: number;
   stock_quantity: number;
   image_url: string;
+  active: boolean;
   category: Category;
 }

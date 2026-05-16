@@ -2,6 +2,8 @@ import { inject, Injectable, signal } from '@angular/core';
 import { ProductsApiService } from '../http/products-api.service';
 import Product from '../models/product';
 import { PaginationMeta } from '../models/api-types';
+import { Router } from '@angular/router';
+import { Toaster } from './toaster';
 
 export interface ProductsQuery {
   searchTerm?: string;
@@ -14,7 +16,9 @@ export interface ProductsQuery {
   providedIn: 'root',
 })
 export class ProductsService {
-  private api = inject(ProductsApiService);
+  private readonly api = inject(ProductsApiService);
+  private readonly router = inject(Router);
+  private readonly toaster = inject(Toaster);
 
   // Esposizione dei signals in modo trasparente al componente che li userà
   #products = signal<Product[]>([]);
@@ -45,7 +49,6 @@ export class ProductsService {
   }
 
   getById(productId: number) {
-
     this.api.getById(productId).subscribe({
       next: (response) => {
         this.#product.set(response.data);

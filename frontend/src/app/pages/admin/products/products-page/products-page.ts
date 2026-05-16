@@ -1,38 +1,39 @@
-import { AfterViewInit, Component, computed, inject, signal, ViewChild } from "@angular/core";
-import { MatPaginator, MatPaginatorModule } from "@angular/material/paginator";
-import { MatTable, MatTableDataSource, MatTableModule } from "@angular/material/table";
-import { User } from "../../../../core/models/user";
-import { UsersQuery, UsersService } from "../../../../core/services/users.service";
+import { Component, computed, inject, signal } from "@angular/core";
+import { MatTableModule } from "@angular/material/table";
+import { UsersQuery } from "../../../../core/services/users.service";
 import ApiPaginator from "../../../../components/api-paginator/api-paginator";
-import { MatInput, MatFormField, MatLabel, MatHint } from "@angular/material/input";
-import { FormControl, ReactiveFormsModule, ɵInternalFormsSharedModule } from "@angular/forms";
+import { MatInput, MatFormField, MatLabel } from "@angular/material/input";
+import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { debounceTime, distinctUntilChanged, map, Subject, takeUntil } from "rxjs";
 import { MatIcon } from "@angular/material/icon";
-import { MatAnchor, MatIconButton } from "@angular/material/button";
+import { MatIconButton, MatAnchor } from "@angular/material/button";
 import { MatMenuModule } from "@angular/material/menu";
 import { MatCheckbox } from "@angular/material/checkbox";
-import {MatSort, Sort, MatSortModule, MatSortHeader} from '@angular/material/sort';
+import {MatSort, MatSortModule, MatSortHeader} from '@angular/material/sort';
 import { ProductsService } from "../../../../core/services/products.service";
 import { CurrencyPipe } from "@angular/common";
 import { handleImageError } from "../../../../core/utils";
+import { RouterLink } from "@angular/router";
 
 @Component({
   selector: "app-products-page",
-  imports: [MatTableModule,
+  imports: [
+    MatTableModule,
     ApiPaginator,
     MatInput,
     ReactiveFormsModule,
     MatFormField,
     MatLabel,
     MatIcon,
-    MatHint,
     MatMenuModule,
     MatCheckbox,
     MatIconButton,
     MatSortHeader,
     MatSortModule,
     MatSort,
-    CurrencyPipe
+    CurrencyPipe,
+    MatAnchor,
+    RouterLink,
   ],
   template: `
     <div class="space-y-4">
@@ -44,28 +45,43 @@ import { handleImageError } from "../../../../core/utils";
       <div>
         <mat-form-field>
           <mat-label>Ricerca un prodotto</mat-label>
-          <input matInput type="text" placeholder="Es. Tavolo da lavoro" [formControl]="searchControl" />
+          <input
+            matInput
+            type="text"
+            placeholder="Es. Tavolo da lavoro"
+            [formControl]="searchControl"
+          />
         </mat-form-field>
       </div>
 
-      <!-- Menu selezione colonne visibili -->
-      <div>
-        <div class="flex items-center justify-end">
-          <button matIconButton [matMenuTriggerFor]="columnsMenu">
-            <mat-icon>view_column</mat-icon>
-          </button>
-          <mat-menu #columnsMenu="matMenu">
-            @for (col of allColumns; track col.key) {
-              <div mat-menu-item (click)="$event.stopPropagation()">
-                <mat-checkbox
-                  [checked]="visibleColumns().includes(col.key)"
-                  (change)="toggleColumn(col.key)"
-                >
-                  {{ col.label }}
-                </mat-checkbox>
-              </div>
-            }
-          </mat-menu>
+      <!-- Sezione delle azioni della table -->
+      <section>
+        <div class="mb-2 flex items-center justify-between">
+          <div>
+            <a matButton="filled" routerLink="new">
+              <mat-icon>add_box</mat-icon>
+              Aggiungi prodotto
+            </a>
+          </div>
+
+          <!-- Menu selezione colonne visibili -->
+          <div>
+            <button matIconButton [matMenuTriggerFor]="columnsMenu">
+              <mat-icon>view_column</mat-icon>
+            </button>
+            <mat-menu #columnsMenu="matMenu">
+              @for (col of allColumns; track col.key) {
+                <div mat-menu-item (click)="$event.stopPropagation()">
+                  <mat-checkbox
+                    [checked]="visibleColumns().includes(col.key)"
+                    (change)="toggleColumn(col.key)"
+                  >
+                    {{ col.label }}
+                  </mat-checkbox>
+                </div>
+              }
+            </mat-menu>
+          </div>
         </div>
 
         <table mat-table [dataSource]="products()" matSort (matSortChange)="onSortChange($event)">
@@ -85,35 +101,70 @@ import { handleImageError } from "../../../../core/utils";
             <td mat-cell *matCellDef="let product">{{ product.id }}</td>
           </ng-container>
           <ng-container matColumnDef="name">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Ordina per nome">Nome</th>
+            <th
+              mat-header-cell
+              *matHeaderCellDef
+              mat-sort-header
+              sortActionDescription="Ordina per nome"
+            >
+              Nome
+            </th>
             <td mat-cell *matCellDef="let product">{{ product.name }}</td>
           </ng-container>
           <ng-container matColumnDef="description">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Ordina per descrizione">Descrizione</th>
+            <th
+              mat-header-cell
+              *matHeaderCellDef
+              mat-sort-header
+              sortActionDescription="Ordina per descrizione"
+            >
+              Descrizione
+            </th>
             <td mat-cell *matCellDef="let product">{{ product.description }}</td>
           </ng-container>
           <ng-container matColumnDef="price">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Ordina per prezzo">Prezzo</th>
-            <td mat-cell *matCellDef="let product">{{ product.price | currency:"EUR" }}</td>
+            <th
+              mat-header-cell
+              *matHeaderCellDef
+              mat-sort-header
+              sortActionDescription="Ordina per prezzo"
+            >
+              Prezzo
+            </th>
+            <td mat-cell *matCellDef="let product">{{ product.price | currency: "EUR" }}</td>
           </ng-container>
           <ng-container matColumnDef="discount_percentage">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Ordina per sconto">Sconto</th>
+            <th
+              mat-header-cell
+              *matHeaderCellDef
+              mat-sort-header
+              sortActionDescription="Ordina per sconto"
+            >
+              Sconto
+            </th>
             <td mat-cell *matCellDef="let product">{{ product.discount_percentage }}%</td>
           </ng-container>
           <ng-container matColumnDef="stock_quantity">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Ordina per quantità">Stock</th>
+            <th
+              mat-header-cell
+              *matHeaderCellDef
+              mat-sort-header
+              sortActionDescription="Ordina per quantità"
+            >
+              Stock
+            </th>
             <td mat-cell *matCellDef="let product">{{ product.stock_quantity }}</td>
           </ng-container>
           <ng-container matColumnDef="category_name">
             <th mat-header-cell *matHeaderCellDef>Categoria</th>
             <td mat-cell *matCellDef="let product">{{ product.category.name }}</td>
           </ng-container>
-          
+
           <tr mat-header-row *matHeaderRowDef="displayedColumns()"></tr>
           <tr mat-row *matRowDef="let row; columns: displayedColumns()"></tr>
         </table>
         <app-api-paginator [meta]="pagination()" (pageChangeEvent)="onPageChangeEvent($event)" />
-      </div>
+      </section>
     </div>
   `,
   styles: ``,
@@ -131,7 +182,14 @@ export default class ProductsPage {
     { key: "stock_quantity", label: "Stock" },
     { key: "category_name", label: "Categoria" },
   ];
-  visibleColumns = signal<string[]>(["product_image", "id", "name", "price", "discount_percentage", "category_name"]);
+  visibleColumns = signal<string[]>([
+    "product_image",
+    "id",
+    "name",
+    "price",
+    "discount_percentage",
+    "category_name",
+  ]);
   displayedColumns = computed(() =>
     this.allColumns.map((c) => c.key).filter((key) => this.visibleColumns().includes(key)),
   );
@@ -173,8 +231,16 @@ export default class ProductsPage {
     );
   }
 
-  onSortChange(event: { active: string, direction: string }) {
-    this.searchQuery.update(sq => ({ ...sq, orderBy: event.active, orderDirection: event.direction }))
-    this.service.loadProducts(this.pagination()?.page, this.pagination()?.limit, this.searchQuery())
+  onSortChange(event: { active: string; direction: string }) {
+    this.searchQuery.update((sq) => ({
+      ...sq,
+      orderBy: event.active,
+      orderDirection: event.direction,
+    }));
+    this.service.loadProducts(
+      this.pagination()?.page,
+      this.pagination()?.limit,
+      this.searchQuery(),
+    );
   }
 }

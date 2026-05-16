@@ -63,6 +63,10 @@ export const routes: Routes = [
         path: "products",
         loadComponent: () => import("./pages/admin/products/products-page/products-page"),
       },
+      { 
+        path: "products/new", 
+        loadComponent: () => import("./pages/admin/products/new-product-page/new-product-page"),
+      },
       {
         path: "orders",
         loadComponent: () => import("./pages/admin/orders/orders-page/orders-page"),
