@@ -68,8 +68,12 @@ export const routes: Routes = [
         loadComponent: () => import("./pages/admin/products/new-product-page/new-product-page"),
       },
       {
-        path: "products/:productId/edit",
+        path: "products/:productId",
         loadComponent: () => import("./pages/admin/products/product-detail-page/product-detail-page"),
+      },
+      {
+        path: "products/:productId/edit",
+        loadComponent: () => import("./pages/admin/products/edit-product-page/edit-product-page"),
       },
       {
         path: "orders",

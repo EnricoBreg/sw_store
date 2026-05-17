@@ -8,6 +8,7 @@ import Product from "../../core/models/product";
 import { CategoriesService } from "../../core/services/categories.service";
 import { LoadingService } from "../../core/http/services/loading.service";
 import { AdminProductsService } from "../../core/services/admin-products.service";
+import { handleImageError } from "../../core/utils";
 
 @Component({
   selector: "app-product-form",
@@ -24,6 +25,15 @@ import { AdminProductsService } from "../../core/services/admin-products.service
   ],
   template: `
     <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
+      <!-- Immagine attualmente scelta -->
+      @if (product(); as product) {
+        <img
+          [src]="product.image_url"
+          [alt]="product.name"
+          class="h-48 w-48 object-cover rounded-xl my-4"
+          (error)="handleImageError($event)"
+        />
+      }
       <section formGroupName="product">
         <!-- Nome -->
         <mat-form-field>
@@ -88,14 +98,21 @@ import { AdminProductsService } from "../../core/services/admin-products.service
         <mat-checkbox formControlName="active">Attivo / Disponibile</mat-checkbox>
 
         <!-- Categoria -->
-        <mat-form-field class="mt-5">
-          <mat-label>Categoria prodotto</mat-label>
-          <mat-select formControlName="category">
-            @for (cat of categories(); track cat.id) {
-              <mat-option [value]="cat.id">{{ cat.name }}</mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
+        <div class="lg:w-1/2">
+          <mat-form-field class="mt-5">
+            <mat-label>Categoria prodotto</mat-label>
+            <mat-select formControlName="category">
+              @for (cat of categories(); track cat.id) {
+                <mat-option [value]="cat.id">
+                  <p>{{ cat.name }}</p>
+                  <!-- @if (cat.description) {
+                    <p class="text-gray-500 font-light text-sm italic">{{ cat.description }}</p>
+                  } -->
+                </mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
 
         <div class="mb-6 flex items-center gap-4">
           <p class="text-sm text-gray-600">Immagine dimostrativa del prodotto:</p>
@@ -152,6 +169,8 @@ export default class ProductForm implements OnInit {
     }),
   });
 
+  readonly handleImageError = handleImageError;
+
   constructor() {
     // Uso di effect() per fa si che il signal 'product' venga intercettato correttamente
     // nel caso in cui venga passato dal padre tramite una chiamata asincrona.
@@ -168,7 +187,7 @@ export default class ProductForm implements OnInit {
             discountPercentage: currentProduct.discount_percentage || 0,
             stockQuantity: currentProduct.stock_quantity || 0,
             category: currentProduct.category.id,
-          }
+          },
         });
 
         this.existingImageUrl = currentProduct.image_url;
