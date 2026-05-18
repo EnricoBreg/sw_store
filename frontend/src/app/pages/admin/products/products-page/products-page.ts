@@ -17,6 +17,7 @@ import { MatDivider } from "@angular/material/divider";
 import { AdminProductsService } from "../../../../core/services/admin-products.service";
 import StockBadge from "../../../../components/stock-badge/stock-badge";
 import DiscountBadge from "../../../../components/discount-badge/discount-badge";
+import CategorySelect from "../../../../components/category-select/category-select";
 
 @Component({
   selector: "app-products-page",
@@ -42,25 +43,34 @@ import DiscountBadge from "../../../../components/discount-badge/discount-badge"
     MatMenuTrigger,
     MatDivider,
     StockBadge,
-    DiscountBadge
-],
+    DiscountBadge,
+    CategorySelect,
+  ],
   template: `
     <div class="space-y-4">
       <div>
         <h1 class="font-bold text-2xl">I prodotti dello store</h1>
       </div>
 
-      <!-- Serach bar -->
+      <!-- Ricerca prodotti -->
       <div>
-        <mat-form-field>
-          <mat-label>Ricerca un prodotto</mat-label>
-          <input
-            matInput
-            type="text"
-            placeholder="Es. Tavolo da lavoro"
-            [formControl]="searchControl"
-          />
-        </mat-form-field>
+        <p class="text-lg font-semibold mb-3">Filtri</p>
+        <!-- Serach bar -->
+        <div class="lg:w-1/2">
+          <mat-form-field>
+            <mat-label>Ricerca un prodotto</mat-label>
+            <input
+              matInput
+              type="text"
+              placeholder="Es. Tavolo da lavoro"
+              [formControl]="searchControl"
+            />
+          </mat-form-field>
+        </div>
+
+        <div class="lg:w-1/3">
+          <app-category-select (categorySelected)="onCategorySelectChange($event)" />
+        </div>
       </div>
 
       <!-- Sezione delle azioni della table -->
@@ -68,7 +78,7 @@ import DiscountBadge from "../../../../components/discount-badge/discount-badge"
         <div class="mb-2 flex items-center justify-between">
           <div>
             <a matButton="filled" routerLink="new">
-              <mat-icon>add_box</mat-icon>
+              <mat-icon>add</mat-icon>
               Aggiungi prodotto
             </a>
           </div>
@@ -270,6 +280,18 @@ export default class ProductsPage {
       ...sq,
       orderBy: event.active,
       orderDirection: event.direction,
+    }));
+    this.service.loadProducts(
+      this.pagination()?.page,
+      this.pagination()?.limit,
+      this.searchQuery(),
+    );
+  }
+
+  onCategorySelectChange(categoryId: number | null) {
+    this.searchQuery.update((sq) => ({
+      ...sq,
+      categoryId: categoryId || undefined, // se è null, lo trasformo in undefined per evitare di mandare categoryId=null al backend
     }));
     this.service.loadProducts(
       this.pagination()?.page,

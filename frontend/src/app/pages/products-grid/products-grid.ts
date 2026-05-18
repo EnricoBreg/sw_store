@@ -6,6 +6,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import ApiPaginator from '../../components/api-paginator/api-paginator';
 import { CategoriesService } from '../../core/services/categories.service';
 import ProductCard from '../../components/product-card/product-card';
+import CategorySelect from "../../components/category-select/category-select";
 
 @Component({
   selector: "app-products-grid",
@@ -16,8 +17,8 @@ import ProductCard from '../../components/product-card/product-card';
     CategoriesList,
     MatPaginatorModule,
     ApiPaginator,
-    ProductCard,
-  ],
+    ProductCard
+],
   template: `
     <mat-sidenav-container class="mt-2 full-height-layout">
       <mat-sidenav mode="side" opened="true">
