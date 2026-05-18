@@ -12,9 +12,9 @@ import { BackButton } from "../../../../components/back-button/back-button";
   imports: [MatAnchor, MatIcon, RouterLink, CurrencyPipe, NgClass, BackButton, MatButton],
   template: `
     <div>
-      <app-back-button class="mb-10" navigateTo="/admin/products"
-        >Torna alla lista dei prodotti</app-back-button
-      >
+      <app-back-button class="mb-10">
+        Torna alla lista dei prodotti
+      </app-back-button>
 
       <div class="mb-6">
         <h3 class="mb-2 text-xl font-semibold">Dettagli prodotto</h3>

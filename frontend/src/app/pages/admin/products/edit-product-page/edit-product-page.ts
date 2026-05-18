@@ -11,7 +11,7 @@ import { BackButton } from "../../../../components/back-button/back-button";
     class: "space-y-4",
   },
   template: `
-    <app-back-button class="mb-10" navigateTo="/admin/products">Torna alla lista dei prodotti</app-back-button>
+    <app-back-button class="mb-10">Indietro</app-back-button>
 
     <section>
       <h1 class="mb-2 text-2xl font-semibold">Nuovo prodotto</h1>
