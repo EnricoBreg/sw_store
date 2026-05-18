@@ -10,11 +10,13 @@ import { MatIconButton, MatAnchor } from "@angular/material/button";
 import { MatMenuItem, MatMenuModule, MatMenuTrigger } from "@angular/material/menu";
 import { MatCheckbox } from "@angular/material/checkbox";
 import { MatSort, MatSortModule, MatSortHeader } from "@angular/material/sort";
-import { ProductsService } from "../../../../core/services/products.service";
 import { CurrencyPipe } from "@angular/common";
 import { handleImageError } from "../../../../core/utils";
 import { RouterLink } from "@angular/router";
 import { MatDivider } from "@angular/material/divider";
+import { AdminProductsService } from "../../../../core/services/admin-products.service";
+import StockBadge from "../../../../components/stock-badge/stock-badge";
+import DiscountBadge from "../../../../components/discount-badge/discount-badge";
 
 @Component({
   selector: "app-products-page",
@@ -39,7 +41,9 @@ import { MatDivider } from "@angular/material/divider";
     MatMenuItem,
     MatMenuTrigger,
     MatDivider,
-  ],
+    StockBadge,
+    DiscountBadge
+],
   template: `
     <div class="space-y-4">
       <div>
@@ -167,7 +171,9 @@ import { MatDivider } from "@angular/material/divider";
             >
               Sconto
             </th>
-            <td mat-cell *matCellDef="let product">{{ product.discount_percentage }}%</td>
+            <td mat-cell *matCellDef="let product">
+              <app-discount-badge [discount_percentage]="product.discount_percentage" />
+            </td>
           </ng-container>
           <ng-container matColumnDef="stock_quantity">
             <th
@@ -178,7 +184,9 @@ import { MatDivider } from "@angular/material/divider";
             >
               Stock
             </th>
-            <td mat-cell *matCellDef="let product">{{ product.stock_quantity }}</td>
+            <td mat-cell *matCellDef="let product">
+              <app-stock-badge [stock_quantity]="product.stock_quantity" />
+            </td>
           </ng-container>
           <ng-container matColumnDef="category_name">
             <th mat-header-cell *matHeaderCellDef>Categoria</th>
@@ -195,7 +203,7 @@ import { MatDivider } from "@angular/material/divider";
   styles: ``,
 })
 export default class ProductsPage {
-  service = inject(ProductsService);
+  service = inject(AdminProductsService);
 
   allColumns = [
     { key: "product_image", label: "Anteprima" },
@@ -213,6 +221,7 @@ export default class ProductsPage {
     "name",
     "price",
     "discount_percentage",
+    "stock_quantity",
     "category_name",
   ]);
   displayedColumns = computed(() =>

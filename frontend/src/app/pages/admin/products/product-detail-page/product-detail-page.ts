@@ -6,10 +6,12 @@ import { AdminProductsService } from "../../../../core/services/admin-products.s
 import { CurrencyPipe, NgClass } from "@angular/common";
 import { computeDiscountPrice, handleImageError } from "../../../../core/utils";
 import { BackButton } from "../../../../components/back-button/back-button";
+import StockBadge from "../../../../components/stock-badge/stock-badge";
+import DiscountBadge from "../../../../components/discount-badge/discount-badge";
 
 @Component({
   selector: "app-product-detail-page",
-  imports: [MatAnchor, MatIcon, RouterLink, CurrencyPipe, NgClass, BackButton, MatButton],
+  imports: [MatAnchor, MatIcon, RouterLink, CurrencyPipe, BackButton, MatButton, StockBadge, DiscountBadge],
   template: `
     <div>
       <app-back-button class="mb-10">
@@ -83,15 +85,7 @@ import { BackButton } from "../../../../components/back-button/back-button";
 
                     <!-- Percentuale di sconto -->
                     <td class="px-6 py-4">
-                      @if (prod.discount_percentage > 0) {
-                        <span
-                          class="inline-flex items-center rounded-full bg-green-50 px-2 py-1 font-medium text-green-700 ring-1 ring-inset ring-green-600/20"
-                        >
-                          -{{ prod.discount_percentage }}%
-                        </span>
-                      } @else {
-                        <span class="text-gray-400">Nessuno sconto applicato</span>
-                      }
+                      <app-discount-badge [discount_percentage]="prod.discount_percentage" />
                     </td>
 
                     <!-- Prezzo effettivo (sconto applicato) -->
@@ -103,23 +97,7 @@ import { BackButton } from "../../../../components/back-button/back-button";
 
                     <!-- Quantità disponibile per la vendita -->
                     <td class="px-6 py-4">
-                      <span
-                        [ngClass]="{
-                          'text-red-700 bg-red-100 px-2 py-1 rounded-full':
-                            prod.stock_quantity === 0,
-                          'text-green-700 bg-green-100 px-2 py-1 rounded-full':
-                            prod.stock_quantity !== undefined && prod.stock_quantity > 0,
-                          'text-gray-400': prod.stock_quantity === undefined,
-                        }"
-                      >
-                        @if (prod.stock_quantity > 0) {
-                          {{ prod.stock_quantity }} unità
-                        } @else if (prod.stock_quantity === 0) {
-                          Esaurito
-                        } @else {
-                          N/A
-                        }
-                      </span>
+                      <app-stock-badge [stock_quantity]="prod.stock_quantity" />
                     </td>
                   </tr>
                 </tbody>
