@@ -32,7 +32,7 @@ class Api::V1::Users::OrdersController < Api::V1::AuthenticatedController
     end
 
     ActiveRecord::Base.transaction do
-      safe_params = new_order_params.merge(
+      safe_params = order_params.merge(
         total_amount: cart.total_amount,
       )
 
