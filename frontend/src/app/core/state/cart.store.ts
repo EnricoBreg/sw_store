@@ -19,11 +19,17 @@ export class CartStore {
 
   constructor() {
     effect(() => {
-      localStorage.setItem("sw-store-cart", JSON.stringify(this.#state()));
+      const currentState = this.#state();
+
+      if (currentState.cart) {
+        localStorage.setItem("sw-store-cart", JSON.stringify(currentState));
+      } else {
+        localStorage.removeItem("sw-store-cart");
+      }
     });
   }
 
-  setCart(cart: Cart) {
+  setCart(cart: Cart | null) {
     this.#state.set({ cart });
   }
 

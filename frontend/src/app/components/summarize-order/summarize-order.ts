@@ -8,13 +8,15 @@ import ViewPanel from "../../core/directives/view-panel/view-panel";
   imports: [CurrencyPipe, ViewPanel],
   template: `
     <div appViewPanel>
-      <h2 class="text-2xl font-bold mb-4"></h2>
+      <h2 class="text-2xl font-bold mb-4">
+        <ng-content select="[title]" />
+      </h2>
 
       <div class="space-y-2 mb-2">
         <ng-content select="[checkoutItems]" />
       </div>
 
-      <div class="space-y-1 text-lg border-b pb-4">
+      <div class="space-y-1 text-lg">
         <div class="flex justify-between pt-2 font-bold text-xl">
           <span>Totale</span>
           <span>{{ total() | currency: "EUR" }}</span>
@@ -25,7 +27,7 @@ import ViewPanel from "../../core/directives/view-panel/view-panel";
         </div>
       </div>
 
-      <ng-content select="[actionButtons]" />
+      <ng-content select="[actionButtons]" class="border-t-1" />
     </div>
   `,
   styles: ``,
@@ -36,9 +38,10 @@ export default class SummarizeOrder {
   private readonly cart = this.cartService.cart;
 
   total = computed(() => {
-    if (!this.cart) return 0.0;
+    if (!this.cart()) return 0.0;
     return this.cart()!.items.reduce(
-      (acc, item) => acc + item.quantity * item.unit_price * (1 - item.product.discount_percentage / 100.0),
+      (acc, item) =>
+        acc + item.quantity * item.unit_price * (1 - item.product.discount_percentage / 100.0),
       0.0,
     );
   });

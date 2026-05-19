@@ -183,5 +183,6 @@ export class CartService {
    */
   clearCart() {
     this.store.clearCart();
+    this.#cart.set(null);
   }
 }

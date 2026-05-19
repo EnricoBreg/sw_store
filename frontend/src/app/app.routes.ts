@@ -41,6 +41,11 @@ export const routes: Routes = [
         loadComponent: () => import("./pages/cart-page/cart-page"),
         canActivate: [loggedInGuard],
       },
+      {
+        path: "checkout",
+        loadComponent: () => import("./pages/checkout-page/checkout-page"),
+        canActivate: [loggedInGuard],
+      }
     ],
   },
 
