@@ -11,7 +11,7 @@ import { MatMenuItem, MatMenuModule, MatMenuTrigger } from "@angular/material/me
 import { MatCheckbox } from "@angular/material/checkbox";
 import { MatSort, MatSortModule, MatSortHeader } from "@angular/material/sort";
 import { CurrencyPipe } from "@angular/common";
-import { handleImageError } from "../../../../core/utils";
+import { computeDiscountPrice, handleImageError } from "../../../../core/utils";
 import { RouterLink } from "@angular/router";
 import { MatDivider } from "@angular/material/divider";
 import { AdminProductsService } from "../../../../core/services/admin-products.service";
@@ -185,6 +185,17 @@ import CategorySelect from "../../../../components/category-select/category-sele
               <app-discount-badge [discount_percentage]="product.discount_percentage" />
             </td>
           </ng-container>
+          <ng-container matColumnDef="discount_price">
+            <th
+              mat-header-cell
+              *matHeaderCellDef
+            >
+              Prezzo effettivo
+            </th>
+            <td mat-cell *matCellDef="let product">
+              {{ computeDiscountPrice(product.price, product.discount_percentage) | currency: "EUR" }}
+            </td>
+          </ng-container>
           <ng-container matColumnDef="stock_quantity">
             <th
               mat-header-cell
@@ -222,6 +233,7 @@ export default class ProductsPage {
     { key: "description", label: "Descrizione" },
     { key: "price", label: "Prezzo" },
     { key: "discount_percentage", label: "Sconto" },
+    { key: "discount_price", label: "Prezzo effettivo" },
     { key: "stock_quantity", label: "Stock" },
     { key: "category_name", label: "Categoria" },
   ];
@@ -231,6 +243,7 @@ export default class ProductsPage {
     "name",
     "price",
     "discount_percentage",
+    "discount_price",
     "stock_quantity",
     "category_name",
   ]);
@@ -248,6 +261,7 @@ export default class ProductsPage {
   private destroy$ = new Subject<void>();
 
   protected readonly handleImageError = handleImageError;
+  protected readonly computeDiscountPrice = computeDiscountPrice;
 
   ngOnInit() {
     this.service.loadProducts();
