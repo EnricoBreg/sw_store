@@ -1,0 +1,51 @@
+import { HttpClient, HttpParams } from "@angular/common/http";
+import { inject, Injectable, signal } from "@angular/core";
+import { Observable } from "rxjs";
+import { Order } from "../models/order";
+import { ApiResponse, PaginationMeta } from "../models/api-types";
+import { AdminOrdersApiService } from "../http/admin-orders-api.service";
+import { Router } from "@angular/router";
+import { Toaster } from "./toaster";
+
+export interface OrdersQuery {
+  searchTerm?: string;
+  categoryId?: number;
+  orderBy?: string;
+  orderDirection?: string;
+}
+
+@Injectable({
+  providedIn: "root",
+})
+export class AdminOrdersService {
+  private readonly api = inject(AdminOrdersApiService);
+  private readonly router = inject(Router);
+  private readonly toaster = inject(Toaster);
+
+  // Esposizione dei signals in modo trasparente al componente che li userà
+  #orders = signal<Order[]>([]);
+  #order = signal<Order | null>(null);
+  #paginationMeta = signal<PaginationMeta | undefined>(undefined);
+  #error = signal<string | undefined>(undefined);
+
+  orders = this.#orders.asReadonly();
+  order = this.#order.asReadonly();
+  paginationMeta = this.#paginationMeta.asReadonly();
+  error = this.#error.asReadonly();
+
+  loadOrders(page: number = 1, perPage: number = 10, searchQuery?: OrdersQuery) {
+    this.api.getOrders(page, perPage, searchQuery).subscribe({
+      next: (response) => {
+        // Popolamento dello store con i dati di risposta e di paginazione
+        this.#orders.set(response.data);
+        this.#paginationMeta.set(response.meta);
+      },
+      error: (err) => {
+        // Gestione del messaggio di errore qualora si verifichi
+        const msg =
+          `${err?.error.error} - ${err?.error.exception}` || "Errore nel caricamento degli ordini.";
+        this.#error.set(msg);
+      },
+    });
+  }
+}
