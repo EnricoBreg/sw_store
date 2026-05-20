@@ -9,6 +9,6 @@ class Cart < ApplicationRecord
   end
 
   def total_amount
-    cart_items.sum { |item| item.unit_price * item.quantity }
+    cart_items.sum { |item| (item.unit_price * (1 - item.product.discount_percentage.to_f / 100)) * item.quantity }
   end
 end
