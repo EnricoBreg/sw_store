@@ -3,18 +3,19 @@ import { provideRouter, withComponentInputBinding, withViewTransitions } from "@
 
 import { routes } from "./app.routes";
 import { provideHttpClient, withInterceptors } from "@angular/common/http";
-import { ApiInterceptor } from "./core/http/interceptors/api-interceptor";
+import { apiInterceptor } from "./core/http/interceptors/api-interceptor";
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from "@angular/material/form-field";
-import { ApiHeadersInterceptor } from "./core/http/interceptors/api-headers-interceptor";
+import { apiHeadersInterceptor } from "./core/http/interceptors/api-headers-interceptor";
 import { provideHotToastConfig } from "@ngxpert/hot-toast";
-import { LoadingInterceptor } from "./core/http/interceptors/loading-interceptor";
+import { loadingInterceptor } from "./core/http/interceptors/loading-interceptor";
 import { authInterceptor } from "./core/http/interceptors/auth-interceptor";
+import { errorInterceptor } from "./core/http/interceptors/error-interceptor";
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes, withComponentInputBinding(), withViewTransitions()),
-    provideHttpClient(withInterceptors([LoadingInterceptor, authInterceptor, ApiInterceptor, ApiHeadersInterceptor])),
+    provideHttpClient(withInterceptors([loadingInterceptor, errorInterceptor, apiInterceptor, apiHeadersInterceptor])),
     provideHotToastConfig({
       stacking: "depth",
       visibleToasts: 3

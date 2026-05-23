@@ -23,6 +23,14 @@ export const routes: Routes = [
     path: "oauth/callback",
     loadComponent: () => import("./pages/auth-callback/auth-callback"),
   },
+  {
+    path: "forbidden",
+    loadComponent: () => import("./pages/forbidden/forbidden"),
+  },
+  {
+    path: "not-found",
+    loadComponent: () => import("./pages/not-found/not-found"),
+  },
 
   // Rotte pubbliche per utenti semplici non autenticati e autenticati
   {

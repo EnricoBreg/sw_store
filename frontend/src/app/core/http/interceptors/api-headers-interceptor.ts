@@ -3,7 +3,7 @@ import { inject } from "@angular/core";
 import { Observable } from "rxjs";
 import { AuthService } from "../../services/auth-service";
 
-export function ApiHeadersInterceptor(
+export function apiHeadersInterceptor(
    req: HttpRequest<unknown>,
   next: HttpHandlerFn,
 ): Observable<HttpEvent<unknown>> {
