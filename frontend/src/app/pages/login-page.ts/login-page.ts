@@ -1,5 +1,5 @@
 import { Component, inject, signal } from "@angular/core";
-import { NonNullableFormBuilder } from "@angular/forms";
+import { NonNullableFormBuilder, Validators } from "@angular/forms";
 import { MatButton, MatIconButton } from "@angular/material/button";
 import { MatDivider } from "@angular/material/divider";
 import { FormGroup, FormControl, ReactiveFormsModule } from "@angular/forms";
@@ -8,6 +8,8 @@ import { MatInput } from "@angular/material/input";
 import { MatIcon } from "@angular/material/icon";
 import { AuthService } from "../../core/services/auth-service";
 import { RouterLink } from "@angular/router";
+import { ErrorPanel } from "../../core/directives/error-panel";
+import { LoadingService } from "../../core/http/services/loading.service";
 
 @Component({
   selector: "app-login-page.ts",
@@ -22,7 +24,8 @@ import { RouterLink } from "@angular/router";
     MatIconButton,
     MatSuffix,
     RouterLink,
-  ],
+    ErrorPanel
+],
   template: `
     <div class="w-full h-screen overflow-auto flex items-center ">
       <div class="max-w-[500px] mx-auto bg-white p-8 elevated rounded-xl space-y-4">
@@ -33,6 +36,12 @@ import { RouterLink } from "@angular/router";
         <div>
           <mat-divider />
         </div>
+
+        @if (error()) {
+          <div appErrorPanel>
+            {{ error() }}
+          </div>
+        }
 
         <form [formGroup]="signInForm" (ngSubmit)="logInWithCredentials()">
           <mat-form-field>
@@ -66,7 +75,7 @@ import { RouterLink } from "@angular/router";
             </button>
           </mat-form-field>
 
-          <button matButton="filled" type="submit" class="w-full">Accedi</button>
+          <button matButton="filled" type="submit" class="w-full" [disabled]="signInForm.invalid || isLoading()">Accedi</button>
         </form>
 
         <div class="w-full flex flex-col justify-center items-center">
@@ -90,12 +99,16 @@ import { RouterLink } from "@angular/router";
 })
 export default class LoginPage {
   private fb = inject(NonNullableFormBuilder);
-  private authService = inject(AuthService);
+  private readonly authService = inject(AuthService);
+  private readonly loadingService = inject(LoadingService);
   readonly passwordVisible = signal(false);
 
+  isLoading = this.loadingService.isLoading;
+  error = this.authService.error;
+
   signInForm = this.fb.group({
-    email: "",
-    password: "",
+    email: ["", [Validators.required, Validators.email]],
+    password: ["", [Validators.required]],
   });
 
   logInWithCredentials() {

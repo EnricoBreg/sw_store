@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { AuthStore } from '../state/auth.store';
 import { CartService } from './cart.service';
 import { Toaster } from './toaster';
+import { ApiResponse } from '../models/api-types';
 
 export interface SignUpData {
   firstName: string;
@@ -39,16 +40,17 @@ export class AuthService {
         const user = response.body?.data;
 
         if (user && token) {
+          this.#error.set(undefined);
           this.store.setAuth(user!, token!);
           // caricamento del carrello al login dell'utente
           this.cartService.loadCart();
           this.router.navigate(["/"]);
         }
       },
-      error: (err) => {
+      error: (err: ApiResponse<null>) => {
         console.error("Login failed: ", err);
-        const msg = `${err?.error.error}` || "Credenziali errate, riprova di nuovo.";
-        this.#error.set(msg);
+
+        this.#error.set("Credenziali errate. Riprova.");
       },
     });
   }

@@ -1,9 +1,10 @@
-import { HttpBackend, HttpClient, HttpHeaders, HttpResponse } from "@angular/common/http";
+import { HttpBackend, HttpClient, HttpContext, HttpHeaders, HttpResponse } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
 import { ApiResponse } from "../models/api-types";
 import { User } from "../models/user";
 import { Observable } from "rxjs";
 import { ObservableSuccessOrError } from "@ngxpert/hot-toast";
+import { BYPASS_GLOBAL_ERROR_HANDLING } from "./interceptors/tokens";
 
 @Injectable({
   providedIn: "root",
@@ -23,7 +24,7 @@ export class AuthApiService {
     return this.http.post<ApiResponse<User>>(
       this.loginUrl,
       { user: { email, password } },
-      { observe: "response" },
+      { observe: "response", context: new HttpContext().set(BYPASS_GLOBAL_ERROR_HANDLING, true) },
     );
   }
 
