@@ -7,6 +7,7 @@ import { AuthService, SignUpData } from "../../core/services/auth-service";
 import { MatInput } from "@angular/material/input";
 import { MatButton, MatIconButton } from "@angular/material/button";
 import { RouterLink } from "@angular/router";
+import { ErrorPanel } from "../../core/directives/error-panel";
 
 @Component({
   selector: "app-signup-page",
@@ -21,6 +22,7 @@ import { RouterLink } from "@angular/router";
     MatSuffix,
     ReactiveFormsModule,
     RouterLink,
+    ErrorPanel
   ],
   template: ` <div class="w-full h-screen overflow-auto flex items-center">
     <div class="max-w-[500px] mx-auto bg-white p-8 elevated rounded-xl space-y-4">
@@ -31,6 +33,17 @@ import { RouterLink } from "@angular/router";
       <div>
         <mat-divider />
       </div>
+
+      @if (error()) {
+        <div appErrorPanel>
+          <p class="font-semibold">{{ error()?.message }}</p>
+          <ul class="list-disc list-inside mt-2">
+            @for (e of error()?.errors; track $index) {
+              <li>{{ e }}</li>
+            }
+          </ul>
+        </div>
+      }
 
       <form [formGroup]="signUpForm" (ngSubmit)="signUp()">
         <section formGroupName="user">
@@ -128,6 +141,8 @@ export default class SignupPage {
 
   private authService = inject(AuthService);
   readonly passwordVisible = signal(false);
+
+  error = this.authService.error;
 
   readonly signUpForm = this.fb.nonNullable.group({
     user: this.fb.nonNullable.group({

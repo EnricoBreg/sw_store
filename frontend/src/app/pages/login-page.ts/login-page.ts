@@ -39,7 +39,7 @@ import { LoadingService } from "../../core/http/services/loading.service";
 
         @if (error()) {
           <div appErrorPanel>
-            {{ error() }}
+            {{ error()?.message }}
           </div>
         }
 

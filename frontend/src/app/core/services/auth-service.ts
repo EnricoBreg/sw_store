@@ -24,7 +24,7 @@ export class AuthService {
   private cartService = inject(CartService);
   private toaster = inject(Toaster);
 
-  #error = signal<string | undefined>(undefined);
+  #error = signal<{message: string, errors: string[]} | undefined>(undefined);
 
   readonly authenticated = this.store.isAuthenticated;
   readonly user = this.store.user;
@@ -49,8 +49,7 @@ export class AuthService {
       },
       error: (err: ApiResponse<null>) => {
         console.error("Login failed: ", err);
-
-        this.#error.set("Credenziali errate. Riprova.");
+        this.#error.set({ message: err.message || "Login fallito. Riprova.", errors: err.errors || []});
       },
     });
   }
@@ -95,9 +94,9 @@ export class AuthService {
           this.router.navigate(["/"]);
         }
       },
-      error: (error) => {
-        this.router.navigate(["/login"]);
+      error: (error: ApiResponse<null>) => {
         this.toaster.error("Registrazione non riuscita. Riprova.");
+        this.#error.set({ message: error.message || "Registrazione fallita. Riprova.", errors: error.errors || [] });
       },
     });
   }
@@ -109,10 +108,9 @@ export class AuthService {
         this.cartService.clearCart();
         this.router.navigate(["/login"]);
       },
-      error: (err) => {
+      error: (err: ApiResponse<null>) => {
         console.error("Login failed: ", err);
-        const msg = `${err?.error.error}` || "Nessun sessione valida trovata.";
-        this.#error.set(msg);
+        this.#error.set({ message: err.message || "Logout fallito. Riprova.", errors: err.errors || [] });
         this.router.navigate(["/login"]);
       },
     });
