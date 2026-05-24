@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_06_123641) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_24_092159) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -46,7 +46,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_06_123641) do
     t.string "city"
     t.string "country"
     t.datetime "created_at", null: false
+    t.string "first_name", null: false
     t.boolean "is_default"
+    t.string "last_name", null: false
     t.string "nickname"
     t.string "street"
     t.datetime "updated_at", null: false
@@ -98,6 +100,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_06_123641) do
     t.string "city"
     t.string "country"
     t.datetime "created_at", null: false
+    t.string "first_name", null: false
+    t.string "last_name", null: false
     t.string "status", default: "pending"
     t.string "street"
     t.string "stripe_payment_token"

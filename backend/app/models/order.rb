@@ -15,7 +15,7 @@ class Order < ApplicationRecord
     refunded: "refunded" # l'ordine è stato rimborsato per un reso o un reclamo
   }, default: "pending"
 
-  validates :street, :city, :country, :zip_code, :stripe_payment_token, presence: true
+  validates :first_name, :last_name, :street, :city, :country, :zip_code, :stripe_payment_token, presence: true
   validates :total_amount, presence: true, numericality: { greater_than_or_equal_to: 0 }
 
   validate :must_be_editable, on: :update

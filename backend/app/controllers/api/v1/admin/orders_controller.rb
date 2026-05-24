@@ -72,6 +72,6 @@ class Api::V1::Admin::OrdersController < Api::V1::AdminController
   end
 
   def order_params
-    params.expect(order: [ :street, :city, :zip_code, :country, :stripe_payment_token, :status, :created_at ])
+    params.expect(order: [ :first_name, :last_name, :street, :city, :zip_code, :country, :stripe_payment_token, :status, :created_at ])
   end
 end

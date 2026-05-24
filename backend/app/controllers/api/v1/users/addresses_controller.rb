@@ -70,6 +70,6 @@ class Api::V1::Users::AddressesController < Api::V1::AuthenticatedController
   end
 
   def address_params
-    params.expect(address: [ :street, :city, :zip_code, :country, :nickname, :is_default ])
+    params.expect(address: [ :first_name, :last_name, :street, :city, :zip_code, :country, :nickname, :is_default ])
   end
 end

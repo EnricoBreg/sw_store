@@ -108,6 +108,6 @@ class Api::V1::Users::OrdersController < Api::V1::AuthenticatedController
   end
 
   def order_params
-    params.expect(order: [ :street, :city, :zip_code, :country, :stripe_payment_token ])
+    params.expect(order: [ :first_name, :last_name, :street, :city, :zip_code, :country, :stripe_payment_token ])
   end
 end
