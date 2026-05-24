@@ -32,10 +32,12 @@ export class OrdersService {
   private readonly toaster = inject(Toaster);
 
   #orders = signal<Order[]>([]);
+  #order = signal<Order | null>(null);
   #paginationMeta = signal<PaginationMeta | undefined>(undefined);
   #error = signal<{ message: string; errors: string[] } | undefined>(undefined);
 
   orders = this.#orders.asReadonly();
+  order = this.#order.asReadonly();
   paginationMeta = this.#paginationMeta.asReadonly();
   error = this.#error.asReadonly();
 
@@ -51,6 +53,17 @@ export class OrdersService {
         this.toaster.error(message);
       },
     });
+  }
+
+  loadOrderById(orderId: number | string) {
+    return this.api.getOrderById(orderId).subscribe({
+      next: (response) => this.#order.set(response.data),
+      error: (err: ApiResponse<null>) => {
+        const message = err.message || "Errore durante il caricamento dell'ordine. Riprova.";
+        this.#error.set({ message: message, errors: err.errors || [] });
+        this.toaster.error(message);
+      },
+    })
   }
 
   checkout(orderData: OrderData) {

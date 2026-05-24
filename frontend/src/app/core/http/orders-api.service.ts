@@ -35,6 +35,10 @@ export class OrdersApiService {
     return this.http.get<ApiResponse<Order[]>>(this.url, { params });
   }
 
+  getOrderById(orderId: number | string): Observable<ApiResponse<Order>> {
+    return this.http.get<ApiResponse<Order>>(`${this.url}/${orderId}`);
+  }
+
   checkout(orderData: any): Observable<ApiResponse<Order>> {
     return this.http.post<ApiResponse<Order>>(this.url, orderData);
   }

@@ -53,12 +53,16 @@ export const routes: Routes = [
         path: "checkout",
         loadComponent: () => import("./pages/checkout-page/checkout-page"),
         canActivate: [loggedInGuard],
-      }, 
+      },
       {
         path: "my-orders",
         loadComponent: () => import("./pages/my-orders-page/my-orders-page"),
         canActivate: [loggedInGuard],
-      }
+      },
+      {
+        path: "my-orders/:orderId",
+        loadComponent: () => import("./pages/order-detail-page/order-detail-page"),
+      },
     ],
   },
 
@@ -81,13 +85,14 @@ export const routes: Routes = [
         path: "products",
         loadComponent: () => import("./pages/admin/products/products-page/products-page"),
       },
-      { 
-        path: "products/new", 
+      {
+        path: "products/new",
         loadComponent: () => import("./pages/admin/products/new-product-page/new-product-page"),
       },
       {
         path: "products/:productId",
-        loadComponent: () => import("./pages/admin/products/product-detail-page/product-detail-page"),
+        loadComponent: () =>
+          import("./pages/admin/products/product-detail-page/product-detail-page"),
       },
       {
         path: "products/:productId/edit",

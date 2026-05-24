@@ -1,8 +1,7 @@
 import { NgClass } from "@angular/common";
 import { Component, input } from "@angular/core";
 import { Badge } from "../core/directives/badge";
-
-export type OrderStatus = "pending" | "paid" | "shipped" | "delivered" | "cancelled" | "refunded";
+import { OrderStatus } from "../core/models/order";
 
 @Component({
   selector: "app-order-status-badge",
