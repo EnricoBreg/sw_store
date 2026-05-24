@@ -55,6 +55,16 @@ import { OrderData, OrdersService } from "../../core/services/orders.service";
               <h2 class="text-2xl font-medium mb-4">Indirizzo di spedizione</h2>
 
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Nome e Cognome -->
+                <mat-form-field>
+                  <mat-label>Nome</mat-label>
+                  <input matInput type="text" formControlName="first_name" placeholder="Nome" />
+                </mat-form-field>
+                <mat-form-field>
+                  <mat-label>Cognome</mat-label>
+                  <input matInput type="text" formControlName="last_name" placeholder="Cognome" />
+                </mat-form-field>
+
                 <!-- Via e numero civico -->
                 <div class="col-span-2">
                   <mat-form-field>
@@ -196,6 +206,8 @@ export default class CheckoutPage implements OnInit {
 
   readonly checkoutForm = this.fb.group({
     order: this.fb.group({
+      first_name: ["", Validators.required],
+      last_name: ["", Validators.required],
       street: ["", Validators.required],
       zip_code: ["", [Validators.required, Validators.pattern(/^\d{5}$/)]],
       city: ["", Validators.required],

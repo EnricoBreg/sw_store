@@ -5,7 +5,14 @@ import { Toaster } from "./toaster";
 import { CartService } from "./cart.service";
 
 export interface OrderData {
-  order: { street: string; city: string; zip_code: string; country: string };
+  order: {
+    first_name: string;
+    last_name: string;
+    street: string;
+    city: string;
+    zip_code: string;
+    country: string;
+  };
   payment: {
     payment_method: string;
     stripe_payment_token?: string;
@@ -30,13 +37,15 @@ export class OrdersService {
     // parsing dei dati del form in un formato adatto alla richiesta API
     const parsedOrderData = {
       order: {
+        first_name: orderData.order.first_name,
+        last_name: orderData.order.last_name,
         street: orderData.order.street,
         city: orderData.order.city,
         zip_code: orderData.order.zip_code,
         country: orderData.order.country,
         stripe_payment_token: orderData.payment.stripe_payment_token,
-      }
-    }
+      },
+    };
 
     this.api.checkout(parsedOrderData).subscribe({
       next: (response) => {
