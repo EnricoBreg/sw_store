@@ -28,8 +28,6 @@ export class RelativeTimePipe implements PipeTransform {
     const rtf = new Intl.RelativeTimeFormat("it", { numeric: "auto" });
 
     for (const { unit, ms } of units) {
-      console.log({ unit, ms, absElapsed });
-
       if (absElapsed >= ms || unit === "second") {
         const count = Math.round(elapsed / ms);
         return rtf.format(count, unit);
