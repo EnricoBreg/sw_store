@@ -1,12 +1,12 @@
-import { Component, computed, inject } from '@angular/core';
-import { MatButton, MatIconButton } from '@angular/material/button';
+import { Component, computed, inject } from "@angular/core";
+import { MatButton, MatIconButton } from "@angular/material/button";
 import { MatIcon } from "@angular/material/icon";
 import { RouterLink } from "@angular/router";
-import { AuthService } from '../../core/services/auth-service';
-import { MatMenuItem, MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
+import { AuthService } from "../../core/services/auth-service";
+import { MatMenuItem, MatMenuModule, MatMenuTrigger } from "@angular/material/menu";
 import { MatDivider } from "@angular/material/divider";
 import { MatBadgeModule } from "@angular/material/badge";
-import { CartService } from '../../core/services/cart.service';
+import { CartService } from "../../core/services/cart.service";
 
 @Component({
   selector: "app-header-actions",
@@ -43,10 +43,20 @@ import { CartService } from '../../core/services/cart.service';
             <span class="text-sm font-medium">{{ user.first_name }} {{ user.last_name }}</span>
             <span class="text-xs text-gray-500">{{ user.email }}</span>
           </div>
+
+          <mat-divider></mat-divider>
           @if (user.admin) {
-            <mat-divider></mat-divider>
-            <button class="!min-h-[32px]" mat-menu-item routerLink="/admin">Area Admin</button>
+            <button class="!min-h-[32px]" mat-menu-item routerLink="/admin">
+              <mat-icon>admin_panel_settings</mat-icon>
+              Area Admin
+            </button>
           }
+
+          <button class="!min-h-[32px]" mat-menu-item routerLink="/my-orders">
+            <mat-icon>receipt_long</mat-icon>    
+            I miei ordini
+          </button>
+
           <mat-divider></mat-divider>
           <button class="!min-h-[32px]" mat-menu-item (click)="authService.signOut()">
             <mat-icon>logout</mat-icon>

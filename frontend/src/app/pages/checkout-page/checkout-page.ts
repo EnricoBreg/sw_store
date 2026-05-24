@@ -37,9 +37,9 @@ import { OrderData, OrdersService } from "../../core/services/orders.service";
 
       @if (error(); as error) {
         <div class="border border-red-200 rounded-xl my-4 p-6 bg-red-100 text-red-600 font-medium">
-          <h4 class="text-lg font-semibold text-red-700 mb-3">{{ error.title }}</h4>
+          <h4 class="text-lg font-semibold text-red-700 mb-3">{{ error.message }}</h4>
           <div class="space-y-2">
-            @for (err of error.errors; track err) {
+            @for (err of error.errors; track $index) {
               <p class="ml-2">{{ err }}</p>
             }
           </div>
