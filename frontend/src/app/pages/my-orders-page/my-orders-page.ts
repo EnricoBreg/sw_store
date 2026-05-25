@@ -4,10 +4,11 @@ import { OrdersService } from "../../core/services/orders.service";
 import { ErrorPanel } from "../../core/directives/error-panel";
 import ApiPaginator from "../../components/api-paginator/api-paginator";
 import OrderCard from "../../order-card/order-card";
+import { RouterLink } from "@angular/router";
 
 @Component({
   selector: "app-my-orders-page",
-  imports: [ViewPanel, ErrorPanel, ApiPaginator, OrderCard],
+  imports: [ViewPanel, ErrorPanel, ApiPaginator, OrderCard, RouterLink],
   template: `
     <div class="mx-auto max-w-[1200px] py-6">
       <div appViewPanel>
@@ -29,9 +30,9 @@ import OrderCard from "../../order-card/order-card";
 
         <div class="mt-4">
           @if (orders().length > 0) {
-            <div class="responsive-grid">
+            <div class="flex flex-col md:flex-row gap-2 flex-wrap">
               @for (order of orders(); track order.id) {
-                <app-order-card [order]="order" />
+                <app-order-card [order]="order" [routerLink]="[order.id]"/>
 
                 <div class="mt-5">
                   <app-api-paginator

@@ -5,12 +5,28 @@ import OrderStatusBadge from "../../order-status-badge/order-status-badge";
 import { MatIcon } from "@angular/material/icon";
 import ISODateDisplayer from "../../data-displayer/data-displayer";
 import { MatStepperModule } from "@angular/material/stepper";
+import { computeVat, handleImageError } from "../../core/utils";
+import { CurrencyPipe } from "@angular/common";
+import { InnerPanel } from "../../core/directives/inner-panel";
+import { BackButton } from "../../components/back-button/back-button";
 
 @Component({
   selector: "app-order-detail-page",
-  imports: [ViewPanel, OrderStatusBadge, MatIcon, ISODateDisplayer, MatStepperModule],
+  imports: [
+    ViewPanel,
+    OrderStatusBadge,
+    MatIcon,
+    ISODateDisplayer,
+    MatStepperModule,
+    CurrencyPipe,
+    InnerPanel,
+    BackButton,
+  ],
   template: `
     <div class="mx-auto max-w-[1200px] py-6">
+
+      <app-back-button class="mb-4">Torna ai miei ordini</app-back-button>
+      
       @if (error(); as error) {
         <div appErrorPanel>
           <h4 class="text-lg font-semibold text-red-700 mb-3">{{ error.message }}</h4>
@@ -36,7 +52,7 @@ import { MatStepperModule } from "@angular/material/stepper";
             <app-order-status-badge [status]="order.status" class="scale-105" />
           </div>
 
-          <div class="rounded-2xl border border-gray-200/70 shadow-xs p-6 mb-8 overflow-x-auto">
+          <div appInnerPanel>
             <mat-stepper
               [selectedIndex]="currentStepIndex()"
               [linear]="true"
@@ -78,8 +94,44 @@ import { MatStepperModule } from "@angular/material/stepper";
                 </ng-template>
               }
             </mat-stepper>
+          </div>
 
-            <!-- TODO: Dettagli ordine (indirizzo, totale, ecc) -->
+          <!-- TODO: Dettagli ordine (indirizzo, totale, ecc) -->
+          <div appInnerPanel>
+            <h3 class="text-xl font-bold mb-4">Dettagli di spedizione</h3>
+            <p class="text-gray-700 mb-1">Nome: {{ order.first_name }} {{ order.last_name }}</p>
+            <p class="text-gray-700 mb-1">Indirizzo: {{ order.street }}</p>
+            <p class="text-gray-700 mb-1">Città: {{ order.city }}, {{ order.zip_code }}</p>
+            <p class="text-gray-700 mb-1">Stato: {{ order.country }}</p>
+          </div>
+
+          <div appInnerPanel>
+            <h3 class="text-xl font-semibold">Gli articoli del tuo ordine</h3>
+            @for (item of order.items; track item.id) {
+              <div class="flex items-center justify-between py-4 px-6 border-b border-gray-200">
+                <div class="flex items-center gap-2">
+                  <img
+                    [src]="item.product.image_url"
+                    [alt]="item.product.name"
+                    class="w-16 h-16 object-cover rounded mr-4"
+                    (error)="handleImageError($event)"
+                  />
+                  <p class="md:text-lg font-medium">
+                    {{ item.quantity }} x {{ item.product.name }}
+                  </p>
+                </div>
+
+                <p class="text-lg font-semibold">
+                  {{ item.unit_price * item.quantity | currency: "EUR" }}
+                </p>
+              </div>
+            }
+            <div class="flex flex-col items-end justify-end mt-6 px-6">
+              <p class="text-2xl font-bold">Totale: {{ order.total_amount | currency: "EUR" }}</p>
+              <p class="text-sm text-gray-500">
+                di cui IVA (22%): {{ computeVat(order.total_amount) | currency: "EUR" }}
+              </p>
+            </div>
           </div>
         </div>
       }
@@ -123,6 +175,9 @@ export default class OrderDetailPage implements OnInit {
         return 0;
     }
   });
+
+  readonly handleImageError = handleImageError;
+  readonly computeVat = computeVat;
 
   ngOnInit() {
     this.ordersService.loadOrderById(this.orderId());

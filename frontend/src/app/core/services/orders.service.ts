@@ -60,7 +60,7 @@ export class OrdersService {
       next: (response) => this.#order.set(response.data),
       error: (err: ApiResponse<null>) => {
         const message = err.message || "Errore durante il caricamento dell'ordine. Riprova.";
-        this.#error.set({ message: message, errors: err.errors || [] });
+        this.#error.set({ message, errors: err.errors || [] });
         this.toaster.error(message);
       },
     })
@@ -86,8 +86,9 @@ export class OrdersService {
         this.cartService.clearCart();
         this.router.navigate(["/products"]);
       },
-      error: (err) => {
-        this.#error.set({ message: err.error.message, errors: err.error.errors });
+      error: (err: ApiResponse<null>) => {
+        const message = err.message || "Errore durante il checkout. Riprova.";
+        this.#error.set({ message, errors: err.errors || [] });
         this.toaster.error("Errore durante il checkout.");
       },
     });
