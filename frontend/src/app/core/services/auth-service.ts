@@ -5,6 +5,8 @@ import { AuthStore } from '../state/auth.store';
 import { CartService } from './cart.service';
 import { Toaster } from './toaster';
 import { ApiResponse } from '../models/api-types';
+import { tap } from 'rxjs';
+import { User } from '../models/user';
 
 export interface SignUpData {
   firstName: string;
@@ -99,6 +101,15 @@ export class AuthService {
         this.#error.set({ message: error.message || "Registrazione fallita. Riprova.", errors: error.errors || [] });
       },
     });
+  }
+
+  me() {
+    return this.api.getCurrentUserInfo().pipe(
+      tap((response: ApiResponse<User>) => {
+        const user = response.data;
+        this.store.setAuth(user, this.jwtToken()!);
+      })
+    );
   }
 
   signOut() {
