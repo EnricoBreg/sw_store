@@ -108,6 +108,7 @@ export class AuthService {
       tap((response: ApiResponse<User>) => {
         const user = response.data;
         this.store.setAuth(user, this.jwtToken()!);
+        this.cartService.loadCart();
       })
     );
   }
