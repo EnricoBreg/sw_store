@@ -15,16 +15,28 @@ class Api::V1::Admin::OrdersController < Api::V1::AdminController
 
     orders = orders.where(status: params[:status]) if params[:status].present?
 
-    if params[:created_after].present? && params[:created_before].present?
-      created_after = Time.parse(params[:created_after]).beginning_of_day
-      created_before = Time.parse(params[:created_before]).end_of_day
-      orders = oorders.where(created_at: created_after..created_before)
-    elsif params[:created_after].present?
-      created_after = Time.parse(params[:created_after]).beginning_of_day
-      orders = orders.where("created_at >= ?", created_after)
-    elsif params[:created_before].present?
-      created_before = Time.parse(params[:created_before]).end_of_day
-      orders = orders.where("created_at <= ?", created_before)
+    if params[:from_date].present? && params[:to_date].present?
+      from_date = Time.parse(params[:from_date]).beginning_of_day
+      to_date = Time.parse(params[:to_date]).end_of_day
+      orders = orders.where(created_at: from_date..to_date)
+    elsif params[:from_date].present?
+      from_date = Time.parse(params[:from_date]).beginning_of_day
+      orders = orders.where("created_at >= ?", from_date)
+    elsif params[:to_date].present?
+      to_date = Time.parse(params[:to_date]).end_of_day
+      orders = orders.where("created_at <= ?", to_date)
+    end
+
+    if params[:min_total_amount].present? && params[:max_total_amount].present?
+      min_total_amount = params[:min_total_amount].to_f
+      max_total_amount = params[:max_total_amount].to_f
+      orders = orders.where(total_amount: min_total_amount..max_total_amount)
+    elsif params[:min_total_amount].present?
+      min_total_amount = params[:min_total_amount].to_f
+      orders = orders.where("total_amount >= ?", min_total_amount)
+    elsif params[:max_total_amount].present?
+      max_total_amount = params[:max_total_amount].to_f
+      orders = orders.where("total_amount <= ?", max_total_amount)
     end
 
     @pagy, @orders = pagy(orders, page: params[:page], items: params[:limit])
@@ -87,6 +99,6 @@ class Api::V1::Admin::OrdersController < Api::V1::AdminController
   def search_by_customer_name_or_id(scope)
     query = params[:q].strip
     scope.joins(:user)
-      .where("orders.id::text ILIKE :query OR users.first_name ILIKE :query OR users.last_name ILIKE :query", query: "%#{query}%")
+      .where("orders.id::text ILIKE :query OR users.first_name ILIKE :query OR users.last_name ILIKE :query OR users.email ILIKE :query", query: "%#{query}%")
   end
 end
