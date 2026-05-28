@@ -43,7 +43,7 @@ import { MatSort, MatSortModule, MatSortHeader } from "@angular/material/sort";
         <mat-form-field>
           <mat-label>Ricerca un utente</mat-label>
           <input matInput type="text" placeholder="Es. Mario" [formControl]="searchControl" />
-          <mat-hint>Ricerca per nome o cognome dell'utente</mat-hint>
+          <mat-hint>Ricerca per nome o cognome dell'utente, email o telefono</mat-hint>
         </mat-form-field>
       </section>
 
