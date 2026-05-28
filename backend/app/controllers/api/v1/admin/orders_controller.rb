@@ -3,7 +3,16 @@ class Api::V1::Admin::OrdersController < Api::V1::AdminController
 
   # GET /admin/orders
   def index
-    orders = Order.all.order(created_at: :desc)
+    if params[:order_by].present?
+      order_by = params[:order_by]
+      order_direction = params[:order_direction] || "asc"
+      orders = Order.all.order("#{order_by} #{order_direction}")
+    else
+      orders = Order.all.order(created_at: :desc)
+    end
+
+    orders = search_by_customer_name_or_id(orders) if params[:q].present?
+
     orders = orders.where(status: params[:status]) if params[:status].present?
 
     if params[:created_after].present? && params[:created_before].present?
@@ -73,5 +82,11 @@ class Api::V1::Admin::OrdersController < Api::V1::AdminController
 
   def order_params
     params.expect(order: [ :first_name, :last_name, :street, :city, :zip_code, :country, :stripe_payment_token, :status, :created_at ])
+  end
+
+  def search_by_customer_name_or_id(scope)
+    query = params[:q].strip
+    scope.joins(:user)
+      .where("orders.id::text ILIKE :query OR users.first_name ILIKE :query OR users.last_name ILIKE :query", query: "%#{query}%")
   end
 end
