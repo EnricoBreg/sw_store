@@ -249,7 +249,7 @@ import OrderStatusBadge from "../../../../order-status-badge/order-status-badge"
               <tr mat-row *matRowDef="let row; columns: displayedColumns()"></tr>
             </table>
           </div>
-          <div class="w-full overflow-x-auto border border-gray-200 rounded-b-lg shadow-sm">
+          <div class="w-full border border-gray-200 rounded-b-lg shadow-sm">
             <app-api-paginator
               [meta]="pagination()"
               (pageChangeEvent)="onPageChangeEvent($event)"

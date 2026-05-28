@@ -28,7 +28,7 @@ import {MatSort, MatSortModule, MatSortHeader} from '@angular/material/sort';
     MatSortHeader,
     MatSortModule,
     MatSort,
-],
+  ],
   template: `
     <div class="space-y-6">
       <div>
@@ -39,13 +39,13 @@ import {MatSort, MatSortModule, MatSortHeader} from '@angular/material/sort';
       </div>
 
       <!-- Serach bar -->
-      <div>
+      <section class="md:w-4/5 space-y-4 mb-6">
         <mat-form-field>
           <mat-label>Ricerca un utente</mat-label>
           <input matInput type="text" placeholder="Es. Mario" [formControl]="searchControl" />
           <mat-hint>Ricerca per nome o cognome dell'utente</mat-hint>
         </mat-form-field>
-      </div>
+      </section>
 
       <!-- Menu selezione colonne visibili -->
       <div>
@@ -66,31 +66,56 @@ import {MatSort, MatSortModule, MatSortHeader} from '@angular/material/sort';
             }
           </mat-menu>
         </div>
-        <table mat-table [dataSource]="users()" matSort (matSortChange)="onSortChange($event)">
-          <ng-container matColumnDef="id">
-            <th mat-header-cell *matHeaderCellDef>ID</th>
-            <td mat-cell *matCellDef="let user">{{ user.id }}</td>
-          </ng-container>
-          <ng-container matColumnDef="first_name">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Ordina per nome">Nome</th>
-            <td mat-cell *matCellDef="let user">{{ user.first_name }}</td>
-          </ng-container>
-          <ng-container matColumnDef="last_name">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Ordina per cognome">Cognome</th>
-            <td mat-cell *matCellDef="let user">{{ user.last_name }}</td>
-          </ng-container>
-          <ng-container matColumnDef="email">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Ordina per email">Email</th>
-            <td mat-cell *matCellDef="let user">{{ user.email }}</td>
-          </ng-container>
-          <ng-container matColumnDef="admin">
-            <th mat-header-cell *matHeaderCellDef>Amministratore</th>
-            <td mat-cell *matCellDef="let user">{{ user.admin ? "Sì" : "No" }}</td>
-          </ng-container>
-          <tr mat-header-row *matHeaderRowDef="displayedColumns()"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumns()"></tr>
-        </table>
-        <app-api-paginator [meta]="pagination()" (pageChangeEvent)="onPageChangeEvent($event)" />
+        <div class="w-full overflow-x-auto border border-gray-200 rounded-t-lg shadow-sm">
+          <table mat-table [dataSource]="users()" matSort (matSortChange)="onSortChange($event)">
+            <ng-container matColumnDef="id">
+              <th mat-header-cell *matHeaderCellDef>ID</th>
+              <td mat-cell *matCellDef="let user">{{ user.id }}</td>
+            </ng-container>
+            <ng-container matColumnDef="first_name">
+              <th
+                mat-header-cell
+                *matHeaderCellDef
+                mat-sort-header
+                sortActionDescription="Ordina per nome"
+              >
+                Nome
+              </th>
+              <td mat-cell *matCellDef="let user">{{ user.first_name }}</td>
+            </ng-container>
+            <ng-container matColumnDef="last_name">
+              <th
+                mat-header-cell
+                *matHeaderCellDef
+                mat-sort-header
+                sortActionDescription="Ordina per cognome"
+              >
+                Cognome
+              </th>
+              <td mat-cell *matCellDef="let user">{{ user.last_name }}</td>
+            </ng-container>
+            <ng-container matColumnDef="email">
+              <th
+                mat-header-cell
+                *matHeaderCellDef
+                mat-sort-header
+                sortActionDescription="Ordina per email"
+              >
+                Email
+              </th>
+              <td mat-cell *matCellDef="let user">{{ user.email }}</td>
+            </ng-container>
+            <ng-container matColumnDef="admin">
+              <th mat-header-cell *matHeaderCellDef>Amministratore</th>
+              <td mat-cell *matCellDef="let user">{{ user.admin ? "Sì" : "No" }}</td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="displayedColumns()"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns()"></tr>
+          </table>
+        </div>
+        <div class="w-full border border-gray-200 rounded-b-lg shadow-sm">
+          <app-api-paginator [meta]="pagination()" (pageChangeEvent)="onPageChangeEvent($event)" />
+        </div>
       </div>
     </div>
   `,
@@ -104,7 +129,7 @@ export default class UsersPage {
     { key: "first_name", label: "Nome" },
     { key: "last_name", label: "Cognome" },
     { key: "email", label: "Email" },
-    { key: "admin", label: "Amministratore" }
+    { key: "admin", label: "Amministratore" },
   ];
   visibleColumns = signal<string[]>(["id", "first_name", "last_name", "email"]);
   displayedColumns = computed(() =>
@@ -148,9 +173,13 @@ export default class UsersPage {
     );
   }
 
-  onSortChange(event: { active: string, direction: string }) {
+  onSortChange(event: { active: string; direction: string }) {
     console.log("Event", event);
-    this.searchQuery.update(sq => ({ ...sq, orderBy: event.active, orderDirection: event.direction }))
-    this.service.getUsers(this.pagination()?.page, this.pagination()?.limit, this.searchQuery())
+    this.searchQuery.update((sq) => ({
+      ...sq,
+      orderBy: event.active,
+      orderDirection: event.direction,
+    }));
+    this.service.getUsers(this.pagination()?.page, this.pagination()?.limit, this.searchQuery());
   }
 }
