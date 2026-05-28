@@ -1,11 +1,12 @@
 import { NgClass } from "@angular/common";
 import { Component, input } from "@angular/core";
 import { Badge } from "../core/directives/badge";
-import { OrderStatus } from "../core/models/order";
+import { ORDER_STATUS_LABELS, OrderStatus } from "../core/models/order";
+import { OrderStatusLabelPipe } from "../core/pipes/order-status-label-pipe";
 
 @Component({
   selector: "app-order-status-badge",
-  imports: [NgClass, Badge],
+  imports: [NgClass, Badge, OrderStatusLabelPipe],
   template: `
     @let s = status();
 
@@ -20,29 +21,7 @@ import { OrderStatus } from "../core/models/order";
         'text-red-700 bg-red-50 ring-red-600/20': s === 'refunded',
       }"
     >
-      @switch (s) {
-        @case ("pending") {
-          In attesa di conferma
-        }
-        @case ("paid") {
-          Pagato
-        }
-        @case ("shipped") {
-          Spedito
-        }
-        @case ("delivered") {
-          Consegnato
-        }
-        @case ("cancelled") {
-          Annullato
-        }
-        @case ("refunded") {
-          Rimborsato
-        }
-        @default {
-          Sconosciuto
-        }
-      }
+      {{ status() | orderStatusLabel }}
     </span>
   `,
   styles: ``,

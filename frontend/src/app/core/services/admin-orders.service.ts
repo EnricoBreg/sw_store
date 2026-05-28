@@ -8,10 +8,15 @@ import { Router } from "@angular/router";
 import { Toaster } from "./toaster";
 
 export interface OrdersQuery {
+  fromDate?: Date;
+  toDate?: Date;
+  status?: string;
   searchTerm?: string;
   categoryId?: number;
   orderBy?: string;
   orderDirection?: string;
+  minTotalAmount?: number;
+  maxTotalAmount?: number;
 }
 
 @Injectable({

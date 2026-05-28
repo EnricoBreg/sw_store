@@ -3,6 +3,15 @@ import { User } from "./user";
 
 export type OrderStatus = "pending" | "paid" | "shipped" | "delivered" | "cancelled" | "refunded";
 
+export const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
+  pending: "In attesa di pagamento",
+  paid: "Pagato",
+  shipped: "Spedito",
+  delivered: "Consegnato",
+  cancelled: "Annullato",
+  refunded: "Rimborsato",
+};
+
 export interface Order {
   id: number;
   first_name: string;

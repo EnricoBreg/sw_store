@@ -19,11 +19,8 @@ export class OrdersApiService {
       .set("per_page", perPage);
 
     if (searchQuery) {
-      const { searchTerm, orderBy, orderDirection } = searchQuery;
-    
-      if (searchTerm) {
-        params = params.set("q", searchTerm);
-      }
+      const { fromDate, toDate, orderBy, orderDirection } = searchQuery;
+      
       if (orderBy) {
         params = params.set("order_by", orderBy);
       }
