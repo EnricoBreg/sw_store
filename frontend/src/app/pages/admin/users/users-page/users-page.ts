@@ -9,7 +9,7 @@ import { MatIcon } from "@angular/material/icon";
 import { MatIconButton } from "@angular/material/button";
 import { MatMenuModule } from "@angular/material/menu";
 import { MatCheckbox } from "@angular/material/checkbox";
-import {MatSort, MatSortModule, MatSortHeader} from '@angular/material/sort';
+import { MatSort, MatSortModule, MatSortHeader } from "@angular/material/sort";
 
 @Component({
   selector: "app-users-page",
@@ -72,6 +72,7 @@ import {MatSort, MatSortModule, MatSortHeader} from '@angular/material/sort';
               <th mat-header-cell *matHeaderCellDef>ID</th>
               <td mat-cell *matCellDef="let user">{{ user.id }}</td>
             </ng-container>
+
             <ng-container matColumnDef="first_name">
               <th
                 mat-header-cell
@@ -83,6 +84,7 @@ import {MatSort, MatSortModule, MatSortHeader} from '@angular/material/sort';
               </th>
               <td mat-cell *matCellDef="let user">{{ user.first_name }}</td>
             </ng-container>
+
             <ng-container matColumnDef="last_name">
               <th
                 mat-header-cell
@@ -94,6 +96,17 @@ import {MatSort, MatSortModule, MatSortHeader} from '@angular/material/sort';
               </th>
               <td mat-cell *matCellDef="let user">{{ user.last_name }}</td>
             </ng-container>
+
+            <ng-container matColumnDef="date_of_birth">
+              <th mat-header-cell *matHeaderCellDef>Data di nascita</th>
+              <td mat-cell *matCellDef="let user">{{ user.date_of_birth }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="created_at">
+              <th mat-header-cell *matHeaderCellDef>Data di registrazione</th>
+              <td mat-cell *matCellDef="let user">{{ user.created_at }}</td>
+            </ng-container>
+
             <ng-container matColumnDef="email">
               <th
                 mat-header-cell
@@ -105,10 +118,32 @@ import {MatSort, MatSortModule, MatSortHeader} from '@angular/material/sort';
               </th>
               <td mat-cell *matCellDef="let user">{{ user.email }}</td>
             </ng-container>
+
+            <ng-container matColumnDef="number">
+              <th mat-header-cell *matHeaderCellDef>Telefono/Cellulare</th>
+              <td mat-cell *matCellDef="let user">{{ user.number }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="orders_count">
+              <th mat-header-cell *matHeaderCellDef>Ordini effettuati</th>
+              <td mat-cell *matCellDef="let user">{{ user.orders_count }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="last_order_date">
+              <th mat-header-cell *matHeaderCellDef>Data ultimo ordine</th>
+              <td mat-cell *matCellDef="let user">{{ user.last_order_date }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="addresses_count">
+              <th mat-header-cell *matHeaderCellDef>Indirizzi salvati</th>
+              <td mat-cell *matCellDef="let user">{{ user.addresses_count }}</td>
+            </ng-container>
+
             <ng-container matColumnDef="admin">
               <th mat-header-cell *matHeaderCellDef>Amministratore</th>
               <td mat-cell *matCellDef="let user">{{ user.admin ? "Sì" : "No" }}</td>
             </ng-container>
+
             <tr mat-header-row *matHeaderRowDef="displayedColumns()"></tr>
             <tr mat-row *matRowDef="let row; columns: displayedColumns()"></tr>
           </table>
@@ -129,9 +164,24 @@ export default class UsersPage {
     { key: "first_name", label: "Nome" },
     { key: "last_name", label: "Cognome" },
     { key: "email", label: "Email" },
+    { key: "number", label: "Telefono/Cellulare" },
+    { key: "orders_count", label: "Num. Ordini effettuati" },
+    { key: "addresses_count", label: "Num. Indirizzi salvati" },
+    { key: "created_at", label: "Data di registrazione" },
+    { key: "date_of_birth", label: "Data di nascita" },
+    { key: "last_order_date", label: "Data ultimo ordine" },
     { key: "admin", label: "Amministratore" },
   ];
-  visibleColumns = signal<string[]>(["id", "first_name", "last_name", "email"]);
+  visibleColumns = signal<string[]>([
+    "id",
+    "first_name",
+    "last_name",
+    "email",
+    "number",
+    "orders_count",
+    "last_order_date",
+    "created_at",
+  ]);
   displayedColumns = computed(() =>
     this.allColumns.map((c) => c.key).filter((key) => this.visibleColumns().includes(key)),
   );
