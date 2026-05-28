@@ -11,7 +11,7 @@ class Api::V1::Admin::UsersController < Api::V1::AdminController
     else
       users = User.all.order(last_name: :asc, first_name: :asc)
     end
-    users = serach_by_name(users) if params[:q].present?
+    users = search_by_txt(users) if params[:q].present?
 
     @pagy, @users = pagy(users, page: params[:page], items: params[:limit])
 
@@ -69,7 +69,7 @@ class Api::V1::Admin::UsersController < Api::V1::AdminController
     params.expect(user: [ :first_name, :last_name, :email, :number, :password, :password_confirmation, :date_of_birth ])
   end
 
-  def serach_by_name(scope)
-    scope.where("first_name ILIKE :q OR last_name ILIKE :q", q: "%#{params[:q]}%")
+  def search_by_txt(scope)
+    scope.where("first_name ILIKE :q OR last_name ILIKE :q OR email ILIKE :q OR number ILIKE :q", q: "%#{params[:q]}%")
   end
 end
