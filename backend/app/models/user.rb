@@ -10,10 +10,12 @@ class User < ApplicationRecord
          omniauth_providers: [ :google_oauth2 ]
 
   has_one :cart, dependent: :destroy
+  has_one :wishlist, dependent: :destroy
   has_many :addresses, dependent: :destroy
   has_many :orders, dependent: :destroy
 
   after_create_commit :create_cart
+  after_create_commit :create_wishlist
 
   validates :email, presence: true, uniqueness: true
   # validates :date_of_birth, presence: true
@@ -54,6 +56,10 @@ class User < ApplicationRecord
 
   def create_cart
     Cart.create(user: self)
+  end
+
+  def create_wishlist
+    Wishlist.create(user: self)
   end
 
   def user_must_be_adult

@@ -120,6 +120,14 @@ en:
       quantity_updated: "Quantity of product %{name} updated successfully." 
       quantity_update_error: "Error during the update of the quantity for product %{name}."
 
+      added_to_wishlist: "Product %{name} added to wishlist successfully."
+      add_to_wishlist_error: "Error during the addition of the product %{name} to the wishlist."
+      already_in_wishlist: "Product %{name} is already in the wishlist."
+      removed_from_wishlist: "Product %{name} removed from wishlist successfully."
+      remove_from_wishlist_error: "Error during the removal of the product %{name} from the wishlist."
+      wishlist_empty: "Your wishlist is now empty."
+      product_not_in_wishlist: "Product %{name} is not in the wishlist."
+
       checkout_successful: "Checkout completed successfully. Your order %{id} is being processed."
       checkout_error: "Error during the checkout process. Please try again."
       checkout_empty_cart: "Your cart is empty. Please add products to your cart before checking out."
