@@ -1,6 +1,6 @@
 import { Component, Inject, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AuthService } from '../../core/services/auth-service';
+import { AuthService } from '../../core/services/auth.service';
 import { Toaster } from '../../core/services/toaster';
 
 @Component({

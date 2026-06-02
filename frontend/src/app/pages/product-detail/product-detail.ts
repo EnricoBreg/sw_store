@@ -6,7 +6,7 @@ import ProductPrice from "../../components/product-price/product-price";
 import { MatIcon } from "@angular/material/icon";
 import { MatAnchor } from "@angular/material/button";
 import { CartService } from "../../core/services/cart.service";
-import { AuthService } from "../../core/services/auth-service";
+import { AuthService } from "../../core/services/auth.service";
 import { RouterLink } from "@angular/router";
 import ViewPanel from "../../core/directives/view-panel/view-panel";
 import QuantitySelector from "../../components/quantity-selector/quantity-selector";

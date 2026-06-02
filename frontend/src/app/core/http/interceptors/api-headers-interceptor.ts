@@ -1,7 +1,7 @@
 import { HttpEvent, HttpHandlerFn, HttpHeaders, HttpRequest } from "@angular/common/http";
 import { inject } from "@angular/core";
 import { Observable } from "rxjs";
-import { AuthService } from "../../services/auth-service";
+import { AuthService } from "../../services/auth.service";
 
 export function apiHeadersInterceptor(
    req: HttpRequest<unknown>,

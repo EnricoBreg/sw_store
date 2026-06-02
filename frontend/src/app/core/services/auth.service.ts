@@ -62,6 +62,7 @@ export class AuthService {
         const user = response.data;
 
         if (user && token) {
+          this.#error.set(undefined);
           this.store.setAuth(user, token);
           this.cartService.loadCart();
           this.router.navigate(["/"]);
@@ -90,6 +91,7 @@ export class AuthService {
         const user = response.body?.data;
 
         if (user && token) {
+          this.#error.set(undefined);
           this.store.setAuth(user!, token!);
           // caricamento del carrello alla registrazione dell'utente
           this.cartService.loadCart();
@@ -121,7 +123,6 @@ export class AuthService {
         this.router.navigate(["/login"]);
       },
       error: (err: ApiResponse<null>) => {
-        console.error("Login failed: ", err);
         this.#error.set({ message: err.message || "Logout fallito. Riprova.", errors: err.errors || [] });
         this.router.navigate(["/login"]);
       },
@@ -131,5 +132,6 @@ export class AuthService {
   clearAuth() {
     this.store.clearAuth();
     this.cartService.clearCart();
+    this.#error.set(undefined);
   }
 }

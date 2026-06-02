@@ -4,7 +4,7 @@ import { ApiResponse } from "../../models/api-types";
 import { inject } from "@angular/core";
 import { Toaster } from "../../services/toaster";
 import { Router } from "@angular/router";
-import { AuthService } from "../../services/auth-service";
+import { AuthService } from "../../services/auth.service";
 import { BYPASS_GLOBAL_ERROR_HANDLING } from "./tokens";
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {

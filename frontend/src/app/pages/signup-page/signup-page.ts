@@ -3,7 +3,7 @@ import { MatDivider } from "@angular/material/divider";
 import { MatFormField, MatPrefix, MatSuffix } from "@angular/material/select";
 import { MatIcon } from "@angular/material/icon";
 import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
-import { AuthService, SignUpData } from "../../core/services/auth-service";
+import { AuthService, SignUpData } from "../../core/services/auth.service";
 import { MatInput } from "@angular/material/input";
 import { MatButton, MatIconButton } from "@angular/material/button";
 import { RouterLink } from "@angular/router";

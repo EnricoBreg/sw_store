@@ -1,7 +1,7 @@
 import { Component, inject } from "@angular/core";
 import { MatAnchor } from "@angular/material/button";
 import { RouterLink } from "@angular/router";
-import { AuthService } from "../../core/services/auth-service";
+import { AuthService } from "../../core/services/auth.service";
 import ViewPanel from "../../core/directives/view-panel/view-panel";
 
 @Component({

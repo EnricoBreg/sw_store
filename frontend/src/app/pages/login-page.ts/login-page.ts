@@ -6,7 +6,7 @@ import { FormGroup, FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatFormField, MatPrefix, MatSuffix } from "@angular/material/select";
 import { MatInput } from "@angular/material/input";
 import { MatIcon } from "@angular/material/icon";
-import { AuthService } from "../../core/services/auth-service";
+import { AuthService } from "../../core/services/auth.service";
 import { RouterLink } from "@angular/router";
 import { ErrorPanel } from "../../core/directives/error-panel";
 import { LoadingService } from "../../core/http/services/loading.service";

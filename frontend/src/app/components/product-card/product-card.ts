@@ -7,7 +7,7 @@ import InstockBadge from "../instock-badge/instock-badge";
 import { handleImageError } from "../../core/utils";
 import ProductPrice from "../product-price/product-price";
 import { CartService } from "../../core/services/cart.service";
-import { AuthService } from "../../core/services/auth-service";
+import { AuthService } from "../../core/services/auth.service";
 
 @Component({
   selector: "app-product-card",

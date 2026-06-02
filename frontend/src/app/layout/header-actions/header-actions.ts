@@ -2,7 +2,7 @@ import { Component, computed, inject } from "@angular/core";
 import { MatButton, MatIconButton } from "@angular/material/button";
 import { MatIcon } from "@angular/material/icon";
 import { RouterLink } from "@angular/router";
-import { AuthService } from "../../core/services/auth-service";
+import { AuthService } from "../../core/services/auth.service";
 import { MatMenuItem, MatMenuModule, MatMenuTrigger } from "@angular/material/menu";
 import { MatDivider } from "@angular/material/divider";
 import { MatBadgeModule } from "@angular/material/badge";
