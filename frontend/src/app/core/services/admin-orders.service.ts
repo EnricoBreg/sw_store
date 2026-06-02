@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { inject, Injectable, signal } from "@angular/core";
-import { Observable } from "rxjs";
-import { Order } from "../models/order";
+import { Observable, tap } from "rxjs";
+import { Order, OrderStatus } from "../models/order";
 import { ApiResponse, PaginationMeta } from "../models/api-types";
 import { AdminOrdersApiService } from "../http/admin-orders-api.service";
 import { Router } from "@angular/router";
@@ -60,13 +60,28 @@ export class AdminOrdersService {
         this.#order.set(response.data);
       },
       error: (err: ApiResponse<null>) => {
-        const msg = 
-          `${err.message}` || "Errore nel caricamento dell'ordine.";
+        const msg = `${err.message}` || "Errore nel caricamento dell'ordine.";
         this.#error.set(err.errors);
-        
+
         this.toaster.error(msg);
         this.router.navigate(["/admin/orders"]);
       },
     });
+  }
+
+  updateOrderStatus(orderId: number, newStatus: OrderStatus): Observable<ApiResponse<Order>> {
+    return this.api.updateOrderStatus(orderId, newStatus).pipe(
+      tap({
+        next: (response) => {
+          this.#error.set(undefined);
+          this.#order.set(response.data);
+          this.toaster.success("Stato dell'ordine aggiornato con successo.");
+        },
+        error: (error: ApiResponse<null>) => {
+          const msg = `${error.message}` || "Errore nell'aggiornamento dello stato dell'ordine.";
+          this.toaster.error(msg);
+        },
+      }),
+    );
   }
 }

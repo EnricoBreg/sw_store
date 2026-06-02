@@ -1,6 +1,6 @@
 import { Component, inject, input, OnInit } from "@angular/core";
 import { AdminOrdersService } from "../../../../core/services/admin-orders.service";
-import { CurrencyPipe, JsonPipe } from "@angular/common";
+import { CurrencyPipe } from "@angular/common";
 import { BackButton } from "../../../../components/back-button/back-button";
 import { ErrorPanel } from "../../../../core/directives/error-panel";
 import ISODateDisplayer from "../../../../data-displayer/data-displayer";
@@ -9,13 +9,26 @@ import OrderStatusBadge from "../../../../order-status-badge/order-status-badge"
 import { MatAnchor } from "@angular/material/button";
 import { MatIcon } from "@angular/material/icon";
 import { computeVat, handleImageError } from "../../../../core/utils";
+import { MatDialog, MatDialogRef } from "@angular/material/dialog";
+import ChangeOrderStatusDialog from "../../../../components/change-order-status-dialog/change-order-status-dialog";
+import DiscountBadge from "../../../../components/discount-badge/discount-badge";
 
 @Component({
   selector: "app-order-detail-page",
-  imports: [BackButton, ErrorPanel, ISODateDisplayer, InnerPanel, OrderStatusBadge, MatAnchor, MatIcon, CurrencyPipe],
+  imports: [
+    BackButton,
+    ErrorPanel,
+    ISODateDisplayer,
+    InnerPanel,
+    OrderStatusBadge,
+    MatAnchor,
+    MatIcon,
+    CurrencyPipe,
+    DiscountBadge,
+  ],
   template: `
     <div>
-      <app-back-button class="mb-10"> Torna alla lista degli ordini </app-back-button>
+      <app-back-button class="mb-10">Torna alla lista degli ordini</app-back-button>
 
       <div class="mb-6">
         <h1 class="mb-2 text-2xl font-bold">Dettaglio ordine</h1>
@@ -28,12 +41,25 @@ import { computeVat, handleImageError } from "../../../../core/utils";
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-x-4">
         @if (order(); as order) {
-
           <div appInnerPanel>
             <h3 class="mb-1 text-lg font-semibold">Informazioni ordine</h3>
-            <p>Identificativo: {{ order.id }}</p>
-            <p>Utente: {{ order.user.full_name }}</p>
-            <p>Data: <app-isodate-displayer [date]="order.created_at" /></p>
+            <p>
+              Codice: <span class="font-medium">{{ order.code }}</span>
+            </p>
+            @if (order.user.full_name) {
+              <p>
+                Nome utente: <span class="font-medium">{{ order.user.full_name }}</span>
+              </p>
+            }
+            <p>
+              Email utente: <span class="font-medium">{{ order.user.email }}</span>
+            </p>
+            <p>
+              Data:
+              <span class="font-medium">
+                <app-isodate-displayer [date]="order.created_at" />
+              </span>
+            </p>
           </div>
 
           <div appInnerPanel>
@@ -41,7 +67,7 @@ import { computeVat, handleImageError } from "../../../../core/utils";
             <div class="mb-4">
               <app-order-status-badge [status]="order.status"></app-order-status-badge>
             </div>
-            <button matButton="outlined">
+            <button matButton="outlined" (click)="openChangeOrderStatusDialog()">
               <mat-icon>edit</mat-icon>
               Modifica stato
             </button>
@@ -49,17 +75,24 @@ import { computeVat, handleImageError } from "../../../../core/utils";
 
           <div appInnerPanel>
             <h3 class="mb-1 text-lg font-semibold">Spedizione</h3>
-            <p>{{ order.first_name }} {{ order.last_name }}</p>
-            <p>{{ order.street }}</p>
-            <p>{{ order.city }}, {{ order.zip_code }}</p>
-            <p>{{ order.country }}</p>
+            <p class="font-medium">{{ order.first_name }} {{ order.last_name }}</p>
+            <p class="font-medium">{{ order.street }}</p>
+            <p class="font-medium">{{ order.city }}, {{ order.zip_code }}</p>
+            <p class="font-medium">{{ order.country }}</p>
           </div>
 
           <div appInnerPanel>
             <h3 class="mb-1 text-lg font-semibold">Riepilogo</h3>
-            <p>Prodotti ordinati: {{ order.items.length }}</p>
+            <p>
+              Prodotti ordinati: <span class="font-medium">{{ order.items.length }}</span>
+            </p>
             <p class="font-medium text-lg">Totale: {{ order.total_amount | currency: "EUR" }}</p>
-            <p>Di cui IVA (22%): {{ computeVat(order.total_amount) | currency: "EUR" }}</p>
+            <p>
+              Di cui IVA (22%):
+              <span class="font-medium">{{
+                computeVat(order.total_amount) | currency: "EUR"
+              }}</span>
+            </p>
           </div>
 
           <div appInnerPanel class="md:col-span-2">
@@ -75,17 +108,33 @@ import { computeVat, handleImageError } from "../../../../core/utils";
                   />
                   <div class="flex flex-col flex-1">
                     <p class="block font-semibold">{{ item.product.name }}</p>
-                    <div appInnerPanel class="w-full px-6 py-2 text-gray-700 bg-gray-100 rounded-lg flex flex-col gap-1 md:flex-row md:items-center md:justify-between">
-                      <p>Quantità: {{ item.quantity }}</p>
-                      <p>Prezzo unitario: {{ item.unit_price | currency: "EUR" }}</p>
-                      <p>Totale: {{ item.total_price | currency: "EUR" }}</p>
+                    <div
+                      appInnerPanel
+                      class="w-full px-6 py-2 text-gray-700 bg-gray-100 rounded-lg flex flex-col gap-1 md:flex-row md:items-center md:justify-between"
+                    >
+                      <p>
+                        Quantità: <span class="font-semibold">{{ item.quantity }}</span>
+                      </p>
+                      <p>
+                        Prezzo unitario:
+                        <span class="font-semibold">{{ item.unit_price | currency: "EUR" }}</span>
+                      </p>
+                      <p>
+                        Sconto:
+                        <app-discount-badge
+                          [discountPercentage]="item.discount_percentage"
+                        ></app-discount-badge>
+                      </p>
+                      <p>
+                        Totale:
+                        <span class="font-semibold">{{ item.total_price | currency: "EUR" }}</span>
+                      </p>
                     </div>
                   </div>
                 </div>
               }
             </div>
           </div>
-
         } @else {
           <div>
             <p class="text-red-500">Non è stato possibile caricare i dettagli dell'ordine.</p>
@@ -102,6 +151,8 @@ export default class OrderDetailPage implements OnInit {
 
   private readonly service = inject(AdminOrdersService);
 
+  private readonly matDialogService = inject(MatDialog);
+
   readonly order = this.service.order;
   readonly error = this.service.error;
 
@@ -110,5 +161,16 @@ export default class OrderDetailPage implements OnInit {
 
   ngOnInit() {
     this.service.getById(this.orderId());
+  }
+
+  openChangeOrderStatusDialog() {
+    this.matDialogService.open(ChangeOrderStatusDialog, {
+      disableClose: true,
+      data: {
+        orderId: this.orderId(),
+        orderCode: this.order()?.code,
+        initialStatus: this.order()?.status,
+      },
+    });
   }
 }

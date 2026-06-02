@@ -181,7 +181,7 @@ import CategorySelect from "../../../../components/category-select/category-sele
                 Sconto
               </th>
               <td mat-cell *matCellDef="let product">
-                <app-discount-badge [discount_percentage]="product.discount_percentage" />
+                <app-discount-badge [discountPercentage]="product.discount_percentage" />
               </td>
             </ng-container>
             <ng-container matColumnDef="discount_price">

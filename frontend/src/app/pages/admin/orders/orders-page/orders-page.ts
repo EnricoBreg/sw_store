@@ -60,7 +60,7 @@ import OrderStatusBadge from "../../../../order-status-badge/order-status-badge"
 
       <div>
         <!-- Ricerca degli ordini -->
-        <section [formGroup]="filterForm" class="md:w-4/5 space-y-4 mb-6">
+        <section [formGroup]="filterForm" class="md:w-4/5 mx-auto space-y-4 mb-6">
           <p class="text-lg font-semibold mb-3">Filtri</p>
 
           <div class="flex items-center gap-6">
@@ -173,9 +173,9 @@ import OrderStatusBadge from "../../../../order-status-badge/order-status-badge"
 
           <div class="w-full overflow-x-auto border border-gray-200 rounded-t-lg shadow-sm">
             <table mat-table [dataSource]="orders()" matSort (matSortChange)="onSortChange($event)">
-              <ng-container matColumnDef="id">
-                <th mat-header-cell *matHeaderCellDef>ID</th>
-                <td mat-cell *matCellDef="let order">{{ order.id }}</td>
+              <ng-container matColumnDef="code">
+                <th mat-header-cell *matHeaderCellDef>Codice</th>
+                <td mat-cell *matCellDef="let order">{{ order.code }}</td>
               </ng-container>
               <ng-container matColumnDef="status">
                 <th
@@ -277,7 +277,7 @@ export default class OrdersPage {
   private destroy$ = new Subject<void>();
 
   allColumns = [
-    { key: "id", label: "ID" },
+    { key: "code", label: "Codice" },
     { key: "status", label: "Stato" },
     { key: "total_amount", label: "Importo totale" },
     { key: "number_of_items", label: "Numero di articoli" },
@@ -287,7 +287,7 @@ export default class OrdersPage {
     { key: "actions", label: "Azioni" },
   ];
   visibleColumns = signal<string[]>([
-    "id",
+    "code",
     "status",
     "total_amount",
     "number_of_items",

@@ -14,6 +14,7 @@ export const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
 
 export interface Order {
   id: number;
+  code: string;
   first_name: string;
   last_name: string;
   street: string;

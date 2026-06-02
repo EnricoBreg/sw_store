@@ -11,12 +11,19 @@ import DiscountBadge from "../../../../components/discount-badge/discount-badge"
 
 @Component({
   selector: "app-product-detail-page",
-  imports: [MatAnchor, MatIcon, RouterLink, CurrencyPipe, BackButton, MatButton, StockBadge, DiscountBadge],
+  imports: [
+    MatAnchor,
+    MatIcon,
+    RouterLink,
+    CurrencyPipe,
+    BackButton,
+    MatButton,
+    StockBadge,
+    DiscountBadge,
+  ],
   template: `
     <div>
-      <app-back-button class="mb-10">
-        Torna alla lista dei prodotti
-      </app-back-button>
+      <app-back-button class="mb-10"> Torna alla lista dei prodotti </app-back-button>
 
       <div class="mb-6">
         <h3 class="mb-2 text-xl font-semibold">Dettagli prodotto</h3>
@@ -85,7 +92,7 @@ import DiscountBadge from "../../../../components/discount-badge/discount-badge"
 
                     <!-- Percentuale di sconto -->
                     <td class="px-6 py-4">
-                      <app-discount-badge [discount_percentage]="prod.discount_percentage" />
+                      <app-discount-badge [discountPercentage]="prod.discount_percentage" />
                     </td>
 
                     <!-- Prezzo effettivo (sconto applicato) -->

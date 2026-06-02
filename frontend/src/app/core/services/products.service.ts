@@ -17,8 +17,6 @@ export interface ProductsQuery {
 })
 export class ProductsService {
   private readonly api = inject(ProductsApiService);
-  private readonly router = inject(Router);
-  private readonly toaster = inject(Toaster);
 
   // Esposizione dei signals in modo trasparente al componente che li userà
   #products = signal<Product[]>([]);

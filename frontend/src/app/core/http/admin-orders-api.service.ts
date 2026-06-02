@@ -3,7 +3,7 @@ import { inject, Injectable } from "@angular/core";
 import { OrdersQuery } from "../services/admin-orders.service";
 import { Observable } from "rxjs";
 import { ApiResponse } from "../models/api-types";
-import { Order } from "../models/order";
+import { Order, OrderStatus } from "../models/order";
 
 @Injectable({
   providedIn: "root",
@@ -49,5 +49,9 @@ export class AdminOrdersApiService {
 
   getOrderById(orderId: string | number): Observable<ApiResponse<Order>> {
     return this.http.get<ApiResponse<Order>>(`${this.url}/${orderId}`);
+  }
+
+  updateOrderStatus(orderId: number, newStatus: OrderStatus): Observable<ApiResponse<Order>> {
+    return this.http.put<ApiResponse<Order>>(`${this.url}/${orderId}`, { order: { status: newStatus } });
   }
 }
