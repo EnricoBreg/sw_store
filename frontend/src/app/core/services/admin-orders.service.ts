@@ -31,7 +31,7 @@ export class AdminOrdersService {
   #orders = signal<Order[]>([]);
   #order = signal<Order | null>(null);
   #paginationMeta = signal<PaginationMeta | undefined>(undefined);
-  #error = signal<string | undefined>(undefined);
+  #error = signal<string[] | undefined>(undefined);
 
   orders = this.#orders.asReadonly();
   order = this.#order.asReadonly();
@@ -49,7 +49,23 @@ export class AdminOrdersService {
         // Gestione del messaggio di errore qualora si verifichi
         const msg =
           `${err?.error.error} - ${err?.error.exception}` || "Errore nel caricamento degli ordini.";
-        this.#error.set(msg);
+        this.#error.set([msg]);
+      },
+    });
+  }
+
+  getById(orderId: number) {
+    this.api.getOrderById(orderId).subscribe({
+      next: (response) => {
+        this.#order.set(response.data);
+      },
+      error: (err: ApiResponse<null>) => {
+        const msg = 
+          `${err.message}` || "Errore nel caricamento dell'ordine.";
+        this.#error.set(err.errors);
+        
+        this.toaster.error(msg);
+        this.router.navigate(["/admin/orders"]);
       },
     });
   }

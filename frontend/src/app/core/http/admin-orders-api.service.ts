@@ -46,4 +46,8 @@ export class AdminOrdersApiService {
 
     return this.http.get<ApiResponse<Order[]>>(this.url, { params });
   }
+
+  getOrderById(orderId: string | number): Observable<ApiResponse<Order>> {
+    return this.http.get<ApiResponse<Order>>(`${this.url}/${orderId}`);
+  }
 }

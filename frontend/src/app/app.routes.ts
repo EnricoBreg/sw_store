@@ -102,6 +102,10 @@ export const routes: Routes = [
         path: "orders",
         loadComponent: () => import("./pages/admin/orders/orders-page/orders-page"),
       },
+      {
+        path: "orders/:orderId",
+        loadComponent: () => import("./pages/admin/orders/order-detail-page/order-detail-page"),
+      }
     ],
   },
   {
