@@ -3,8 +3,8 @@ class WishlistSerializer
   attributes :id, :user_id
 
   attribute :items do |wishlist|
-    wishlist.products.map do |product|
-      ProductSerializer.new(product).serializable_hash[:data][:attributes]
+    wishlist.wishlist_items.map do |item|
+      WishlistItemSerializer.new(item).serializable_hash[:data][:attributes]
     end
   end
 end
