@@ -5,10 +5,11 @@ import { Component } from "@angular/core";
   imports: [],
   template: `
     <div class="-mt-1 border-t border-gray-700 text-gray-700 bg-gray-100 py-20 px-3">
-      <div class="max-w-[1200px] mx-auto grid md:grid-cols-3 items-start">
+      <div class="max-w-[1500px] mx-auto grid md:grid-cols-3 items-start">
         <!-- Contatti -->
         <div>
-          <h4 class="lg:text-2xl font-bold">SW Store</h4>
+          <!-- <h4 class="lg:text-2xl font-bold">SW Store</h4> -->
+          <img src="assets/ebeefy_logo.png" alt="EBeefy Logo" class="h-20 mb-2" />
           <span class="text-sm text-gray-400">Copyright 2026</span>
           <div class="mt-2 flex flex-col gap-4">
             <p class="text-lg font-semibold">Contatti</p>
@@ -32,14 +33,30 @@ import { Component } from "@angular/core";
           <div class="mt-8 flex flex-col gap-4">
             <p class="text-lg font-semibold">Domande frequenti</p>
             <ul class="space-y-1">
-              <li><a class="hover:underline cursor-pointer" href="#">Come effettuare un ordine</a></li>
+              <li>
+                <a class="hover:underline cursor-pointer" href="#">Come effettuare un ordine</a>
+              </li>
               <li><a class="hover:underline cursor-pointer" href="#">Tempi di spedizione</a></li>
-              <li><a class="hover:underline cursor-pointer" href="#">Come effettuare un reso</a></li>
-              <li><a class="hover:underline cursor-pointer" href="#">Certificazioni dei prodotti</a></li>
+              <li>
+                <a class="hover:underline cursor-pointer" href="#">Come effettuare un reso</a>
+              </li>
+              <li>
+                <a class="hover:underline cursor-pointer" href="#">Certificazioni dei prodotti</a>
+              </li>
               <li><a class="hover:underline cursor-pointer" href="#">Metodi di pagamento</a></li>
-              <li><a class="hover:underline cursor-pointer" href="#">Dove si trova il mio ordine</a></li>
-              <li><a class="hover:underline cursor-pointer" href="#">Come modifico i dati del mio account</a></li>
-              <li><a class="hover:underline cursor-pointer" href="#">Iscriviti alla nostra newsletter</a></li>
+              <li>
+                <a class="hover:underline cursor-pointer" href="#">Dove si trova il mio ordine</a>
+              </li>
+              <li>
+                <a class="hover:underline cursor-pointer" href="#"
+                  >Come modifico i dati del mio account</a
+                >
+              </li>
+              <li>
+                <a class="hover:underline cursor-pointer" href="#"
+                  >Iscriviti alla nostra newsletter</a
+                >
+              </li>
             </ul>
           </div>
         </div>
@@ -49,9 +66,17 @@ import { Component } from "@angular/core";
           <div class="mb-4 mt-8">
             <p class="text-lg font-semibold">Spedito da</p>
             <div class="flex gap-3">
-              <img class="w-12 h-12 cursor-pointer" src="assets/dhl_express.svg" alt="DHL espress" />
+              <img
+                class="w-12 h-12 cursor-pointer"
+                src="assets/dhl_express.svg"
+                alt="DHL espress"
+              />
               <img class="w-12 h-12 cursor-pointer" src="assets/sda.svg" alt="DHL espress" />
-              <img class="w-12 h-12 cursor-pointer" src="assets/poste_italiane.svg" alt="DHL espress" />
+              <img
+                class="w-12 h-12 cursor-pointer"
+                src="assets/poste_italiane.svg"
+                alt="DHL espress"
+              />
             </div>
           </div>
 
@@ -84,9 +109,15 @@ import { Component } from "@angular/core";
         <div>
           <p class="text-lg font-semibold mb-2">Seguici su</p>
           <div class="flex gap-3">
-            <a class="cursor-pointer" href="#"><img class="w-8 h-8" src="assets/instagram.svg" alt="Instagram" /></a>
-            <a class="cursor-pointer" href="#"><img class="w-8 h-8" src="assets/tiktok.svg" alt="Tiktok" /></a>
-            <a class="cursor-pointer" href="#"><img class="w-8 h-8" src="assets/facebook.svg" alt="Facebook" /></a>
+            <a class="cursor-pointer" href="#"
+              ><img class="w-8 h-8" src="assets/instagram.svg" alt="Instagram"
+            /></a>
+            <a class="cursor-pointer" href="#"
+              ><img class="w-8 h-8" src="assets/tiktok.svg" alt="Tiktok"
+            /></a>
+            <a class="cursor-pointer" href="#"
+              ><img class="w-8 h-8" src="assets/facebook.svg" alt="Facebook"
+            /></a>
           </div>
         </div>
       </div>

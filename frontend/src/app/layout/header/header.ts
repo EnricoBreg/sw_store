@@ -15,12 +15,14 @@ import { LayoutService } from '../../core/services/layout.service';
   template: ` 
     <div class="sticky top-0 -mb-3 z-10">
       <mat-toolbar class="w-full elevated">
-        <div class="max-w-[1200px] mx-auto w-full flex items-center justify-between">
+        <div class="max-w-[1500px] mx-auto w-full flex items-center justify-between">
           <div class="flex items-center">
             <button matIconButton (click)="layoutService.toggleSidenav()">
               <mat-icon>menu</mat-icon>
             </button>
-            <a class="ml-2" routerLink="/">{{ title() }}</a>
+            <a class="ml-2" routerLink="/">
+              <img src="assets/ebeefy_logo.png" alt="EBeefy Logo" class="h-12"/>
+            </a>
           </div>
           <app-header-actions />
         </div>
