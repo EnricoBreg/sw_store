@@ -1,5 +1,5 @@
 import { Component, computed, inject, signal } from '@angular/core';
-import { MatSidenavContainer, MatSidenavContent, MatSidenav } from "@angular/material/sidenav"
+import { MatSidenavContainer, MatSidenavContent, MatSidenav, MatSidenavModule } from "@angular/material/sidenav"
 import CategoriesList from '../../components/categories-list/categories-list';
 import { ProductsQuery, ProductsService } from '../../core/services/products.service';
 import { MatPaginatorModule } from '@angular/material/paginator';
@@ -7,6 +7,7 @@ import ApiPaginator from '../../components/api-paginator/api-paginator';
 import { CategoriesService } from '../../core/services/categories.service';
 import ProductCard from '../../components/product-card/product-card';
 import CategorySelect from "../../components/category-select/category-select";
+import { LayoutService } from '../../core/services/layout.service';
 
 @Component({
   selector: "app-products-grid",
@@ -14,14 +15,15 @@ import CategorySelect from "../../components/category-select/category-select";
     MatSidenavContainer,
     MatSidenavContent,
     MatSidenav,
+    MatSidenavModule,
     CategoriesList,
     MatPaginatorModule,
     ApiPaginator,
-    ProductCard
-],
+    ProductCard,
+  ],
   template: `
-    <mat-sidenav-container class="mt-2 full-height-layout">
-      <mat-sidenav mode="side" opened="true">
+    <mat-sidenav-container class="mt-2 full-height-layout" hasBackdrop="false">
+      <mat-sidenav mode="push" [opened]="sidenavOpened()">
         <div class="p-6">
           <h3 class="text-lg font-semibold text-gray-900">Categories</h3>
 
@@ -65,11 +67,14 @@ import CategorySelect from "../../components/category-select/category-select";
 export default class ProductsGrid {
   private productsService = inject(ProductsService);
   private categoriesService = inject(CategoriesService);
+  readonly layoutService = inject(LayoutService);
 
   selectedCategory = this.categoriesService.selected;
   products = this.productsService.products;
   pagination = this.productsService.paginationMeta;
   errorMessage = this.productsService.error;
+
+  sidenavOpened = this.layoutService.sidenavOpened;
 
   productsCount = computed(() => this.products().length);
 
@@ -78,11 +83,15 @@ export default class ProductsGrid {
   }
 
   onPageChangeEvent(event: { page: number; limit: number }) {
-    this.productsService.loadProducts(event.page, event.limit, { categoryId: this.selectedCategory()?.id });
+    this.productsService.loadProducts(event.page, event.limit, {
+      categoryId: this.selectedCategory()?.id,
+    });
   }
 
   onCategorySelection(event: { id?: number; name?: string }) {
     const categoryId = event.id;
-    this.productsService.loadProducts(this.pagination()?.page, this.pagination()?.limit, { categoryId });
+    this.productsService.loadProducts(this.pagination()?.page, this.pagination()?.limit, {
+      categoryId,
+    });
   }
 }

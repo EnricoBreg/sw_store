@@ -1,9 +1,10 @@
-import { Component } from "@angular/core";
+import { Component, inject, input } from "@angular/core";
 import { MatListItem, MatListItemTitle, MatNavList } from "@angular/material/list";
 import { MatSidenav, MatSidenavContainer, MatSidenavContent } from "@angular/material/sidenav";
 import { RouterOutlet, RouterLinkWithHref } from "@angular/router";
 import ViewPanel from "../../core/directives/view-panel/view-panel";
 import { MatIcon } from "@angular/material/icon";
+import { LayoutService } from "../../core/services/layout.service";
 
 @Component({
   selector: "app-admin-layout",
@@ -17,11 +18,11 @@ import { MatIcon } from "@angular/material/icon";
     ViewPanel,
     MatIcon,
     MatListItemTitle,
-    RouterLinkWithHref,
-  ],
+    RouterLinkWithHref
+],
   template: `
-    <mat-sidenav-container class="mt-2 full-height-layout">
-      <mat-sidenav mode="side" opened="true">
+    <mat-sidenav-container class="mt-2 full-height-layout" hasBackdrop="false">
+      <mat-sidenav #sidenav mode="push" [opened]="sidenavOpened()">
         <div class="p-6">
           <h3 class="text-lg font-semibold text-gray-900">Menu operazioni</h3>
 
@@ -67,4 +68,8 @@ import { MatIcon } from "@angular/material/icon";
   `,
   styles: ``,
 })
-export default class AdminLayout {}
+export default class AdminLayout {
+  private readonly layoutService = inject(LayoutService);
+
+  readonly sidenavOpened = this.layoutService.sidenavOpened;
+}
