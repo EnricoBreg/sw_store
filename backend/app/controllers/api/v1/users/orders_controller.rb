@@ -44,7 +44,8 @@ class Api::V1::Users::OrdersController < Api::V1::AuthenticatedController
         @order.order_items.create!(
           product: cart_item.product,
           quantity: cart_item.quantity,
-          unit_price: cart_item.unit_price * (1 - (cart_item.product.discount_percentage.to_f / 100))
+          unit_price: cart_item.unit_price * (1 - (cart_item.product.discount_percentage.to_f / 100)),
+          discount_percentage: cart_item.product.discount_percentage
         )
 
         cart_item.product.decrement!(:stock_quantity, cart_item.quantity)
