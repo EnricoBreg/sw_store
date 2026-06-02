@@ -60,7 +60,7 @@ class Api::V1::Users::WishlistItemsController < Api::V1::AuthenticatedController
 
       render_success(
         message: I18n.t("api.messages.added_to_cart", name: @product.name),
-        data: serialize_resource(current_user.cart, CartSerializer),
+        data: serialize_resource(current_user.wishlist, WishlistSerializer),
         status: :created
       )
     else
