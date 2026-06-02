@@ -1,6 +1,6 @@
 class OrderSerializer
   include JSONAPI::Serializer
-  attributes :id, :first_name, :last_name, :street, :city, :zip_code, :country, :total_amount, :stripe_payment_token, :status, :created_at, :updated_at
+  attributes :id, :code, :first_name, :last_name, :street, :city, :zip_code, :country, :total_amount, :stripe_payment_token, :status, :created_at, :updated_at
 
   attribute :user do |order|
     UserSerializer.new(order.user).serializable_hash[:data][:attributes]

@@ -1,4 +1,5 @@
 class Order < ApplicationRecord
+  before_validation :generate_code, on: :create
   before_validation :editable?, on: :update
 
   belongs_to :user
@@ -36,5 +37,28 @@ class Order < ApplicationRecord
   # Metodo per verificare se l'ordine è ancora modificabile.
   def editable?
     pending? || paid?
+  end
+
+  def generate_code
+    # Genera un codice univoco per l'ordine, combinando un prefisso, un numero sequenziale e un timestamp.
+    # Il numero sequenziale viene calcolato come il numero di ordini esistenti + 1, garantendo così l'unicità del codice.
+
+    current_date = self.created_at || Time.current
+    current_year = current_date.year
+
+    start_of_year = current_date.beginning_of_year
+    end_of_year = current_date.end_of_year
+
+    Order.transaction do
+      last_order = Order.where(created_at: start_of_year..end_of_year)
+                        .order(sequence_number: :desc)
+                        .lock("FOR UPDATE")
+                        .first
+
+      last_sequence = last_order ? last_order.sequence_number : 0
+      self.sequence_number = last_sequence + 1
+    end
+
+    self.code = "ORD-#{current_year}-#{sprintf("%05d", self.sequence_number)}"
   end
 end
