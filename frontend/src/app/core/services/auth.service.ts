@@ -7,6 +7,7 @@ import { Toaster } from './toaster';
 import { ApiResponse } from '../models/api-types';
 import { tap } from 'rxjs';
 import { User } from '../models/user';
+import { WishlistsService } from './wishlists.service';
 
 export interface SignUpData {
   firstName: string;
@@ -24,6 +25,7 @@ export class AuthService {
   private store = inject(AuthStore);
   private router = inject(Router);
   private cartService = inject(CartService);
+  private wishlistService = inject(WishlistsService);
   private toaster = inject(Toaster);
 
   #error = signal<{message: string, errors: string[]} | undefined>(undefined);
@@ -46,6 +48,7 @@ export class AuthService {
           this.store.setAuth(user!, token!);
           // caricamento del carrello al login dell'utente
           this.cartService.loadCart();
+          this.wishlistService.loadWishlist();
           this.router.navigate(["/"]);
         }
       },
@@ -65,6 +68,7 @@ export class AuthService {
           this.#error.set(undefined);
           this.store.setAuth(user, token);
           this.cartService.loadCart();
+          this.wishlistService.loadWishlist();
           this.router.navigate(["/"]);
         }
       },
@@ -95,6 +99,7 @@ export class AuthService {
           this.store.setAuth(user!, token!);
           // caricamento del carrello alla registrazione dell'utente
           this.cartService.loadCart();
+          this.wishlistService.loadWishlist();
           this.router.navigate(["/"]);
         }
       },
@@ -111,6 +116,7 @@ export class AuthService {
         const user = response.data;
         this.store.setAuth(user, this.jwtToken()!);
         this.cartService.loadCart();
+        this.wishlistService.loadWishlist();
       })
     );
   }
@@ -120,6 +126,7 @@ export class AuthService {
       next: (response) => {
         this.store.clearAuth();
         this.cartService.clearCart();
+        this.wishlistService.clearWishlist();
         this.router.navigate(["/login"]);
       },
       error: (err: ApiResponse<null>) => {
@@ -132,6 +139,7 @@ export class AuthService {
   clearAuth() {
     this.store.clearAuth();
     this.cartService.clearCart();
+    this.wishlistService.clearWishlist();
     this.#error.set(undefined);
   }
 }

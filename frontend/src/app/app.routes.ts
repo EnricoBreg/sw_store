@@ -50,6 +50,11 @@ export const routes: Routes = [
         canActivate: [loggedInGuard],
       },
       {
+        path: "wishlist",
+        loadComponent: () => import("./pages/wishlist-page/wishlist-page"),
+        canActivate: [loggedInGuard],
+      },
+      {
         path: "checkout",
         loadComponent: () => import("./pages/checkout-page/checkout-page"),
         canActivate: [loggedInGuard],

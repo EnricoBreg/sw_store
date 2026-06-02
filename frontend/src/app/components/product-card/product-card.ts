@@ -13,7 +13,11 @@ import { AuthService } from "../../core/services/auth.service";
   selector: "app-product-card",
   imports: [MatIcon, MatIconButton, RouterLink, InstockBadge, ProductPrice],
   template: `
-    <div class="w-72 bg-white shadow-md rounded-xl duration-500 hover:scale-102 hover:shadow-lg">
+    <div
+      class="relative w-72 bg-white shadow-md rounded-xl duration-500 hover:scale-102 hover:shadow-lg"
+    >
+      <ng-content></ng-content>
+      
       <div>
         <img
           [src]="product().image_url || 'assets/no_image_500x500.png'"
@@ -22,6 +26,7 @@ import { AuthService } from "../../core/services/auth.service";
           (error)="handleImageError($event)"
           [routerLink]="['/products', product().id]"
         />
+
         <div class="px-4 py-3 w-72">
           <app-instock-badge [stockQuantity]="product().stock_quantity" />
           <h3 class="text-lg font-bold text-black truncate block capitalize">

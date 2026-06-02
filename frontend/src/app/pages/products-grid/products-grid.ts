@@ -8,6 +8,7 @@ import { CategoriesService } from '../../core/services/categories.service';
 import ProductCard from '../../components/product-card/product-card';
 import CategorySelect from "../../components/category-select/category-select";
 import { LayoutService } from '../../core/services/layout.service';
+import ToggleWishlistButton from '../../components/toggle-wishlist-button/toggle-wishlist-button';
 
 @Component({
   selector: "app-products-grid",
@@ -20,6 +21,7 @@ import { LayoutService } from '../../core/services/layout.service';
     MatPaginatorModule,
     ApiPaginator,
     ProductCard,
+    ToggleWishlistButton,
   ],
   template: `
     <mat-sidenav-container class="mt-2 full-height-layout" hasBackdrop="false">
@@ -43,7 +45,12 @@ import { LayoutService } from '../../core/services/layout.service';
           @if (products().length) {
             <div class="responsive-grid mt-4">
               @for (product of products(); track product.id) {
-                <app-product-card [product]="product" />
+                <app-product-card [product]="product">
+                  <app-toggle-wishlist-button
+                    [product]="product"
+                    class="!absolute z-10 top-3 right-3"
+                  />
+                </app-product-card>
               }
             </div>
 

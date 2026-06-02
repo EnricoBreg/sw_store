@@ -7,6 +7,7 @@ import { MatMenuItem, MatMenuModule, MatMenuTrigger } from "@angular/material/me
 import { MatDivider } from "@angular/material/divider";
 import { MatBadgeModule } from "@angular/material/badge";
 import { CartService } from "../../core/services/cart.service";
+import { WishlistsService } from "../../core/services/wishlists.service";
 
 @Component({
   selector: "app-header-actions",
@@ -24,6 +25,15 @@ import { CartService } from "../../core/services/cart.service";
   template: `
     <div class="flex items-center gap-2">
       @if (authService.user(); as user) {
+        <button
+          matIconButton
+          routerLink="/wishlist"
+          [matBadge]="wishlistItemCount()"
+          [matBadgeHidden]="!wishlistItemCount()"
+        >
+          <mat-icon>favorite</mat-icon>
+        </button>
+
         <button
           matIconButton
           routerLink="/cart"
@@ -53,7 +63,7 @@ import { CartService } from "../../core/services/cart.service";
           }
 
           <button class="!min-h-[32px]" mat-menu-item routerLink="/my-orders">
-            <mat-icon>receipt_long</mat-icon>    
+            <mat-icon>receipt_long</mat-icon>
             I miei ordini
           </button>
 
@@ -74,6 +84,8 @@ import { CartService } from "../../core/services/cart.service";
 export class HeaderActions {
   readonly authService = inject(AuthService);
   readonly cartService = inject(CartService);
+  readonly whishlistService = inject(WishlistsService);
 
   cartItemCount = this.cartService.cartItemCount;
+  wishlistItemCount = this.whishlistService.wishlistItemCount;
 }
