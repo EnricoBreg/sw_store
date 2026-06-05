@@ -21,8 +21,8 @@ import { LayoutService } from "../../core/services/layout.service";
     RouterLinkWithHref
 ],
   template: `
-    <mat-sidenav-container class="mt-2 full-height-layout" hasBackdrop="false">
-      <mat-sidenav #sidenav mode="push" [opened]="sidenavOpened()">
+    <mat-sidenav-container class="mt-2 full-height-layout" hasBackdrop="true">
+      <mat-sidenav #sidenav mode="over" [opened]="sidenavOpened()">
         <div class="p-6">
           <h3 class="text-lg font-semibold text-gray-900">Menu operazioni</h3>
 
