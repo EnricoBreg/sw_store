@@ -12,6 +12,8 @@ import { MatIcon } from "@angular/material/icon";
 import { CartService } from '../../core/services/cart.service';
 import Product from '../../core/models/product';
 import { MatIconButton } from '@angular/material/button';
+import NoProductFound from '../../components/no-product-found/no-product-found';
+import ViewPanel from '../../core/directives/view-panel/view-panel';
 
 @Component({
   selector: "app-products-grid",
@@ -26,20 +28,21 @@ import { MatIconButton } from '@angular/material/button';
     ProductCard,
     ToggleWishlistButton,
     MatIcon,
-    MatIconButton
+    MatIconButton,
+    NoProductFound,
   ],
   template: `
     <mat-sidenav-container class="mt-2 full-height-layout" hasBackdrop="false">
-      <mat-sidenav mode="push" [opened]="sidenavOpened()">
+      <mat-sidenav mode="side" [opened]="true">
         <div class="p-6">
-          <h3 class="text-lg font-semibold text-gray-900">Categories</h3>
+          <h3 class="text-lg font-semibold text-gray-900">Categorie</h3>
 
           <app-categories-list (categorySelectEvent)="onCategorySelection($event)" />
         </div>
       </mat-sidenav>
       <mat-sidenav-content>
         <section class="p-6 relative">
-          <h1 class="text-3xl font-bold text-gray-900">Our Products</h1>
+          <h1 class="text-3xl font-bold text-gray-900">I nostri prodotti</h1>
 
           @if (productsCount()) {
             <div class="text-red-500 text-lg">
@@ -74,9 +77,11 @@ import { MatIconButton } from '@angular/material/button';
               />
             </div>
           } @else {
-            <div class="h-full">
-              <h3 class="text-lg text-gray-600">Nessun prodotto trovato per categoria🥺</h3>
-            </div>
+            <app-no-product-found>
+              <p message class="text-gray-500 text-lg text-center">
+                Nessun prodotto trovato. Prova a selezionare un'altra categoria o ad usare altre parole chiave. In alternativa, ritorna più tardi!😁
+              </p>
+            </app-no-product-found>
           }
         </section>
       </mat-sidenav-content>
