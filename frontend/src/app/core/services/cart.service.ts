@@ -26,6 +26,7 @@ export class CartService {
   error = this.#error.asReadonly();
 
   cartItemCount = computed(() => this.#cart()?.items.length ?? 0);
+  cartEmpty = computed(() => (this.#cart()?.items.length ?? 0) === 0);
 
   constructor() {
     effect(() => {

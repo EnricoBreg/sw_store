@@ -1,22 +1,19 @@
 import { Component, computed, inject, input } from "@angular/core";
 import Product from "../../core/models/product";
-import { MatIcon } from "@angular/material/icon";
-import { MatIconButton } from "@angular/material/button";
 import { RouterLink } from "@angular/router";
 import InstockBadge from "../instock-badge/instock-badge";
 import { handleImageError } from "../../core/utils";
 import ProductPrice from "../product-price/product-price";
-import { CartService } from "../../core/services/cart.service";
 import { AuthService } from "../../core/services/auth.service";
 
 @Component({
   selector: "app-product-card",
-  imports: [MatIcon, MatIconButton, RouterLink, InstockBadge, ProductPrice],
+  imports: [RouterLink, InstockBadge, ProductPrice],
   template: `
     <div
       class="relative w-72 bg-white shadow-md rounded-xl duration-500 hover:scale-102 hover:shadow-lg"
     >
-      <ng-content></ng-content>
+      <ng-content select=[wishlistToggleButton]></ng-content>
       
       <div>
         <img
@@ -36,9 +33,8 @@ import { AuthService } from "../../core/services/auth.service";
             <app-product-price [product]="product()" />
             @if (authService.authenticated()) {
               <div class="ml-auto">
-                <button matIconButton (click)="addToCart()">
-                  <mat-icon>add_shopping_cart</mat-icon>
-                </button>
+                <ng-content select="[addToCartButton]"></ng-content>
+                
               </div>
             }
           </div>
@@ -51,7 +47,6 @@ import { AuthService } from "../../core/services/auth.service";
 export default class ProductCard {
   product = input.required<Product>();
   authService = inject(AuthService);
-  private cartService = inject(CartService);
 
   protected readonly handleImageError = handleImageError;
 
@@ -64,8 +59,4 @@ export default class ProductCard {
   priceColorClass = computed(() =>
     this.product().discount_percentage > 0 ? "text-red-500" : "text-black",
   );
-
-  addToCart() {
-    this.cartService.addToCart(this.product(), 1);
-  }
 }

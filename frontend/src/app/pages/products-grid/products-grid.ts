@@ -1,14 +1,17 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { MatSidenavContainer, MatSidenavContent, MatSidenav, MatSidenavModule } from "@angular/material/sidenav"
 import CategoriesList from '../../components/categories-list/categories-list';
-import { ProductsQuery, ProductsService } from '../../core/services/products.service';
+import { ProductsService } from '../../core/services/products.service';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import ApiPaginator from '../../components/api-paginator/api-paginator';
 import { CategoriesService } from '../../core/services/categories.service';
 import ProductCard from '../../components/product-card/product-card';
-import CategorySelect from "../../components/category-select/category-select";
 import { LayoutService } from '../../core/services/layout.service';
 import ToggleWishlistButton from '../../components/toggle-wishlist-button/toggle-wishlist-button';
+import { MatIcon } from "@angular/material/icon";
+import { CartService } from '../../core/services/cart.service';
+import Product from '../../core/models/product';
+import { MatIconButton } from '@angular/material/button';
 
 @Component({
   selector: "app-products-grid",
@@ -22,6 +25,8 @@ import ToggleWishlistButton from '../../components/toggle-wishlist-button/toggle
     ApiPaginator,
     ProductCard,
     ToggleWishlistButton,
+    MatIcon,
+    MatIconButton
   ],
   template: `
     <mat-sidenav-container class="mt-2 full-height-layout" hasBackdrop="false">
@@ -46,10 +51,18 @@ import ToggleWishlistButton from '../../components/toggle-wishlist-button/toggle
             <div class="responsive-grid mt-4">
               @for (product of products(); track product.id) {
                 <app-product-card [product]="product">
-                  <app-toggle-wishlist-button
-                    [product]="product"
-                    class="!absolute z-10 top-3 right-3"
-                  />
+                  <ng-content wishlistToggleButton>
+                    <app-toggle-wishlist-button
+                      [product]="product"
+                      class="!absolute z-10 top-3 right-3"
+                    />
+                  </ng-content>
+
+                  <ng-content addToCartButton>
+                    <button matIconButton (click)="addToCart(product)">
+                      <mat-icon>add_shopping_cart</mat-icon>
+                    </button>
+                  </ng-content>
                 </app-product-card>
               }
             </div>
@@ -74,6 +87,7 @@ import ToggleWishlistButton from '../../components/toggle-wishlist-button/toggle
 export default class ProductsGrid {
   private productsService = inject(ProductsService);
   private categoriesService = inject(CategoriesService);
+  private cartService = inject(CartService);
   readonly layoutService = inject(LayoutService);
 
   selectedCategory = this.categoriesService.selected;
@@ -100,5 +114,9 @@ export default class ProductsGrid {
     this.productsService.loadProducts(this.pagination()?.page, this.pagination()?.limit, {
       categoryId,
     });
+  }
+
+  addToCart(product: Product) {
+    this.cartService.addToCart(product, 1);
   }
 }

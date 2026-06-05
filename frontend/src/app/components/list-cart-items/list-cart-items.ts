@@ -2,18 +2,32 @@ import { Component, inject } from "@angular/core";
 import ViewPanel from "../../core/directives/view-panel/view-panel";
 import { CartService } from "../../core/services/cart.service";
 import CartListItem from "../cart-list-item/cart-list-item";
+import { MatButton } from "@angular/material/button";
+import { RouterLink } from "@angular/router";
+import EmptyCart from "../empty-cart/empty-cart";
 
 @Component({
   selector: "app-list-cart-items",
-  imports: [ViewPanel, CartListItem],
+  imports: [ViewPanel, CartListItem, EmptyCart],
   template: `
     <div appViewPanel>
-      <h2 class="text-2xl font-bold mb-4">Articoli nel carrello: {{ cartService.cartItemCount() }}</h2>
-      <div class="flex flex-col gap-6">
-        @for (item of cartService.cart()?.items; track item.product.id) {
-          <app-cart-list-item [cartItem]="item" />
-        }
-      </div>
+      @if (!cartService.cartEmpty()) {
+        <h2 class="text-2xl font-bold mb-4">
+          Articoli nel carrello: {{ cartService.cartItemCount() }}
+        </h2>
+        
+        <div class="flex flex-col gap-6">
+          @for (item of cartService.cart()?.items; track item.product.id) {
+            <app-cart-list-item [cartItem]="item" />
+          }
+        </div>
+      } @else {
+        <app-empty-cart>
+          <p message class="text-gray-500 font-semibold text-lg">
+            Il tuo carrello è vuoto. Aggiungi subito dei prodotti!😁
+          </p>
+        </app-empty-cart>
+      }
     </div>
   `,
   styles: ``,
