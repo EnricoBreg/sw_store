@@ -78,7 +78,7 @@ import ViewPanel from '../../core/directives/view-panel/view-panel';
             </div>
           } @else {
             <app-no-product-found>
-              <p i18n="@@noProductsFound" class="text-gray-500 text-lg text-center">
+              <p message i18n="@@noProductsFound" class="text-gray-500 text-lg text-center">
                 Nessun prodotto trovato. Prova a selezionare un'altra categoria o ad usare altre parole chiave. In alternativa, ritorna più tardi!😁
               </p>
             </app-no-product-found>
