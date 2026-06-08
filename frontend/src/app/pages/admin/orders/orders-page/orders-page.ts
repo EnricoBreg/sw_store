@@ -54,30 +54,36 @@ import OrderStatusBadge from "../../../../order-status-badge/order-status-badge"
   template: `
     <div class="space-y-4">
       <div>
-        <h1 class="font-bold text-2xl">Gestione degli ordini</h1>
-        <p class="text-gray-500 text-sm">Numero di ordini presenti: {{ pagination()?.count }}</p>
+        <h1 i18n="@@adminOrdersPage.title" class="font-bold text-2xl">Gestione degli ordini</h1>
+        <p i18n="@@adminOrdersPage.orderCount" class="text-gray-500 text-sm">
+          Numero di ordini presenti:
+          {{
+            pagination()?.count //i18n(ph="orderCount")
+          }}
+        </p>
       </div>
 
       <div>
         <!-- Ricerca degli ordini -->
         <section [formGroup]="filterForm" class="md:w-4/5 mx-auto space-y-4 mb-6">
-          <p class="text-lg font-semibold mb-3">Filtri</p>
+          <p i18n="@@filters" class="text-lg font-semibold mb-3">Filtri</p>
 
           <div class="flex items-center gap-6">
             <mat-form-field>
-              <mat-label>Ricerca</mat-label>
+              <mat-label i18n="@@search">Ricerca</mat-label>
               <input
                 matInput
                 formControlName="searchTerm"
+                i18n-placeholder="@@searchPlaceholder"
                 placeholder="Es. Mario Rossi o ID ordine"
               />
-              <mat-hint>Ricerca per utente o ID ordine</mat-hint>
+              <mat-hint i18n="@@userSearchHint">Ricerca per utente o ID ordine</mat-hint>
             </mat-form-field>
 
             <mat-form-field>
-              <mat-label>Stato ordine</mat-label>
+              <mat-label i18n="@@orderStatus">Stato ordine</mat-label>
               <mat-select formControlName="status">
-                <mat-option [value]="null">Tutti gli stati</mat-option>
+                <mat-option [value]="null" i18n="@@orderStatus.all">Tutti gli stati</mat-option>
                 @for (option of statusOptions; track option.key) {
                   <mat-option [value]="option.key">
                     <app-order-status-badge [status]="option.key"></app-order-status-badge>
@@ -89,26 +95,26 @@ import OrderStatusBadge from "../../../../order-status-badge/order-status-badge"
 
           <div class="flex items-center gap-1">
             <mat-form-field>
-              <mat-label>Da data</mat-label>
+              <mat-label i18n="@@fromDate">Da data</mat-label>
               <input
                 matInput
                 [matDatepicker]="fromDatePicker"
                 formControlName="fromDate"
                 placeholder="MM/DD/YYYY"
               />
-              <mat-hint>Ordini da data</mat-hint>
+              <mat-hint i18n="@@ordersFromDateHint">Ordini da data</mat-hint>
               <mat-datepicker-toggle matIconSuffix [for]="fromDatePicker"></mat-datepicker-toggle>
               <mat-datepicker #fromDatePicker></mat-datepicker>
             </mat-form-field>
             <mat-form-field>
-              <mat-label>A data</mat-label>
+              <mat-label i18n="@@ordersToDate">A data</mat-label>
               <input
                 matInput
                 [matDatepicker]="toDatePicker"
                 formControlName="toDate"
                 placeholder="MM/DD/YYYY"
               />
-              <mat-hint>Ordini fino a data</mat-hint>
+              <mat-hint i18n="@@ordersToDateHint">Ordini fino a data</mat-hint>
               <mat-datepicker-toggle matIconSuffix [for]="toDatePicker"></mat-datepicker-toggle>
               <mat-datepicker #toDatePicker></mat-datepicker>
             </mat-form-field>
@@ -116,7 +122,7 @@ import OrderStatusBadge from "../../../../order-status-badge/order-status-badge"
 
           <div class="flex items-center gap-1">
             <mat-form-field>
-              <mat-label>Importo totale minimo</mat-label>
+              <mat-label i18n="@@ordersMinTotalAmount">Importo totale minimo</mat-label>
               <input
                 matInput
                 type="number"
@@ -125,11 +131,13 @@ import OrderStatusBadge from "../../../../order-status-badge/order-status-badge"
                 step="0.01"
               />
               <span matSuffix class="text-lg font-medium px-4">€</span>
-              <mat-hint>Ordini con importo totale minimo</mat-hint>
+              <mat-hint i18n="@@ordersMinTotalAmountHint"
+                >Ordini con importo totale minimo</mat-hint
+              >
             </mat-form-field>
 
             <mat-form-field>
-              <mat-label>Importo totale massimo</mat-label>
+              <mat-label i18n="@@ordersMaxTotalAmount">Importo totale massimo</mat-label>
               <input
                 matInput
                 type="number"
@@ -138,13 +146,15 @@ import OrderStatusBadge from "../../../../order-status-badge/order-status-badge"
                 step="0.01"
               />
               <span matSuffix class="text-lg font-medium px-4">€</span>
-              <mat-hint>Ordini con importo totale massimo</mat-hint>
+              <mat-hint i18n="@@ordersMaxTotalAmountHint"
+                >Ordini con importo totale massimo</mat-hint
+              >
             </mat-form-field>
           </div>
 
           <button matButton="text" (click)="resetFilters()">
             <mat-icon>clear_all</mat-icon>
-            Reset filtri
+            <ng-container i18n="@@resetFilters">Reset filtri</ng-container>
           </button>
         </section>
 
@@ -174,7 +184,9 @@ import OrderStatusBadge from "../../../../order-status-badge/order-status-badge"
           <div class="w-full overflow-x-auto border border-gray-200 rounded-t-lg shadow-sm">
             <table mat-table [dataSource]="orders()" matSort (matSortChange)="onSortChange($event)">
               <ng-container matColumnDef="code">
-                <th mat-header-cell *matHeaderCellDef>Codice</th>
+                <th mat-header-cell *matHeaderCellDef>
+                  <ng-container i18n="@@order.code">Codice</ng-container>
+                </th>
                 <td mat-cell *matCellDef="let order">{{ order.code }}</td>
               </ng-container>
               <ng-container matColumnDef="status">
@@ -184,7 +196,7 @@ import OrderStatusBadge from "../../../../order-status-badge/order-status-badge"
                   mat-sort-header
                   sortActionDescription="Ordina per stato"
                 >
-                  Stato
+                  <ng-container i18n="@@order.status">Stato</ng-container>
                 </th>
                 <td mat-cell *matCellDef="let order">
                   <app-order-status-badge [status]="order.status"></app-order-status-badge>
@@ -197,14 +209,16 @@ import OrderStatusBadge from "../../../../order-status-badge/order-status-badge"
                   mat-sort-header
                   sortActionDescription="Ordina per importo totale"
                 >
-                  Importo
+                  <ng-container i18n="@@order.total_amount">Totale</ng-container>
                 </th>
                 <td mat-cell *matCellDef="let order">
                   {{ order.total_amount | currency: "EUR" }}
                 </td>
               </ng-container>
               <ng-container matColumnDef="number_of_items">
-                <th mat-header-cell *matHeaderCellDef>Numero di articoli</th>
+                <th mat-header-cell *matHeaderCellDef>
+                  <ng-container i18n="@@order.number_of_items">Numero di articoli</ng-container>
+                </th>
                 <td mat-cell *matCellDef="let order">
                   {{ order.items.length }}
                 </td>
@@ -216,24 +230,30 @@ import OrderStatusBadge from "../../../../order-status-badge/order-status-badge"
                   mat-sort-header
                   sortActionDescription="Ordina per data di creazione"
                 >
-                  Data creazione
+                  <ng-container i18n="@@order.created_at">Data creazione</ng-container>
                 </th>
                 <td mat-cell *matCellDef="let order">{{ order.created_at }}</td>
               </ng-container>
               <ng-container matColumnDef="user">
-                <th mat-header-cell *matHeaderCellDef>Utente</th>
+                <th mat-header-cell *matHeaderCellDef>
+                  <ng-container i18n="@@order.user">Utente</ng-container>
+                </th>
                 <td mat-cell *matCellDef="let order">
                   {{ order.user.first_name }} {{ order.user.last_name }}
                 </td>
               </ng-container>
               <ng-container matColumnDef="user_email">
-                <th mat-header-cell *matHeaderCellDef>Utente (email)</th>
+                <th mat-header-cell *matHeaderCellDef>
+                  <ng-container i18n="@@order.user_email">Email utente</ng-container>
+                </th>
                 <td mat-cell *matCellDef="let order">
                   {{ order.user.email }}
                 </td>
               </ng-container>
               <ng-container matColumnDef="actions">
-                <th mat-header-cell *matHeaderCellDef>Azioni</th>
+                <th mat-header-cell *matHeaderCellDef>
+                  <ng-container i18n="@@order.actions">Azioni</ng-container>
+                </th>
                 <td mat-cell *matCellDef="let order">
                   <div class="flex items-center gap-1">
                     <a matIconButton [routerLink]="[order.id]">
@@ -277,14 +297,14 @@ export default class OrdersPage {
   private destroy$ = new Subject<void>();
 
   allColumns = [
-    { key: "code", label: "Codice" },
-    { key: "status", label: "Stato" },
-    { key: "total_amount", label: "Importo totale" },
-    { key: "number_of_items", label: "Numero di articoli" },
-    { key: "created_at", label: "Data creazione" },
-    { key: "user", label: "Utente" },
-    { key: "user_email", label: "Utente (email)" },
-    { key: "actions", label: "Azioni" },
+    { key: "code", label: $localize`:@@order.code:Codice` },
+    { key: "status", label: $localize`:@@order.status:Stato` },
+    { key: "total_amount", label: $localize`:@@order.total_amount:Totale` },
+    { key: "number_of_items", label: $localize`:@@order.number_of_items.short:N° Articoli` },
+    { key: "created_at", label: $localize`:@@order.created_at:Data creazione` },
+    { key: "user", label: $localize`:@@order.user:Utente` },
+    { key: "user_email", label: $localize`:@@order.user_email:Email utente` },
+    { key: "actions", label: $localize`:@@order.actions:Azioni` },
   ];
   visibleColumns = signal<string[]>([
     "code",

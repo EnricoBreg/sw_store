@@ -2,26 +2,527 @@
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
   <file source-language="it-IT" datatype="plaintext" original="ng2.template">
     <body>
-      <trans-unit id="4568025969880696244" datatype="html">
+      <trans-unit id="login.description" datatype="html">
+        <source>Accedi al tuo account per continuare lo shopping</source>
+      </trans-unit>
+      <trans-unit id="login.email.placeholder" datatype="html">
+        <source>Inserisci la tua email</source>
+      </trans-unit>
+      <trans-unit id="login.google" datatype="html">
+        <source>Accedi con Google</source>
+      </trans-unit>
+      <trans-unit id="login.noAccount" datatype="html">
+        <source>Non hai ancora un account?</source>
+      </trans-unit>
+      <trans-unit id="login.or" datatype="html">
+        <source>oppure</source>
+      </trans-unit>
+      <trans-unit id="login.password.placeholder" datatype="html">
+        <source>Inserisci la tua password</source>
+      </trans-unit>
+      <trans-unit id="login.signUp" datatype="html">
+        <source>Registrati ora</source>
+      </trans-unit>
+      <trans-unit id="login.title" datatype="html">
+        <source>Accedi al tuo account</source>
+      </trans-unit>
+      <trans-unit id="menuOperazioni" datatype="html">
+        <source>Menu operazioni</source>
+      </trans-unit>
+      <trans-unit id="myOrders.description" datatype="html">
+        <source>Di seguito, gli ordini da te effettuati nel nostro e-commerce.</source>
+      </trans-unit>
+      <trans-unit id="myOrders.empty" datatype="html">
+        <source>Non hai ancora effettuato ordini🥺</source>
+      </trans-unit>
+      <trans-unit id="myOrders.title" datatype="html">
+        <source>I miei ordini</source>
+      </trans-unit>
+      <trans-unit id="6570363013146073520" datatype="html">
+        <source>Dashboard</source>
+      </trans-unit>
+      <trans-unit id="utenti" datatype="html">
+        <source>Utenti</source>
+      </trans-unit>
+      <trans-unit id="wishlist.title" datatype="html">
+        <source>La tua lista dei desideri</source>
+      </trans-unit>
+      <trans-unit id="prodotti" datatype="html">
+        <source>Prodotti</source>
+      </trans-unit>
+      <trans-unit id="ordini" datatype="html">
+        <source>Ordini</source>
+      </trans-unit>
+      <trans-unit id="headerAction.areaAdmin" datatype="html">
+        <source>Area Admin</source>
+      </trans-unit>
+      <trans-unit id="headerAction.myOrders" datatype="html">
+        <source>I miei ordini</source>
+      </trans-unit>
+      <trans-unit id="headerAction.signOut" datatype="html">
+        <source>Disconnettiti</source>
+      </trans-unit>
+      <trans-unit id="headerAction.login" datatype="html">
+        <source>Accedi</source>
+      </trans-unit>
+      <trans-unit id="headerAction.signUp" datatype="html">
+        <source>Registrati</source>
+      </trans-unit>
+      <trans-unit id="headerAction.greetUnauthenticatedUser" datatype="html">
+        <source>Ciao, utente:username:</source>
+      </trans-unit>
+      <trans-unit id="headerAction.greetAuthenticatedUser" datatype="html">
+        <source>Ciao, <x id="username" equiv-text="name"/></source>
+      </trans-unit>
+      <trans-unit id="orderCard.orderId" datatype="html">
+        <source> Ordine #<x id="ORDERID" equiv-text="{{ order().id //i18n(ph=&quot;orderId&quot;) }}"/> </source>
+      </trans-unit>
+      <trans-unit id="orderCard.customerName" datatype="html">
+        <source> Nome: <x id="ORDERFIRSTNAME" equiv-text="{{ order().first_name //i18n(ph=&quot;orderFirstName&quot;) }}"/> <x id="ORDERLASTNAME" equiv-text="{{ order().last_name //i18n(ph=&quot;orderLastName&quot;) }}"/> </source>
+      </trans-unit>
+      <trans-unit id="orderCard.customerAddress" datatype="html">
+        <source> Indirizzo: <x id="ORDERSTREET" equiv-text="{{ order().street //i18n(ph=&quot;orderStreet&quot;) }}"/>, <x id="ORDERCITY" equiv-text="{{ order().city //i18n(ph=&quot;orderCity&quot;) }}"/>, <x id="ORDERZIPCODE" equiv-text="{{ order().zip_code //i18n(ph=&quot;orderZipCode&quot;) }}"/> </source>
+      </trans-unit>
+      <trans-unit id="orderCard.orderDate" datatype="html">
+        <source> Effettuato <x id="START_TAG_APP_ISODATE_DISPLAYER" ctype="x-app_isodate_displayer" equiv-text="&lt;app-isodate-displayer [date]=&quot;order().created_at&quot; [relative]=&quot;true&quot; /&gt;"/><x id="CLOSE_TAG_APP_ISODATE_DISPLAYER" ctype="x-app_isodate_displayer" equiv-text="&lt;app-isodate-displayer [date]=&quot;order().created_at&quot; [relative]=&quot;true&quot; /&gt;"/></source>
+      </trans-unit>
+      <trans-unit id="orderCard.orderTotal" datatype="html">
+        <source> Totale: <x id="ORDERTOTALAMOUNT" equiv-text="{{ order().total_amount | currency: &quot;EUR&quot; ////i18n(ph=&quot;orderTotalAmount&quot;) }}"/> </source>
+      </trans-unit>
+      <trans-unit id="back" datatype="html">
+        <source>Indietro</source>
+      </trans-unit>
+      <trans-unit id="backToOrderList" datatype="html">
+        <source>Torna alla lista degli ordini</source>
+      </trans-unit>
+      <trans-unit id="orderDetailPage.title" datatype="html">
+        <source>Dettaglio ordine</source>
+      </trans-unit>
+      <trans-unit id="orderDetails.shipping.address" datatype="html">
+        <source>Indirizzo: <x id="INTERPOLATION" equiv-text="{{ order.street }}"/></source>
+      </trans-unit>
+      <trans-unit id="orderDetails.shipping.city" datatype="html">
+        <source>Città: <x id="INTERPOLATION" equiv-text="{{ order.city }}"/>, <x id="INTERPOLATION_1" equiv-text="{{ order.zip_code }}"/></source>
+      </trans-unit>
+      <trans-unit id="orderDetails.shipping.country" datatype="html">
+        <source>Stato: <x id="INTERPOLATION" equiv-text="{{ order.country }}"/></source>
+      </trans-unit>
+      <trans-unit id="orderDetails.shipping.name" datatype="html">
+        <source>Nome: <x id="INTERPOLATION" equiv-text="{{ order.first_name }}"/> <x id="INTERPOLATION_1" equiv-text="{{ order.last_name }}"/></source>
+      </trans-unit>
+      <trans-unit id="orderDetail.effettuato" datatype="html">
+        <source>Effettuato</source>
+      </trans-unit>
+      <trans-unit id="orderDetail.items.title" datatype="html">
+        <source>Gli articoli del tuo ordine</source>
+      </trans-unit>
+      <trans-unit id="orderDetail.shipping.title" datatype="html">
+        <source>Dettagli di spedizione</source>
+      </trans-unit>
+      <trans-unit id="orderDetail.stepper.consegnato.description" datatype="html">
+        <source> Consegnato all&apos;indirizzo specificato. Grazie per aver acquistato da noi! </source>
+      </trans-unit>
+      <trans-unit id="orderDetail.stepper.consegnato.label" datatype="html">
+        <source>Consegnato</source>
+      </trans-unit>
+      <trans-unit id="orderDetail.stepper.inAttesa.description" datatype="html">
+        <source> Ordine registrato nei nostri sistemi. </source>
+      </trans-unit>
+      <trans-unit id="orderDetail.stepper.inAttesa.label" datatype="html">
+        <source>In attesa</source>
+      </trans-unit>
+      <trans-unit id="orderDetail.stepper.pagato.description" datatype="html">
+        <source> Pagamento confermato. Ordine in preparazione. </source>
+      </trans-unit>
+      <trans-unit id="orderDetail.stepper.pagato.label" datatype="html">
+        <source>Pagato</source>
+      </trans-unit>
+      <trans-unit id="orderDetail.stepper.spedito.description" datatype="html">
+        <source> Affidato al corriere espresso. </source>
+      </trans-unit>
+      <trans-unit id="orderDetail.stepper.spedito.label" datatype="html">
+        <source>Spedito</source>
+      </trans-unit>
+      <trans-unit id="orderDetail.title" datatype="html">
+        <source> Dettagli ordine #<x id="ORDERDETAIL_ORDERID" equiv-text="{{ orderId() //i18n(ph=&quot;orderDetail.orderId&quot;) }}"/> </source>
+      </trans-unit>
+      <trans-unit id="orderDetail.total" datatype="html">
+        <source>Totale: <x id="INTERPOLATION" equiv-text="{{ order.total_amount | currency: &quot;EUR&quot; }}"/></source>
+      </trans-unit>
+      <trans-unit id="orderDetail.vat" datatype="html">
+        <source> di cui IVA (22%): <x id="INTERPOLATION" equiv-text="{{ computeVat(order.total_amount) | currency: &quot;EUR&quot; }}"/> </source>
+      </trans-unit>
+      <trans-unit id="orderDetailPage.description" datatype="html">
+        <source> Questa è la pagina dei dettagli dell&apos;ordine. Qui puoi visualizzare tutte le informazioni relative all&apos;ordine selezionato, inclusi i prodotti ordinati, lo stato dell&apos;ordine e i dettagli di spedizione. </source>
+      </trans-unit>
+      <trans-unit id="orderDetailPage.order.info" datatype="html">
+        <source>Informazioni ordine</source>
+      </trans-unit>
+      <trans-unit id="orderDetailPage.order.code" datatype="html">
+        <source> Codice: <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;font-medium&quot;&gt;"/><x id="INTERPOLATION" equiv-text="{{ order.code }}"/><x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></source>
+      </trans-unit>
+      <trans-unit id="orderDetailPage.order.fullName" datatype="html">
+        <source> Nome utente: <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;font-medium&quot;&gt;"/><x id="INTERPOLATION" equiv-text="{{ order.user.full_name }}"/><x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></source>
+      </trans-unit>
+      <trans-unit id="orderDetailPage.order.email" datatype="html">
+        <source> Email utente: <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;font-medium&quot;&gt;"/><x id="INTERPOLATION" equiv-text="{{ order.user.email }}"/><x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></source>
+      </trans-unit>
+      <trans-unit id="orderDetailPage.order.date" datatype="html">
+        <source> Data: <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;font-medium&quot;&gt;"/><x id="START_TAG_APP_ISODATE_DISPLAYER" ctype="x-app_isodate_displayer" equiv-text="&lt;app-isodate-displayer [date]=&quot;order.created_at&quot; /&gt;"/><x id="CLOSE_TAG_APP_ISODATE_DISPLAYER" ctype="x-app_isodate_displayer" equiv-text="&lt;app-isodate-displayer [date]=&quot;order.created_at&quot; /&gt;"/><x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></source>
+      </trans-unit>
+      <trans-unit id="orderDetailPage.order.status" datatype="html">
+        <source>Stato ordine</source>
+      </trans-unit>
+      <trans-unit id="orderDetailPage.order.editStatus" datatype="html">
+        <source>Modifica stato</source>
+      </trans-unit>
+      <trans-unit id="orderDetailPage.order.shipping" datatype="html">
+        <source>Spedizione</source>
+      </trans-unit>
+      <trans-unit id="orderDetailPage.order.summary" datatype="html">
+        <source>Riepilogo</source>
+      </trans-unit>
+      <trans-unit id="orderDetailPage.order.productsOrdered" datatype="html">
+        <source> Prodotti ordinati: <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;font-medium&quot;&gt;"/><x id="INTERPOLATION" equiv-text="{{ order.items.length }}"/><x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></source>
+      </trans-unit>
+      <trans-unit id="orderDetailPage.order.totalAmount" datatype="html">
+        <source>Totale: <x id="INTERPOLATION" equiv-text="{{ order.total_amount | currency: &quot;EUR&quot; }}"/></source>
+      </trans-unit>
+      <trans-unit id="orderDetailPage.order.vat" datatype="html">
+        <source> Di cui IVA (22%): <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;font-medium&quot;&gt;"/><x id="INTERPOLATION" equiv-text="{{ computeVat(order.total_amount) | currency: &quot;EUR&quot; }}"/><x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></source>
+      </trans-unit>
+      <trans-unit id="orderDetailPage.order.products" datatype="html">
+        <source>Prodotti ordinati</source>
+      </trans-unit>
+      <trans-unit id="orderDetailPage.order.productName" datatype="html">
+        <source><x id="INTERPOLATION" equiv-text="{{ item.product.name }}"/></source>
+      </trans-unit>
+      <trans-unit id="orderDetailPage.order.quantity" datatype="html">
+        <source> Quantità: <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;font-semibold&quot;&gt;"/><x id="INTERPOLATION" equiv-text="{{ item.quantity }}"/><x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></source>
+      </trans-unit>
+      <trans-unit id="orderDetailPage.order.unitPrice" datatype="html">
+        <source> Prezzo unitario: <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;font-semibold&quot;&gt;"/><x id="INTERPOLATION" equiv-text="{{ item.unit_price | currency: &quot;EUR&quot; }}"/><x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></source>
+      </trans-unit>
+      <trans-unit id="orderDetailPage.order.discount" datatype="html">
+        <source> Sconto: <x id="START_TAG_APP_DISCOUNT_BADGE" ctype="x-app_discount_badge" equiv-text="&lt;app-discount-badge [discountPercentage]=&quot;item.discount_percentage&quot; &gt;"/><x id="CLOSE_TAG_APP_DISCOUNT_BADGE" ctype="x-app_discount_badge" equiv-text="&lt;/app-discount-badge&gt;"/></source>
+      </trans-unit>
+      <trans-unit id="orderDetailPage.order.total" datatype="html">
+        <source> Totale: <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;font-semibold&quot;&gt;"/><x id="INTERPOLATION" equiv-text="{{ item.total_price | currency: &quot;EUR&quot; }}"/><x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></source>
+      </trans-unit>
+      <trans-unit id="orderDetailPage.error.loading" datatype="html">
+        <source>Non è stato possibile caricare i dettagli dell&apos;ordine.</source>
+      </trans-unit>
+      <trans-unit id="adminOrdersPage.title" datatype="html">
+        <source>Gestione degli ordini</source>
+      </trans-unit>
+      <trans-unit id="aggiungiAlCarrello" datatype="html">
+        <source>Aggiungi al carrello</source>
+      </trans-unit>
+      <trans-unit id="adminOrdersPage.orderCount" datatype="html">
+        <source> Numero di ordini presenti: <x id="ORDERCOUNT" equiv-text="{{ pagination()?.count //i18n(ph=&quot;orderCount&quot;) }}"/> </source>
+      </trans-unit>
+      <trans-unit id="filters" datatype="html">
+        <source>Filtri</source>
+      </trans-unit>
+      <trans-unit id="search" datatype="html">
+        <source>Ricerca</source>
+      </trans-unit>
+      <trans-unit id="searchPlaceholder" datatype="html">
+        <source>Es. Mario Rossi o ID ordine</source>
+      </trans-unit>
+      <trans-unit id="signUp.description" datatype="html">
+        <source>Registrati per iniziare ora lo shopping.</source>
+      </trans-unit>
+      <trans-unit id="signUp.email.placeholder" datatype="html">
+        <source>Inserisci la tua email</source>
+      </trans-unit>
+      <trans-unit id="signUp.firstName.placeholder" datatype="html">
+        <source>Inserisci il tuo nome</source>
+      </trans-unit>
+      <trans-unit id="signUp.google" datatype="html">
+        <source>Registrati con Google</source>
+      </trans-unit>
+      <trans-unit id="signUp.lastName.placeholder" datatype="html">
+        <source>Inserisci il cognome</source>
+      </trans-unit>
+      <trans-unit id="signUp.login" datatype="html">
+        <source> Hai già un account? <x id="START_LINK" ctype="x-a" equiv-text="&lt;a class=&quot;text-blue-400 underline&quot; routerLink=&quot;/login&quot;&gt;"/>Accedi ora.<x id="CLOSE_LINK" ctype="x-a" equiv-text="&lt;/a&gt;"/></source>
+      </trans-unit>
+      <trans-unit id="signUp.or" datatype="html">
+        <source>oppure</source>
+      </trans-unit>
+      <trans-unit id="signUp.password.placeholder" datatype="html">
+        <source>Inserisci la tua password</source>
+      </trans-unit>
+      <trans-unit id="signUp.passwordConfirmation.placeholder" datatype="html">
+        <source>Ripeti la tua password</source>
+      </trans-unit>
+      <trans-unit id="signUp.submit" datatype="html">
+        <source>Registrati</source>
+      </trans-unit>
+      <trans-unit id="signUp.title" datatype="html">
+        <source>Registrati</source>
+      </trans-unit>
+      <trans-unit id="tornaAiMieiOrdini" datatype="html">
+        <source> Torna ai miei ordini </source>
+      </trans-unit>
+      <trans-unit id="tornaDashboard" datatype="html">
+        <source> Torna alla dashboard </source>
+      </trans-unit>
+      <trans-unit id="tornaHome" datatype="html">
+        <source>Torna alla home</source>
+      </trans-unit>
+      <trans-unit id="userSearchHint" datatype="html">
+        <source>Ricerca per utente o ID ordine</source>
+      </trans-unit>
+      <trans-unit id="orderStatus" datatype="html">
+        <source>Stato ordine</source>
+      </trans-unit>
+      <trans-unit id="orderStatus.all" datatype="html">
+        <source>Tutti gli stati</source>
+      </trans-unit>
+      <trans-unit id="forbidden.description" datatype="html">
+        <source> Sembra che tu non abbia i permessi necessari per accedere a questa risorsa. </source>
+      </trans-unit>
+      <trans-unit id="forbidden.title" datatype="html">
+        <source>403 - Non hai i permessi necessari</source>
+      </trans-unit>
+      <trans-unit id="fromDate" datatype="html">
+        <source>Da data</source>
+      </trans-unit>
+      <trans-unit id="ordersFromDateHint" datatype="html">
+        <source>Ordini da data</source>
+      </trans-unit>
+      <trans-unit id="ordersToDate" datatype="html">
+        <source>A data</source>
+      </trans-unit>
+      <trans-unit id="ordersToDateHint" datatype="html">
+        <source>Ordini fino a data</source>
+      </trans-unit>
+      <trans-unit id="ordersMinTotalAmount" datatype="html">
+        <source>Importo totale minimo</source>
+      </trans-unit>
+      <trans-unit id="ordersMinTotalAmountHint" datatype="html">
+        <source>Ordini con importo totale minimo</source>
+      </trans-unit>
+      <trans-unit id="ordersMaxTotalAmount" datatype="html">
+        <source>Importo totale massimo</source>
+      </trans-unit>
+      <trans-unit id="ordersMaxTotalAmountHint" datatype="html">
+        <source>Ordini con importo totale massimo</source>
+      </trans-unit>
+      <trans-unit id="resetFilters" datatype="html">
+        <source>Reset filtri</source>
+      </trans-unit>
+      <trans-unit id="order.code" datatype="html">
+        <source>Codice</source>
+      </trans-unit>
+      <trans-unit id="order.status" datatype="html">
+        <source>Stato</source>
+      </trans-unit>
+      <trans-unit id="order.total_amount" datatype="html">
+        <source>Totale</source>
+      </trans-unit>
+      <trans-unit id="order.number_of_items" datatype="html">
+        <source>Numero di articoli</source>
+      </trans-unit>
+      <trans-unit id="order.created_at" datatype="html">
+        <source>Data creazione</source>
+      </trans-unit>
+      <trans-unit id="order.user" datatype="html">
+        <source>Utente</source>
+      </trans-unit>
+      <trans-unit id="order.user_email" datatype="html">
+        <source>Email utente</source>
+      </trans-unit>
+      <trans-unit id="order.actions" datatype="html">
+        <source>Azioni</source>
+      </trans-unit>
+      <trans-unit id="order.number_of_items.short" datatype="html">
+        <source>N° Articoli</source>
+      </trans-unit>
+      <trans-unit id="cartPage.checkout" datatype="html">
+        <source>Procedi al checkout</source>
+      </trans-unit>
+      <trans-unit id="cartPage.title" datatype="html">
+        <source>Il tuo carrello</source>
+      </trans-unit>
+      <trans-unit id="categories" datatype="html">
         <source>Categorie</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/pages/products-grid/products-grid.ts</context>
-          <context context-type="linenumber">38,40</context>
-        </context-group>
       </trans-unit>
-      <trans-unit id="8848238405981602178" datatype="html">
+      <trans-unit id="checkoutPage.completaOrdine" datatype="html">
+        <source> Completa il tuo ordine </source>
+      </trans-unit>
+      <trans-unit id="checkoutPage.pagamento.card" datatype="html">
+        <source>Carta di debito/credito</source>
+      </trans-unit>
+      <trans-unit id="checkoutPage.pagamento.description" datatype="html">
+        <source> Per semplicità, in questa demo non gestiamo direttamente i dettagli di pagamento. In un&apos;app reale, qui integreremmo Stripe Elements o simili per raccogliere in modo sicuro le informazioni di pagamento e ottenere un token da inviare al backend. </source>
+      </trans-unit>
+      <trans-unit id="checkoutPage.pagamento.title" datatype="html">
+        <source> Dettagli di pagamento </source>
+      </trans-unit>
+      <trans-unit id="checkoutPage.riepilogo.title" datatype="html">
+        <source>Riepilogo ordine</source>
+      </trans-unit>
+      <trans-unit id="checkoutPage.spedizione.cap" datatype="html">
+        <source>CAP</source>
+      </trans-unit>
+      <trans-unit id="checkoutPage.spedizione.citta" datatype="html">
+        <source>Città</source>
+      </trans-unit>
+      <trans-unit id="checkoutPage.spedizione.cognome" datatype="html">
+        <source>Cognome</source>
+      </trans-unit>
+      <trans-unit id="checkoutPage.spedizione.nome" datatype="html">
+        <source>Nome</source>
+      </trans-unit>
+      <trans-unit id="checkoutPage.spedizione.paese" datatype="html">
+        <source>Paese</source>
+      </trans-unit>
+      <trans-unit id="checkoutPage.spedizione.title" datatype="html">
+        <source> Indirizzo di spedizione </source>
+      </trans-unit>
+      <trans-unit id="checkoutPage.spedizione.via" datatype="html">
+        <source>Via e numero civico</source>
+      </trans-unit>
+      <trans-unit id="checkoutPage.submit.default" datatype="html">
+        <source>Conferma ordine</source>
+      </trans-unit>
+      <trans-unit id="checkoutPage.submit.description" datatype="html">
+        <source>Tutto pronto! Invia subito il tuo ordine!</source>
+      </trans-unit>
+      <trans-unit id="checkoutPage.submit.inProgress" datatype="html">
+        <source>Invio dell&apos;ordine...</source>
+      </trans-unit>
+      <trans-unit id="checkoutPage.tornaAlCarrello" datatype="html">
+        <source>Rivedi carrello</source>
+      </trans-unit>
+      <trans-unit id="delete" datatype="html">
+        <source>Elimina</source>
+      </trans-unit>
+      <trans-unit id="edit" datatype="html">
+        <source>Modifica</source>
+      </trans-unit>
+      <trans-unit id="productDetail.backButton" datatype="html">
+        <source>Torna alla lista dei prodotti</source>
+      </trans-unit>
+      <trans-unit id="productDetail.product.category" datatype="html">
+        <source>Categoria:</source>
+      </trans-unit>
+      <trans-unit id="productDetail.description" datatype="html">
+        <source> Questa è la pagina dei dettagli del prodotto. Qui puoi visualizzare e modificare le informazioni del prodotto selezionato. </source>
+      </trans-unit>
+      <trans-unit id="productDetail.deviAccedere" datatype="html">
+        <source><x id="START_LINK" ctype="x-a" equiv-text="&lt;a class=&quot;text-blue-400 underline&quot; routerLink=&quot;/login&quot;&gt;"/>Accedi<x id="CLOSE_LINK" ctype="x-a" equiv-text="&lt;/a&gt;"/> per aggiungere questo prodotto al tuo carrello! </source>
+      </trans-unit>
+      <trans-unit id="productDetail.product.description" datatype="html">
+        <source>Descrizione:</source>
+      </trans-unit>
+      <trans-unit id="productDetail.product.discount" datatype="html">
+        <source>Sconto</source>
+      </trans-unit>
+      <trans-unit id="productDetail.product.discountPrice" datatype="html">
+        <source>Prezzo effettivo</source>
+      </trans-unit>
+      <trans-unit id="productDetail.disponibilita" datatype="html">
+        <source> Disponibità: <x id="PRODUCTDETAIL_STOCKQUANTITY" equiv-text="{{ product.stock_quantity //i18n(ph=&quot;productDetail.stockQuantity&quot;) }}"/> pezzo/i. </source>
+      </trans-unit>
+      <trans-unit id="productDetail.error" datatype="html">
+        <source>Non è stato possibile caricare i dettagli del prodotto.</source>
+      </trans-unit>
+      <trans-unit id="productDetail.product.id" datatype="html">
+        <source>Identificativo (ID):</source>
+      </trans-unit>
+      <trans-unit id="productDetail.info" datatype="html">
+        <source>Informazioni prodotto:</source>
+      </trans-unit>
+      <trans-unit id="productDetail.nonDisponibile" datatype="html">
+        <source> Prodotto non più dispobile. Ti avviseremo quando tornerà in stock. </source>
+      </trans-unit>
+      <trans-unit id="productDetail.product.price" datatype="html">
+        <source>Prezzo</source>
+      </trans-unit>
+      <trans-unit id="productDetail.product.stock" datatype="html">
+        <source>Quantità disponibile</source>
+      </trans-unit>
+      <trans-unit id="productDetail.title" datatype="html">
+        <source>Dettagli prodotto</source>
+      </trans-unit>
+      <trans-unit id="products" datatype="html">
         <source>I nostri prodotti</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/pages/products-grid/products-grid.ts</context>
-          <context context-type="linenumber">45,47</context>
-        </context-group>
       </trans-unit>
-      <trans-unit id="2136449297265466557" datatype="html">
+      <trans-unit id="productsPage.addProduct" datatype="html">
+        <source>Aggiungi prodotto</source>
+      </trans-unit>
+      <trans-unit id="productsPage.fastAction.modifica" datatype="html">
+        <source>Modifica</source>
+      </trans-unit>
+      <trans-unit id="productsPage.fastAction.vedi" datatype="html">
+        <source>Vedi</source>
+      </trans-unit>
+      <trans-unit id="productsPage.fastActions.title" datatype="html">
+        <source>Azioni rapide</source>
+      </trans-unit>
+      <trans-unit id="productsPage.search.label" datatype="html">
+        <source>Ricerca un prodotto</source>
+      </trans-unit>
+      <trans-unit id="productsPage.search.placeholder" datatype="html">
+        <source>Es. Tavolo da lavoro</source>
+      </trans-unit>
+      <trans-unit id="productsPage.table.actions" datatype="html">
+        <source> Azioni </source>
+      </trans-unit>
+      <trans-unit id="productsPage.table.category_name" datatype="html">
+        <source> Categoria </source>
+      </trans-unit>
+      <trans-unit id="productsPage.table.description" datatype="html">
+        <source> Descrizione </source>
+      </trans-unit>
+      <trans-unit id="productsPage.table.description.sort" datatype="html">
+        <source>Ordina per descrizione</source>
+      </trans-unit>
+      <trans-unit id="productsPage.table.discount" datatype="html">
+        <source> Sconto </source>
+      </trans-unit>
+      <trans-unit id="productsPage.table.discount_percentage.sort" datatype="html">
+        <source>Ordina per sconto</source>
+      </trans-unit>
+      <trans-unit id="productsPage.table.discount_price" datatype="html">
+        <source> Prezzo effettivo </source>
+      </trans-unit>
+      <trans-unit id="productsPage.table.id" datatype="html">
+        <source>ID</source>
+      </trans-unit>
+      <trans-unit id="productsPage.table.image" datatype="html">
+        <source>Anteprima</source>
+      </trans-unit>
+      <trans-unit id="productsPage.table.name" datatype="html">
+        <source> Nome </source>
+      </trans-unit>
+      <trans-unit id="productsPage.table.price" datatype="html">
+        <source> Prezzo </source>
+      </trans-unit>
+      <trans-unit id="productsPage.table.price.sort" datatype="html">
+        <source>Ordina per prezzo</source>
+      </trans-unit>
+      <trans-unit id="productsPage.table.stock_quantity" datatype="html">
+        <source> Stock </source>
+      </trans-unit>
+      <trans-unit id="productsPage.title" datatype="html">
+        <source>I prodotti dello store</source>
+      </trans-unit>
+      <trans-unit id="newProduct.title" datatype="html">
+        <source>Nuovo prodotto</source>
+      </trans-unit>
+      <trans-unit id="noProductsFound" datatype="html">
         <source> Nessun prodotto trovato. Prova a selezionare un&apos;altra categoria o ad usare altre parole chiave. In alternativa, ritorna più tardi!😁 </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/pages/products-grid/products-grid.ts</context>
-          <context context-type="linenumber">82</context>
-        </context-group>
+      </trans-unit>
+      <trans-unit id="notFound.description" datatype="html">
+        <source> La pagina o risorsa che stai cercando non esiste o è stata spostata. </source>
+      </trans-unit>
+      <trans-unit id="notFound.title" datatype="html">
+        <source>404 - Risorsa non trovata</source>
       </trans-unit>
     </body>
   </file>

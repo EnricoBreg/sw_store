@@ -12,8 +12,8 @@ import { RouterLink } from "@angular/router";
   template: `
     <div class="mx-auto max-w-[1200px] py-6">
       <div appViewPanel>
-        <h1 class="text-2xl font-semibold">I miei ordini</h1>
-        <p class="text-gray-500">Di seguito, gli ordini da te effettuati nel nostro e-commerce.</p>
+        <h1 i18n="@@myOrders.title" class="text-2xl font-semibold">I miei ordini</h1>
+        <p i18n="@@myOrders.description" class="text-gray-500">Di seguito, gli ordini da te effettuati nel nostro e-commerce.</p>
 
         @if (error(); as error) {
           <div
@@ -44,7 +44,7 @@ import { RouterLink } from "@angular/router";
             </div>
           } @else {
             <div class="h-full">
-              <h3 class="text-lg text-gray-600">Non hai ancora effettuato ordini🥺</h3>
+              <h3 i18n="@@myOrders.empty" class="text-lg text-gray-600">Non hai ancora effettuato ordini🥺</h3>
             </div>
           }
         </div>

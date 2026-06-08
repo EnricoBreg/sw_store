@@ -48,8 +48,8 @@ import QuantitySelector from "../../components/quantity-selector/quantity-select
             {{ product?.description }}
           </p>
 
-          <p class="mt-4 text-sm text-gray-400">
-            Disponibità: {{ product.stock_quantity }} pezzo/i.
+          <p i18n="@@productDetail.disponibilita" class="mt-4 text-sm text-gray-400">
+            Disponibità: {{ product.stock_quantity //i18n(ph="productDetail.stockQuantity") }} pezzo/i.
           </p>
 
           <div class="mt-6">
@@ -67,15 +67,15 @@ import QuantitySelector from "../../components/quantity-selector/quantity-select
 
                 <button matButton="filled" (click)="addToCart()">
                   <mat-icon>add_shopping_cart</mat-icon>
-                  Aggiungi al carrello
+                  <ng-container i18n="@@aggiungiAlCarrello">Aggiungi al carrello</ng-container>
                 </button>
               } @else {
-                <p class="text-gray-800">
+                <p i18n="@@productDetail.nonDisponibile" class="text-gray-800">
                   Prodotto non più dispobile. Ti avviseremo quando tornerà in stock.
                 </p>
               }
             } @else {
-              <p class="text-gray-700">
+              <p i18n="@@productDetail.deviAccedere" class="text-gray-700">
                 <a class="text-blue-400 underline" routerLink="/login">Accedi</a> per aggiungere
                 questo prodotto al tuo carrello!
               </p>

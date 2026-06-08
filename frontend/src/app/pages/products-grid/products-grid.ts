@@ -35,14 +35,14 @@ import ViewPanel from '../../core/directives/view-panel/view-panel';
     <mat-sidenav-container class="mt-2 full-height-layout" hasBackdrop="false">
       <mat-sidenav mode="side" [opened]="true">
         <div class="p-6">
-          <h3 i18n class="text-lg font-semibold text-gray-900">Categorie</h3>
+          <h3 i18n="@@categories" class="text-lg font-semibold text-gray-900">Categorie</h3>
 
           <app-categories-list (categorySelectEvent)="onCategorySelection($event)" />
         </div>
       </mat-sidenav>
       <mat-sidenav-content>
         <section class="p-6 relative">
-          <h1 i18n class="text-3xl font-bold text-gray-900">I nostri prodotti</h1>
+          <h1 i18n="@@products" class="text-3xl font-bold text-gray-900">I nostri prodotti</h1>
 
           @if (productsCount()) {
             <div class="text-red-500 text-lg">
@@ -78,7 +78,7 @@ import ViewPanel from '../../core/directives/view-panel/view-panel';
             </div>
           } @else {
             <app-no-product-found>
-              <p i18n message class="text-gray-500 text-lg text-center">
+              <p i18n="@@noProductsFound" class="text-gray-500 text-lg text-center">
                 Nessun prodotto trovato. Prova a selezionare un'altra categoria o ad usare altre parole chiave. In alternativa, ritorna più tardi!😁
               </p>
             </app-no-product-found>

@@ -49,19 +49,20 @@ import CategorySelect from "../../../../components/category-select/category-sele
   template: `
     <div class="space-y-4">
       <div>
-        <h1 class="font-bold text-2xl">I prodotti dello store</h1>
+        <h1 i18n="@@productsPage.title" class="font-bold text-2xl">I prodotti dello store</h1>
       </div>
 
       <!-- Ricerca prodotti -->
       <section class="md:w-4/5 space-y-4 mb-6">
-        <p class="text-lg font-semibold mb-3">Filtri</p>
+        <p i18n="@@filters" class="text-lg font-semibold mb-3">Filtri</p>
         <!-- Serach bar -->
         <mat-form-field>
-          <mat-label>Ricerca un prodotto</mat-label>
+          <mat-label i18n="@@productsPage.search.label">Ricerca un prodotto</mat-label>
           <input
             matInput
             type="text"
             placeholder="Es. Tavolo da lavoro"
+            i18n-placeholder="@@productsPage.search.placeholder"
             [formControl]="searchControl"
           />
         </mat-form-field>
@@ -77,7 +78,7 @@ import CategorySelect from "../../../../components/category-select/category-sele
           <div>
             <a matButton="filled" routerLink="new">
               <mat-icon>add</mat-icon>
-              Aggiungi prodotto
+              <ng-container i18n="@@productsPage.addProduct">Aggiungi prodotto</ng-container>
             </a>
           </div>
 
@@ -104,7 +105,7 @@ import CategorySelect from "../../../../components/category-select/category-sele
         <div class="w-full overflow-x-auto border border-gray-200 rounded-t-lg shadow-sm">
           <table mat-table [dataSource]="products()" matSort (matSortChange)="onSortChange($event)">
             <ng-container matColumnDef="product_image">
-              <th mat-header-cell *matHeaderCellDef>Anteprima</th>
+              <th i18n="@@productsPage.table.image" mat-header-cell *matHeaderCellDef>Anteprima</th>
               <td mat-cell *matCellDef="let product">
                 <img
                   [src]="product.image_url"
@@ -115,11 +116,12 @@ import CategorySelect from "../../../../components/category-select/category-sele
               </td>
             </ng-container>
             <ng-container matColumnDef="id">
-              <th mat-header-cell *matHeaderCellDef>ID</th>
+              <th i18n="@@productsPage.table.id" mat-header-cell *matHeaderCellDef>ID</th>
               <td mat-cell *matCellDef="let product">{{ product.id }}</td>
             </ng-container>
             <ng-container matColumnDef="name">
               <th
+                i18n="@@productsPage.table.name"
                 mat-header-cell
                 *matHeaderCellDef
                 mat-sort-header
@@ -135,26 +137,30 @@ import CategorySelect from "../../../../components/category-select/category-sele
                 >
                 <mat-menu #productMenu="matMenu" xPosition="before">
                   <div class="flex flex-col px-3 min-w-[200px]">
-                    <span class="text-sm font-medium">Azioni rapide</span>
+                    <span i18n="@@productsPage.fastActions.title" class="text-sm font-medium"
+                      >Azioni rapide</span
+                    >
                   </div>
                   <mat-divider></mat-divider>
                   <a class="!min-h-[32px]" mat-menu-item [routerLink]="[product.id]">
                     <mat-icon>visibility</mat-icon>
-                    Vedi
+                    <ng-container i18n="@@productsPage.fastAction.vedi">Vedi</ng-container>
                   </a>
                   <a class="!min-h-[32px]" mat-menu-item [routerLink]="[product.id, 'edit']">
                     <mat-icon>edit</mat-icon>
-                    Modifica
+                    <ng-container i18n="@@productsPage.fastAction.modifica">Modifica</ng-container>
                   </a>
                 </mat-menu>
               </td>
             </ng-container>
             <ng-container matColumnDef="description">
               <th
+                i18n="@@productsPage.table.description"
                 mat-header-cell
                 *matHeaderCellDef
                 mat-sort-header
                 sortActionDescription="Ordina per descrizione"
+                i18n-sortActionDescription="@@productsPage.table.description.sort"
               >
                 Descrizione
               </th>
@@ -162,10 +168,12 @@ import CategorySelect from "../../../../components/category-select/category-sele
             </ng-container>
             <ng-container matColumnDef="price">
               <th
+                i18n="@@productsPage.table.price"
                 mat-header-cell
                 *matHeaderCellDef
                 mat-sort-header
                 sortActionDescription="Ordina per prezzo"
+                i18n-sortActionDescription="@@productsPage.table.price.sort"
               >
                 Prezzo
               </th>
@@ -173,10 +181,12 @@ import CategorySelect from "../../../../components/category-select/category-sele
             </ng-container>
             <ng-container matColumnDef="discount_percentage">
               <th
+                i18n="@@productsPage.table.discount"
                 mat-header-cell
                 *matHeaderCellDef
                 mat-sort-header
                 sortActionDescription="Ordina per sconto"
+                i18n-sortActionDescription="@@productsPage.table.discount_percentage.sort"
               >
                 Sconto
               </th>
@@ -185,7 +195,9 @@ import CategorySelect from "../../../../components/category-select/category-sele
               </td>
             </ng-container>
             <ng-container matColumnDef="discount_price">
-              <th mat-header-cell *matHeaderCellDef>Prezzo effettivo</th>
+              <th i18n="@@productsPage.table.discount_price" mat-header-cell *matHeaderCellDef>
+                Prezzo effettivo
+              </th>
               <td mat-cell *matCellDef="let product">
                 {{
                   computeDiscountPrice(product.price, product.discount_percentage) | currency: "EUR"
@@ -194,6 +206,7 @@ import CategorySelect from "../../../../components/category-select/category-sele
             </ng-container>
             <ng-container matColumnDef="stock_quantity">
               <th
+                i18n="@@productsPage.table.stock_quantity"
                 mat-header-cell
                 *matHeaderCellDef
                 mat-sort-header
@@ -206,11 +219,15 @@ import CategorySelect from "../../../../components/category-select/category-sele
               </td>
             </ng-container>
             <ng-container matColumnDef="category_name">
-              <th mat-header-cell *matHeaderCellDef>Categoria</th>
+              <th i18n="@@productsPage.table.category_name" mat-header-cell *matHeaderCellDef>
+                Categoria
+              </th>
               <td mat-cell *matCellDef="let product">{{ product.category.name }}</td>
             </ng-container>
             <ng-container matColumnDef="actions">
-              <th mat-header-cell *matHeaderCellDef>Azioni</th>
+              <th i18n="@@productsPage.table.actions" mat-header-cell *matHeaderCellDef>
+                Azioni
+              </th>
               <td mat-cell *matCellDef="let product">
                 <div class="flex items-center gap-1">
                   <a matIconButton [routerLink]="[product.id]">
@@ -238,16 +255,16 @@ export default class ProductsPage {
   service = inject(AdminProductsService);
 
   allColumns = [
-    { key: "product_image", label: "Anteprima" },
-    { key: "id", label: "ID" },
-    { key: "name", label: "Nome" },
-    { key: "description", label: "Descrizione" },
-    { key: "price", label: "Prezzo" },
-    { key: "discount_percentage", label: "Sconto" },
-    { key: "discount_price", label: "Prezzo effettivo" },
-    { key: "stock_quantity", label: "Stock" },
-    { key: "category_name", label: "Categoria" },
-    { key: "actions", label: "Azioni" },
+    { key: "product_image", label: ":@@product.image:Anteprima" },
+    { key: "id", label: ":@@product.id:ID" },
+    { key: "name", label: ":@@product.name:Nome" },
+    { key: "description", label: ":@@product.description:Descrizione" },
+    { key: "price", label: ":@@product.price:Prezzo" },
+    { key: "discount_percentage", label: ":@@product.discount_percentage:Sconto" },
+    { key: "discount_price", label: ":@@product.discount_price:Prezzo effettivo" },
+    { key: "stock_quantity", label: ":@@product.stock_quantity:Stock" },
+    { key: "category_name", label: ":@@product.category_name:Categoria" },
+    { key: "actions", label: ":@@product.actions:Azioni" },
   ];
   visibleColumns = signal<string[]>([
     "product_image",

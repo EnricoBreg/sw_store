@@ -24,34 +24,34 @@ import { LayoutService } from "../../core/services/layout.service";
     <mat-sidenav-container class="mt-2 full-height-layout" hasBackdrop="true">
       <mat-sidenav #sidenav mode="over" [opened]="sidenavOpened()">
         <div class="p-6">
-          <h3 class="text-lg font-semibold text-gray-900">Menu operazioni</h3>
+          <h3 i18n="@@menuOperazioni" class="text-lg font-semibold text-gray-900">Menu operazioni</h3>
 
           <mat-nav-list>
             <mat-list-item class="my-2" routerLink="dashboard">
               <span matListItemTitle class="font-medium flex items-center gap-2">
                 <mat-icon>dashboard</mat-icon>
-                Dashboard
+                <ng-container i18n>Dashboard</ng-container>
               </span>
             </mat-list-item>
 
             <mat-list-item class="my-2" routerLink="users">
               <span matListItemTitle class="font-medium flex items-center gap-2">
                 <mat-icon>groups</mat-icon>
-                Utenti
+                <ng-container i18n="@@utenti">Utenti</ng-container>
               </span>
             </mat-list-item>
 
             <mat-list-item class="my-2" routerLink="products">
               <span matListItemTitle class="font-medium flex items-center gap-2">
                 <mat-icon>list_alt</mat-icon>
-                Prodotti
+                <ng-container i18n="@@prodotti">Prodotti</ng-container>
               </span>
             </mat-list-item>
 
             <mat-list-item class="my-2" routerLink="orders">
               <span matListItemTitle class="font-medium flex items-center gap-2">
                 <mat-icon>local_shipping</mat-icon>
-                Ordini
+                <ng-container i18n="@@ordini">Ordini</ng-container>
               </span>
             </mat-list-item>
           </mat-nav-list>
