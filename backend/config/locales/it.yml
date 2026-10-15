@@ -41,6 +41,7 @@ it:
         product_id: "Prodotto"
     
       category:
+        products: "Prodotti"
         name: "Nome"
         description: "Descrizione"
     
@@ -62,6 +63,7 @@ it:
         product_id: "Prodotto"
 
       product:
+        order_items: "Ordini"
         <<: *common_timestamps
         name: "Nome"
         description: "Descrizione"
@@ -112,6 +114,8 @@ it:
       parameter_missing_detail: "Parametro mancante o vuoto: %{param}."
       conflict: "Operazione non consentita: la risorsa è collegata ad altri dati."
       unprocessable_entity: "I dati inviati non sono validi."
+      invalid_parameter: "Valore non ammesso per %{param}. Valori ammessi: %{allowed}."
+      cannot_delete_self: "Non puoi eliminare il tuo account dall'area admin: usa la cancellazione dell'account dal profilo."
 
     messages:
       address_created_successfully: "Indirizzo %{nickname} creato con successo."
@@ -148,12 +152,14 @@ it:
       category_updated_successfully: "Categoria %{name} aggiornata con successo."
       category_update_error: "Errore durante l'aggiornamento della categoria."
       category_deleted_successfully: "Categoria %{name} cancellata con successo."
+      category_delete_error: "Impossibile eliminare la categoria %{name}."
 
       product_created_successfully: "Prodotto %{name} creato con successo" 
       product_create_error: "Errore nella creazione del nuovo prodotto."
       product_updated_successfully: "Prodotto %{name} aggiornato con successo."
       product_update_error: "Errore durante l'aggiornamento del prodotto."
       product_deleted_successfully: "Prodotto %{name} cancellato con successo."
+      product_delete_error: "Impossibile eliminare il prodotto %{name}."
 
       order_created_successfully: "Ordine %{id} creato con successo."
       order_create_error: "Errore nella creazione del nuovo ordine."

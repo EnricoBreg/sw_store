@@ -47,4 +47,21 @@ class Api::V1::Admin::OrdersControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :unprocessable_entity
   end
+
+  test "GET /admin/orders sorts by an allowed column and rejects the others with 400" do
+    get api_v1_admin_orders_path, params: { order_by: "total_amount", order_direction: "desc" }, headers: auth_headers(@admin)
+    assert_response :ok
+    totals = json_response["data"].map { |order| order["total_amount"].to_d }
+    assert_equal totals.sort.reverse, totals
+
+    get api_v1_admin_orders_path, params: { order_by: "user_id" }, headers: auth_headers(@admin)
+    assert_response :bad_request
+  end
+
+  test "GET /admin/orders combines the customer search with the date filter" do
+    get api_v1_admin_orders_path, params: { q: "Carlo", from_date: 1.day.ago.to_date.iso8601 }, headers: auth_headers(@admin)
+
+    assert_response :ok
+    assert_equal users(:customer).orders.count, json_response["data"].size
+  end
 end

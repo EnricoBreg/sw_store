@@ -59,6 +59,7 @@ en:
         unit_price: "Unit price"
     
       category:
+        products: "Products"
         name: "Name"
         description: "Description"
     
@@ -74,6 +75,7 @@ en:
         unit_price: "Unit price"
 
       product:
+        order_items: "Orders"
         <<: *common_timestamps
         name: "Name"
         description: "Description"
@@ -122,6 +124,8 @@ en:
       parameter_missing_detail: "Missing or empty parameter: %{param}."
       conflict: "Operation not allowed: the resource is linked to other data."
       unprocessable_entity: "The submitted data is not valid."
+      invalid_parameter: "Value not allowed for %{param}. Allowed values: %{allowed}."
+      cannot_delete_self: "You cannot delete your own account from the admin area: delete it from your profile."
 
     messages:
       address_created_successfully: "Address %{nickname} created successfully."
@@ -158,12 +162,14 @@ en:
       category_updated_successfully: "Category %{name} updated successfully."
       category_update_error: "Error during the update of the category."
       category_deleted_successfully: "Category %{name} deleted successfully."
+      category_delete_error: "Unable to delete the category %{name}."
 
       product_created_successfully: "Product %{name} created successfully." 
       product_create_error: "Error during the creation of the new product."
       product_updated_successfully: "Product %{name} updated successfully."
       product_update_error: "Error during the update of the product."
       product_deleted_successfully: "Product %{name} deleted successfully."
+      product_delete_error: "Unable to delete the product %{name}."
 
       order_created_successfully: "Order %{id} created successfully."
       order_create_error: "Error during the creation of the new order."

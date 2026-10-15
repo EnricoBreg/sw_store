@@ -1,10 +1,13 @@
 class Api::V1::BaseController < ApplicationController
+  include Sortable
+
   # Gestione centralizzata delle eccezioni: ogni errore risponde nel formato standard di render_error.
   # Rails cerca il gestore partendo dall'ultimo rescue_from dichiarato, quindi StandardError va per primo.
   rescue_from StandardError, with: :render_internal_server_error
   rescue_from ArgumentError, ActiveRecord::UnknownAttributeReference, ActionDispatch::Http::Parameters::ParseError,
     with: :render_bad_request
   rescue_from ActionController::ParameterMissing, with: :render_parameters_missing
+  rescue_from Sortable::InvalidParameterError, with: :render_invalid_parameter
   rescue_from ActiveRecord::InvalidForeignKey, ActiveRecord::RecordNotUnique, with: :render_conflict
   rescue_from ActiveRecord::RecordNotFound, with: :render_not_found
   rescue_from ActiveRecord::RecordInvalid, with: :render_record_invalid
@@ -21,6 +24,10 @@ class Api::V1::BaseController < ApplicationController
       errors: [ I18n.t("api.errors.parameter_missing_detail", param: exception.param) ],
       status: :bad_request
     )
+  end
+
+  def render_invalid_parameter(exception)
+    render_error(message: :bad_request, errors: [ exception.message ], status: :bad_request)
   end
 
   def render_not_found(_exception)
@@ -44,6 +51,13 @@ class Api::V1::BaseController < ApplicationController
   def render_internal_server_error(exception)
     Rails.logger.error([ "#{exception.class}: #{exception.message}", *exception.backtrace ].join("\n"))
     render_error(message: :internal_server_error, status: :internal_server_error)
+  end
+
+  # Ricerca case-insensitive sul nome (parametro q). I caratteri jolly di LIKE (% e _) nel testo cercato
+  # vengono neutralizzati, così valgono come caratteri normali.
+  def search_by_name(scope)
+    pattern = "%#{ActiveRecord::Base.sanitize_sql_like(params[:q].to_s.strip)}%"
+    scope.where(scope.arel_table[:name].matches(pattern))
   end
 
   def serialize_collection(collection, serializer_class)

@@ -1,16 +1,11 @@
 class Api::V1::Admin::ProductsController < Api::V1::AdminController
+  SORTABLE_COLUMNS = %w[id name price discount_percentage stock_quantity active created_at updated_at].freeze
+
   before_action :set_product, only: %i[ show update destroy ]
 
   # GET /admin/products
   def index
-    # TODO: implementare filtri
-    if params[:order_by].present?
-      order_by = params[:order_by]
-      order_direction = params[:order_direction] || "asc"
-      products = Product.all.order("#{order_by} #{order_direction}")
-    else
-      products = Product.all.order(created_at: :desc)
-    end
+    products = apply_sorting(Product.all, allowed: SORTABLE_COLUMNS, default: { created_at: :desc })
     products = search_by_name(products) if params[:q].present?
     products = products.where(category_id: params[:category_id]) if params[:category_id].present?
 
@@ -54,8 +49,7 @@ class Api::V1::Admin::ProductsController < Api::V1::AdminController
     if @product.update(product_params)
       render_success(
         message: I18n.t("api.messages.product_updated_successfully", name: @product.name),
-        data: serialize_resource(@product, ProductSerializer),
-        status: :created
+        data: serialize_resource(@product, ProductSerializer)
       )
     else
       render_error(
@@ -68,11 +62,18 @@ class Api::V1::Admin::ProductsController < Api::V1::AdminController
 
   # DELETE /admin/products/1
   def destroy
-    @product.destroy!
-    render_success(
-      message: I18n.t("api.messages.product_deleted_successfully", name: @product.name),
-      status: :ok
-    )
+    # Un prodotto presente in ordini non si elimina (restrict_with_error): 409 con il motivo.
+    if @product.destroy
+      render_success(
+        message: I18n.t("api.messages.product_deleted_successfully", name: @product.name)
+      )
+    else
+      render_error(
+        message: I18n.t("api.messages.product_delete_error", name: @product.name),
+        errors: @product.errors.full_messages,
+        status: :conflict
+      )
+    end
   end
 
   private
@@ -83,9 +84,5 @@ class Api::V1::Admin::ProductsController < Api::V1::AdminController
 
   def product_params
     params.expect(product: [ :name, :description, :price, :discount_percentage, :stock_quantity, :active, :category_id, :image ])
-  end
-
-  def search_by_name(scope)
-    scope.where("name ILIKE ?", "%#{params[:q]}%")
   end
 end

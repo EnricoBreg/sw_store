@@ -1,7 +1,7 @@
 # Analisi dei requisiti – SW Store
 
 Stato del progetto rispetto a `docs/Progetto_di_sistemi_web_Specifiche.pdf`.
-Ultimo aggiornamento: 2026-10-15 (Fase 2: chiusi T0, T1, T2, T2-FE, T3, T4, T5, T9, T10a, T11a).
+Ultimo aggiornamento: 2026-10-15 (Fase 2: chiusi T0, T1, T2, T2-FE, T3, T4, T5, T8, T9, T10a, T11a).
 Path backend relativi a `backend/app/` salvo indicazione, path frontend relativi a `frontend/src/app/`. Tutte le rotte hanno prefisso `/api/v1`.
 
 Legenda stato: **fatto** / **parziale** / **mancante**.
@@ -10,7 +10,7 @@ Legenda stato: **fatto** / **parziale** / **mancante**.
 
 | Comando | Esito |
 |---|---|
-| `bin/rails test` | Dopo T3: 121 test, 398 asserzioni, tutti verdi |
+| `bin/rails test` | Dopo T8: 146 test, 476 asserzioni, tutti verdi |
 | `bin/rubocop` | 88 file, 0 offese |
 | `brakeman` | Dopo T2: 0 warning (il Redirect della baseline è risolto) |
 | `npx ng test --watch=false` | Dopo T11a/T2-FE: 72/72 verdi |
@@ -33,15 +33,15 @@ Legenda stato: **fatto** / **parziale** / **mancante**.
 | S3 | (risolto in T2) IDOR sugli ordini: `set_order` usa `Order.find`, quindi chiunque legge, modifica e annulla ordini di altri utenti | alta | backend | `controllers/api/v1/users/orders_controller.rb` | |
 | S4 | (T2: JWT spostato nel fragment; CSRF dell'avvio lasciato disattivato per scelta, rischio residuo documentato in `API.md`) CSRF della request phase OmniAuth disattivato; JWT passato in query string nel redirect | alta | backend | `config/initializers/oauth.rb`, `omniauth_callbacks_controller.rb` | |
 | S5 | (risolto in T2) `ApplicationController#debug_params` logga `params.inspect`, password comprese | bassa | backend | `controllers/application_controller.rb` | |
-| S6 | `db/seeds.rb` esegue `destroy_all` su utenti, categorie e prodotti: `db:seed` cancella i dati di dev | media | backend | `db/seeds.rb` | Da **non** eseguire finché il seed non viene riscritto |
+| S6 | (risolto in T8) `db/seeds.rb` eseguiva `destroy_all` su utenti, categorie e prodotti: `db:seed` cancella i dati di dev | media | backend | `db/seeds.rb` | Da **non** eseguire finché il seed non viene riscritto |
 
 ## Requisiti funzionali obbligatori (§4)
 
 | # | Requisito | Stato | Parte | File coinvolti | Cosa manca |
 |---|---|---|---|---|---|
-| 4.1a | `GET /products` con filtro/ricerca/paginazione | fatto | backend | `controllers/api/v1/products_controller.rb` | Supporta `q`, `category_id`, `page`/`limit`. Restituisce anche i prodotti inattivi (28 su 56 in dev) |
-| 4.1b | `GET /products/:id` | fatto | backend | idem | Restituisce anche i prodotti inattivi |
-| 4.1c | `GET /categories` | parziale | backend | `controllers/api/v1/categories_controller.rb:4` | `?q=` dà 500 (`search_by_name` non definito) |
+| 4.1a | `GET /products` con filtro/ricerca/paginazione | fatto | backend | `controllers/api/v1/products_controller.rb`, `concerns/sortable.rb` | `q`, `category_id`, `page`/`limit`, ordinamento con whitelist; solo prodotti attivi (T8) |
+| 4.1b | `GET /products/:id` | fatto | backend | idem | Prodotto inattivo → 404 (T8) |
+| 4.1c | `GET /categories` | fatto (T8) | backend | `controllers/api/v1/categories_controller.rb` | `?q=` corretto; `?all=true` restituisce tutte le categorie. Il frontend deve ancora usarlo |
 | 4.1d | ProductService su API reali, nessun dato hardcoded | parziale | frontend | `core/http/products-api.service.ts`, `core/services/products.service.ts`, `pages/products-grid`, `components/categories-list` | Nessun dato hardcoded. Ricerca `q` (sincronizzata con l'URL), reset pagina e pannello errore sistemati in T9. Resta: categorie limitate alle prime 10 (serve modifica BE) |
 | 4.2a | Modelli Cart / CartItem | fatto (T4) | backend | `models/cart.rb`, `models/cart_item.rb`, `db/migrate/20261015200000_add_unique_indexes_to_carts.rb` | – |
 | 4.2b | `GET /cart`, `POST /cart/items`, `PATCH`/`DELETE /cart/items/:id` | fatto (T4) | backend | `users/cart_items_controller.rb`, `config/routes.rb:43` | `:id` del CartItem come da specifiche; 404 su righe altrui; validazioni di stock e prodotto attivo; `items_count` e `total_amount` nel carrello. Il frontend deve adeguarsi (T6) |
@@ -74,7 +74,7 @@ Legenda stato: **fatto** / **parziale** / **mancante**.
 
 | # | Funzionalità | Stato | Parte | File coinvolti | Cosa manca |
 |---|---|---|---|---|---|
-| 7.1 | Area admin prodotti (ruolo admin + guard) | parziale | entrambi | `api/v1/admin/*`, `pages/admin/*`, `components/product-form`, `core/guards/admin*` | BE: PUT risponde 201; `order_by` senza whitelist (500); delete di elementi referenziati dà 500; delete categoria a cascata sui prodotti; l'admin può eliminare sé stesso. FE: eliminazione prodotto non implementata, dashboard placeholder, label del form non i18n |
+| 7.1 | Area admin prodotti (ruolo admin + guard) | parziale | entrambi | `api/v1/admin/*`, `pages/admin/*`, `components/product-form`, `core/guards/admin*` | BE: rifinito in T8 (PUT 200, whitelist, 409 su elementi referenziati, niente cascata, admin non può eliminare sé stesso). FE: eliminazione prodotto non implementata, dashboard placeholder, label del form non i18n |
 | 7.2 | Storico ordini avanzato (filtri data/stato, dettaglio) | parziale | entrambi | `users/orders_controller.rb`, `pages/my-orders-page`, `pages/order-detail-page` | Dettaglio completo. Filtri lato utente assenti (BE e FE) |
 | 7.3 | Wishlist | parziale | entrambi | `users/wishlist*_controller.rb`, `core/services/wishlists.service.ts` | BE: niente unique/validazione, POST risponde 200. FE: localStorage e side effect come il carrello (pulsante nascosto agli ospiti dal T9) |
 | 7.4 | Coupon | mancante | entrambi | – | Tutto |
@@ -85,7 +85,7 @@ Legenda stato: **fatto** / **parziale** / **mancante**.
 
 | # | Requisito | Stato | Parte | File coinvolti | Cosa manca |
 |---|---|---|---|---|---|
-| 8a | Seed iniziale prodotti | parziale | backend | `db/seeds.rb` | Distruttivo (S6), non idempotente, metà dei prodotti inattivi, nessuna immagine |
+| 8a | Seed iniziale prodotti | fatto (T8) | backend | `db/seeds.rb`, `db/seeds/images/*` | Idempotente e non distruttivo: 5 categorie, 12 prodotti attivi con immagini, utenti demo ed E2E (credenziali in `API.md`, "Dati demo") |
 | 8b | README principale | mancante | PM + entrambi | `README.md` (contiene la master key), `backend/README.md` (template) | Prerequisiti, setup DB, avvio |
 | 8c | Documento di architettura | mancante | PM | – | `docs/ARCHITETTURA.md` |
 | 8d | docker-compose (opzionale) | mancante | entrambi | `backend/Dockerfile` | Il Dockerfile installa sqlite e non libpq; compose assente |
@@ -108,6 +108,7 @@ Legenda stato: **fatto** / **parziale** / **mancante**.
 | T4 | Carrello e checkout robusti (backend) | **fatto** |
 | T6 | Carrello frontend su nuovo contratto | in corso (carrello FE non funzionante fino ad allora) |
 | T3 | Errori uniformi (backend) | **fatto** |
+| T8 | Prodotti attivi, categorie (`q`, `all`), whitelist ordinamento, rifiniture admin, seed non distruttivo | **fatto** |
 
 Problemi segnalati, da includere nei task successivi:
 - Admin ordini: il link "Modifica" punta a `orders/:id/edit`, rotta inesistente (task Area admin).

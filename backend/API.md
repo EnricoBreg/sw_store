@@ -63,11 +63,18 @@ Si usa **409 Conflict** per i vincoli di integrità perché la richiesta è corr
 
 ### Paginazione
 
-Gli endpoint di lista accettano `page` e `limit` in query string e restituiscono in `meta` i dati di Pagy (`@pagy.data_hash`: pagina corrente, totale elementi, ultima pagina, ecc.).
+Gli endpoint di lista accettano `page` e `limit` in query string e restituiscono in `meta` i dati di Pagy (`count`, `limit`, `page`, `previous`, `next`, `pages`, `previous_url`, `next_url`). `limit`: default 10, massimo 30. Eccezione: `GET /categories?all=true` restituisce tutte le categorie senza paginazione.
 
-### Ordinamento (solo endpoint admin di lista)
+### Ordinamento
 
-`order_by` (nome di colonna) e `order_direction` (`asc` | `desc`, default `asc`).
+Gli endpoint che lo prevedono accettano `order_by` (uno dei valori ammessi indicati per ogni endpoint) e `order_direction` (`asc` | `desc`, default `asc`). Un valore non ammesso dà **400** (`bad_request`), con i valori ammessi in `errors`.
+
+| Endpoint | `order_by` ammessi | Default |
+| -------- | ------------------ | ------- |
+| `GET /products` | `name`, `price`, `created_at` | `name asc` |
+| `GET /admin/products` | `id`, `name`, `price`, `discount_percentage`, `stock_quantity`, `active`, `created_at`, `updated_at` | `created_at desc` |
+| `GET /admin/users` | `id`, `first_name`, `last_name`, `email`, `admin`, `created_at` | `last_name asc, first_name asc` |
+| `GET /admin/orders` | `id`, `code`, `status`, `total_amount`, `created_at`, `updated_at` | `created_at desc` |
 
 ## Oggetti restituiti
 
@@ -242,9 +249,12 @@ Flusso (il frontend non chiama questi endpoint con HttpClient, ma con una naviga
 | GET    | `/categories`      | Pubblico | Lista categorie       |
 | GET    | `/categories/:id`  | Pubblico | Dettaglio categoria   |
 
-- `GET /products`: query `q` (ricerca sul nome, case-insensitive), `category_id`, `page`, `limit`. Ordinati per nome. **200:** `data: [Product]`, `meta`.
-- `GET /products/:id`: **200:** `data: Product`. **404** se non esiste.
-- `GET /categories`: query `q`, `page`, `limit`. Ordinate per nome. **200:** `data: [Category]`, `meta`.
+Il catalogo pubblico mostra **solo i prodotti attivi** (`active: true`). I prodotti inattivi sono visibili solo dagli endpoint `/admin/products`.
+
+- `GET /products`: query `q` (ricerca sul nome, case-insensitive), `category_id`, `order_by`/`order_direction` (vedi *Ordinamento*), `page`, `limit`. **200:** `data: [Product]`, `meta`. **400:** `order_by` non ammesso.
+- `GET /products/:id`: **200:** `data: Product`. **404** se non esiste o non è attivo.
+- `GET /categories`: query `q` (ricerca sul nome, case-insensitive), `page`, `limit`. Ordinate per nome. **200:** `data: [Category]`, `meta`.
+  - `GET /categories?all=true`: tutte le categorie in un'unica risposta, senza paginazione (`page` e `limit` ignorati; `q` ancora applicabile). `meta: { "count": N }`. Pensato per menu e select del frontend.
 - `GET /categories/:id`: **200:** `data: Category`. **404** se non esiste.
 
 ---
@@ -349,10 +359,11 @@ Tutti gli endpoint `/admin/*` richiedono livello **Admin**.
 | PUT/PATCH | `/admin/products/:id` | Modifica    |
 | DELETE | `/admin/products/:id`   | Cancellazione |
 
-- `GET`: query `q` (nome), `category_id`, `order_by`, `order_direction`, `page`, `limit`. Default: più recenti prima. **200:** `data: [Product]`, `meta`.
+- `GET`: query `q` (nome), `category_id`, `order_by`, `order_direction` (vedi *Ordinamento*), `page`, `limit`. Include anche i prodotti inattivi. **200:** `data: [Product]`, `meta`. **400:** `order_by` non ammesso.
 - **Payload** (create/update): `{ "product": { "name", "description", "price", "discount_percentage", "stock_quantity", "active", "category_id", "image" } }`. Per caricare `image` serve `multipart/form-data`.
-  - Validazioni: `name` obbligatorio; `description` obbligatoria, almeno 10 caratteri; `price` ≥ 0; `discount_percentage` 0–100 (opzionale); `stock_quantity` ≥ 0.
-- Risposte: create **201** `product_created_successfully`; update **201** `product_updated_successfully`; delete **200** `product_deleted_successfully`. Errori **422** `product_create_error` / `product_update_error`.
+  - Validazioni: `name` obbligatorio; `description` obbligatoria, almeno 10 caratteri; `price` ≥ 0; `discount_percentage` 0–100 (opzionale); `stock_quantity` ≥ 0. `active` è opzionale: default `true`.
+- Risposte: create **201** `product_created_successfully`; update **200** `product_updated_successfully`; delete **200** `product_deleted_successfully`. Errori **422** `product_create_error` / `product_update_error`.
+- Delete di un prodotto presente in ordini: **409** `product_delete_error`, `errors: [...]`. Il prodotto resta; per toglierlo dal catalogo si imposta `active: false`. Le righe di carrelli e wishlist che lo contengono vengono rimosse insieme al prodotto.
 
 ### Categorie
 
@@ -366,7 +377,8 @@ Tutti gli endpoint `/admin/*` richiedono livello **Admin**.
 
 - `GET`: query `q`, `page`, `limit`.
 - **Payload:** `{ "category": { "name", "description" } }` (`name` obbligatorio e unico).
-- Risposte: create **201** `category_created_successfully`; update **200** (messaggio `category_created_successfully`, vedi *Problemi noti*); delete **200** `category_deleted_successfully`. Errori **422** `category_create_error` / `category_update_error`.
+- Risposte: create **201** `category_created_successfully`; update **200** `category_updated_successfully`; delete **200** `category_deleted_successfully`. Errori **422** `category_create_error` / `category_update_error`.
+- Delete di una categoria che contiene prodotti: **409** `category_delete_error`, `errors: [...]`. Prima vanno spostati o eliminati i prodotti: non c'è più l'eliminazione a cascata.
 
 ### Utenti
 
@@ -381,7 +393,9 @@ La creazione avviene solo tramite `/auth/signup`.
 
 - `GET`: query `q` (nome, cognome, email, telefono), `order_by`, `order_direction`, `page`, `limit`. Default: ordinati per cognome e nome. **200:** `data: [User]`, `meta`.
 - **Payload** (update): `{ "user": { "first_name", "last_name", "email", "number", "password", "password_confirmation", "date_of_birth" } }`.
+- `GET`: `order_by` vedi *Ordinamento*; **400** se non ammesso.
 - Risposte: `user_updated_successfully`, `user_deleted_successfully` (200); errori `user_update_error`, `user_delete_error` (422).
+- Un admin non può eliminare il proprio account da qui: **403** `cannot_delete_self`. Per eliminare il proprio account si usa `DELETE /auth/me`. 403 perché la richiesta è valida, ma l'azione non è permessa a chi la esegue.
 
 ### Ordini
 
@@ -397,13 +411,30 @@ La creazione avviene solo tramite `/auth/signup`.
   - `status`;
   - `from_date`, `to_date` (date, estremi inclusi);
   - `min_total_amount`, `max_total_amount`;
-  - `order_by`, `order_direction`, `page`, `limit`.
-  - Default: più recenti prima. **200:** `data: [Order]`, `meta`.
+  - `order_by`, `order_direction` (vedi *Ordinamento*), `page`, `limit`.
+  - Default: più recenti prima. **200:** `data: [Order]`, `meta`. **400:** data non interpretabile o `order_by` non ammesso.
 - **Payload** (update): `{ "order": { "first_name", "last_name", "street", "city", "zip_code", "country", "stripe_payment_token", "status", "created_at" } }`.
 - `status` segue le *Transizioni di stato* (sezione Order): una transizione non consentita o uno stato sconosciuto dà **422**. Passare a `cancelled` ripristina lo stock.
 - Risposte: update **200** `order_updated_successfully`, `data: Order`; delete (annullamento, solo da `pending`/`paid`, ripristina lo stock) **200** `order_deleted_successfully`, `data: Order`. Errori **422** `order_update_error`.
 
 ---
+
+## Dati demo (`bin/rails db:seed`)
+
+Il seed (`db/seeds.rb`) è **idempotente e non distruttivo**: crea solo categorie, prodotti e utenti mancanti (cercandoli per nome o email) e non modifica né cancella dati esistenti. Si può rieseguire in qualsiasi momento.
+
+- Categorie: Elettronica, Videogiochi, Intrattenimento, Casa.
+- 12 prodotti attivi con immagine (file in `db/seeds/images/`, allegati con Active Storage).
+- Utenti:
+
+| Ruolo | Email | Password |
+| ----- | ----- | -------- |
+| Admin | `admin@swstore.com` | `password123` |
+| Cliente demo | `cliente@swstore.com` | `password123` |
+| Utente E2E | `e2e.user@swstore.test` | `E2eTest-2026!` |
+| Utente E2E per i test di logout (il logout revoca tutti i token dell'utente) | `e2e.logout@swstore.test` | `E2eTest-2026!` |
+
+Sono credenziali di sviluppo, da non usare in produzione.
 
 ## Altro
 
@@ -418,6 +449,4 @@ La creazione avviene solo tramite `/auth/signup`.
 Comportamenti attuali del backend che differiscono da quanto ci si aspetterebbe. Vanno risolti con task dedicati, poi questa sezione va aggiornata.
 
 1. **`GET /orders`:** il filtro `status` non viene applicato (il risultato di `where` è scartato).
-2. **Admin, `order_by` / `order_direction`:** interpolati direttamente nella clausola SQL `ORDER BY` senza whitelist.
-3. **`PUT /admin/products/:id`** risponde `201` invece di `200`; **`PUT /admin/categories/:id`** usa il messaggio `category_created_successfully`.
-4. **OAuth, request phase:** `POST /auth/google_oauth2` non verifica un token CSRF. Rischio accettato e basso, vedi *OAuth Google*.
+2. **OAuth, request phase:** `POST /auth/google_oauth2` non verifica un token CSRF. Rischio accettato e basso, vedi *OAuth Google*.
