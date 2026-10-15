@@ -1,7 +1,7 @@
 # Analisi dei requisiti – SW Store
 
 Stato del progetto rispetto a `docs/Progetto_di_sistemi_web_Specifiche.pdf`.
-Ultimo aggiornamento: 2026-10-15 (Fase 2: chiuso T5).
+Ultimo aggiornamento: 2026-10-15 (Fase 2: chiusi T0, T5).
 Path backend relativi a `backend/app/` salvo indicazione, path frontend relativi a `frontend/src/app/`. Tutte le rotte hanno prefisso `/api/v1`.
 
 Legenda stato: **fatto** / **parziale** / **mancante**.
@@ -28,7 +28,7 @@ Legenda stato: **fatto** / **parziale** / **mancante**.
 
 | # | Problema | Gravità | Parte | File | Note |
 |---|---|---|---|---|---|
-| S1 | (parziale: rimossa dal README, rotazione in corso) Master key Rails in chiaro nel `README.md` di root (commit `f0413a3`, già su `origin/main` e `origin/development`): decifra `credentials.yml.enc`, quindi espone il segreto JWT e il client secret Google | critica | repo | `README.md`, `backend/config/credentials.yml.enc` | Serve la decisione dell'utente: rotazione dei segreti e rimozione dal README. Riscrivere la history è un'operazione distruttiva. |
+| S1 | (risolto in T0: rimossa dal README, segreti ruotati; la vecchia chiave resta nella history) Master key Rails in chiaro nel `README.md` di root (commit `f0413a3`, già su `origin/main` e `origin/development`): decifra `credentials.yml.enc`, quindi espone il segreto JWT e il client secret Google | critica | repo | `README.md`, `backend/config/credentials.yml.enc` | Serve la decisione dell'utente: rotazione dei segreti e rimozione dal README. Riscrivere la history è un'operazione distruttiva. |
 | S2 | Account takeover OAuth: `uid: auth.id` è sempre nil, quindi ogni login Google entra nell'account Google già esistente con uid nil | critica | backend | `models/user.rb:24`, `auth/omniauth_callbacks_controller.rb` | In dev esiste già un utente con uid nil |
 | S3 | IDOR sugli ordini: `set_order` usa `Order.find`, quindi chiunque legge, modifica e annulla ordini di altri utenti | alta | backend | `controllers/api/v1/users/orders_controller.rb` | |
 | S4 | CSRF della request phase OmniAuth disattivato; JWT passato in query string nel redirect | alta | backend | `config/initializers/oauth.rb`, `omniauth_callbacks_controller.rb` | |
@@ -97,6 +97,6 @@ Legenda stato: **fatto** / **parziale** / **mancante**.
 
 | Task | Descrizione | Stato |
 |---|---|---|
-| T0 | Rotazione credentials (master key, `secret_key_base`, JWT, secret Google) | in attesa dell'esecuzione dello script da parte dell'utente |
+| T0 | Rotazione credentials (master key, `secret_key_base`, JWT, secret Google) | **fatto** (resta all'utente: revocare il vecchio secret sulla Google Console) |
 | T1 | Infrastruttura test backend | da fare (dopo T0) |
 | T5 | Basi HTTP del frontend | **fatto** |
