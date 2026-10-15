@@ -20,7 +20,8 @@
       "Bash(npx ng build:*)",
       "Bash(npm test:*)",
       "Bash(npm run build:*)",
-      "Bash(npm run i18n:*)"
+      "Bash(npm run i18n:*)",
+	  "mcp__playwright"
     ]
   }
 }
