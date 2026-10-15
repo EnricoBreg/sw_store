@@ -52,5 +52,8 @@ module Backend
     # di conseguenza la chiamata fallisce, ma funziona correttamente.
     config.middleware.use ActionDispatch::Cookies
     config.middleware.use ActionDispatch::Session::CookieStore
+
+    # URL della SPA Angular, usato per i redirect al termine del login con Google.
+    config.x.frontend_url = ENV.fetch("FRONTEND_URL", "http://localhost:4200")
   end
 end

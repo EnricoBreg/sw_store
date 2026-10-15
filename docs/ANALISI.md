@@ -1,7 +1,7 @@
 # Analisi dei requisiti – SW Store
 
 Stato del progetto rispetto a `docs/Progetto_di_sistemi_web_Specifiche.pdf`.
-Ultimo aggiornamento: 2026-10-15 (Fase 2: chiusi T0, T1, T5, T9, T10a).
+Ultimo aggiornamento: 2026-10-15 (Fase 2: chiusi T0, T1, T2, T5, T9, T10a).
 Path backend relativi a `backend/app/` salvo indicazione, path frontend relativi a `frontend/src/app/`. Tutte le rotte hanno prefisso `/api/v1`.
 
 Legenda stato: **fatto** / **parziale** / **mancante**.
@@ -10,9 +10,9 @@ Legenda stato: **fatto** / **parziale** / **mancante**.
 
 | Comando | Esito |
 |---|---|
-| `bin/rails test` | Dopo T1: 24 test, 67 asserzioni, tutti verdi |
+| `bin/rails test` | Dopo T2: 72 test, 202 asserzioni, tutti verdi |
 | `bin/rubocop` | 88 file, 0 offese |
-| `brakeman` | 1 warning (Redirect, `auth/omniauth_callbacks_controller.rb:8`), come la baseline |
+| `brakeman` | Dopo T2: 0 warning (il Redirect della baseline è risolto) |
 | `npx ng test --watch=false` | Dopo T10a: 61/61 verdi |
 | `npx ng build` | ok (it + en); warning sul budget (initial 719 kB > 500 kB) |
 | `npx playwright test` | Dopo T10a: 9/9 verdi; `npm run e2e:i18n` 3/3 verdi |
@@ -29,10 +29,10 @@ Legenda stato: **fatto** / **parziale** / **mancante**.
 | # | Problema | Gravità | Parte | File | Note |
 |---|---|---|---|---|---|
 | S1 | (risolto in T0: rimossa dal README, segreti ruotati; la vecchia chiave resta nella history) Master key Rails in chiaro nel `README.md` di root (commit `f0413a3`, già su `origin/main` e `origin/development`): decifra `credentials.yml.enc`, quindi espone il segreto JWT e il client secret Google | critica | repo | `README.md`, `backend/config/credentials.yml.enc` | Serve la decisione dell'utente: rotazione dei segreti e rimozione dal README. Riscrivere la history è un'operazione distruttiva. |
-| S2 | Account takeover OAuth: `uid: auth.id` è sempre nil, quindi ogni login Google entra nell'account Google già esistente con uid nil | critica | backend | `models/user.rb:24`, `auth/omniauth_callbacks_controller.rb` | In dev esiste già un utente con uid nil |
-| S3 | IDOR sugli ordini: `set_order` usa `Order.find`, quindi chiunque legge, modifica e annulla ordini di altri utenti | alta | backend | `controllers/api/v1/users/orders_controller.rb` | |
-| S4 | CSRF della request phase OmniAuth disattivato; JWT passato in query string nel redirect | alta | backend | `config/initializers/oauth.rb`, `omniauth_callbacks_controller.rb` | |
-| S5 | `ApplicationController#debug_params` logga `params.inspect`, password comprese | bassa | backend | `controllers/application_controller.rb` | |
+| S2 | (risolto in T2) Account takeover OAuth: `uid: auth.id` è sempre nil, quindi ogni login Google entra nell'account Google già esistente con uid nil | critica | backend | `models/user.rb:24`, `auth/omniauth_callbacks_controller.rb` | In dev esiste già un utente con uid nil |
+| S3 | (risolto in T2) IDOR sugli ordini: `set_order` usa `Order.find`, quindi chiunque legge, modifica e annulla ordini di altri utenti | alta | backend | `controllers/api/v1/users/orders_controller.rb` | |
+| S4 | (T2: JWT spostato nel fragment; CSRF dell'avvio lasciato disattivato per scelta, rischio residuo documentato in `API.md`) CSRF della request phase OmniAuth disattivato; JWT passato in query string nel redirect | alta | backend | `config/initializers/oauth.rb`, `omniauth_callbacks_controller.rb` | |
+| S5 | (risolto in T2) `ApplicationController#debug_params` logga `params.inspect`, password comprese | bassa | backend | `controllers/application_controller.rb` | |
 | S6 | `db/seeds.rb` esegue `destroy_all` su utenti, categorie e prodotti: `db:seed` cancella i dati di dev | media | backend | `db/seeds.rb` | Da **non** eseguire finché il seed non viene riscritto |
 
 ## Requisiti funzionali obbligatori (§4)
@@ -49,11 +49,11 @@ Legenda stato: **fatto** / **parziale** / **mancante**.
 | 4.2d | Carrello guest (plus) | mancante | entrambi | – | Non supportato |
 | 4.3a | Modelli Order / OrderItem | fatto | backend | `models/order.rb`, `models/order_item.rb` | Transizioni di stato non vincolate (es. cancelled→pending); messaggio di errore non tradotto |
 | 4.3b | `POST /orders` dal carrello, svuota carrello | parziale | backend | `users/orders_controller.rb:24-70`, `serializers/order_item_serializer.rb` | 500 invece di 422 con dati mancanti; `decrement!` porta lo stock sotto zero; nessun controllo su active; `total_price` dell'item scontato due volte; carrello vuoto: 400 senza `errors` |
-| 4.3c | `GET /orders`, `GET /orders/:id` solo dell'utente | parziale | backend | `users/orders_controller.rb` | IDOR (S3). Filtro `status` ignorato. Annullamento senza controllo di stato e senza ripristino dello stock |
+| 4.3c | `GET /orders`, `GET /orders/:id` solo dell'utente | parziale | backend | `users/orders_controller.rb`, `models/order.rb` | Fatto in T2: scoping sull'utente (404 sugli ordini altrui), transizioni di stato vincolate, annullamento con ripristino dello stock. Resta: filtro `status` ignorato (7.2) |
 | 4.3d | Checkout: Reactive Forms + OrderService, loading, conferma, errore con retry | parziale | frontend | `pages/checkout-page`, `core/services/orders.service.ts` | Loading solo globale. Dopo il successo solo un toast e redirect a /products, nessuna conferma. Nessun "Riprova". L'errore resta visibile quando si torna sulla pagina. Il carrello non viene ricaricato dal server |
 | 4.3e | Pagina lista ordini | parziale | frontend | `pages/my-orders-page`, `pages/order-detail-page`, `core/http/orders-api.service.ts` | Paginatore dentro il `@for`; `paginationMeta` mai impostato; viene inviato `per_page` invece di `limit` |
-| 4.4a | `POST /auth/login`, `POST /auth/logout`, `GET /auth/me` | parziale | backend | `auth/sessions_controller.rb`, `config/initializers/devise.rb`, `api/v1/current_user_controller.rb` | Login e me ok. Logout solo `DELETE` (le specifiche chiedono `POST`). `PUT /auth/me` dà 500 (`exept`, parametri errati) |
-| 4.4b | Login Google OAuth2 | parziale | backend | `models/user.rb`, `auth/omniauth_callbacks_controller.rb` | S2, S4. Un utente già registrato con la stessa email non riesce ad accedere con Google. URL frontend hardcoded |
+| 4.4a | `POST /auth/login`, `POST /auth/logout`, `GET /auth/me` | fatto (T2) | backend | `auth/sessions_controller.rb`, `config/initializers/devise.rb`, `api/v1/current_user_controller.rb` | `POST /auth/logout` aggiunto (DELETE resta); `PUT /auth/me` corretto (cambio email/password richiede `current_password`) |
+| 4.4b | Login Google OAuth2 | parziale | entrambi | `models/user.rb`, `auth/omniauth_callbacks_controller.rb`, `pages/auth-callback` | BE fatto in T2 (uid corretto, collegamento per email verificata, token nel fragment, `FRONTEND_URL`). FE: leggere il token dal fragment (T2-FE) |
 | 4.4c | Login, token, HttpInterceptor | parziale | frontend | `pages/login-page.ts/`, `core/services/auth.service.ts`, `core/http/interceptors/*` | fatto (T5, T9): interceptor, signup con `password_confirmation`, `date_of_birth` e validator di uguaglianza |
 | 4.4d | Route guard | parziale | frontend | `core/guards/*`, `app.routes.ts` | `adminGuard` corretto in T9 (ospite → /login, non admin → /forbidden). Manca il guard su `/my-orders/:orderId` (T7) |
 
@@ -63,7 +63,7 @@ Legenda stato: **fatto** / **parziale** / **mancante**.
 |---|---|---|---|---|---|
 | 5a | Rails API mode, DB relazionale | fatto | backend | `config/application.rb`, `config/database.yml` | – |
 | 5b | Validazioni di base sui modelli | parziale | backend | `models/*` | CartItem, WishlistItem; `Product.active` senza default; messaggi custom non tradotti |
-| 5c | Gestione errori: status coerenti + JSON con messaggio | parziale | backend | `api/v1/base_controller.rb`, `concerns/authorization.rb`, `concerns/api_responses.rb` | Mancano 500 generico, `InvalidForeignKey`, `ArgumentError`, `UnknownAttributeReference`. `ParameterMissing` dovrebbe dare 400. 401/403 in formato diverso e solo in italiano. `AddressSerializer` mancante: tutti gli `/addresses` danno 500 |
+| 5c | Gestione errori: status coerenti + JSON con messaggio | parziale | backend | `api/v1/base_controller.rb`, `concerns/authorization.rb`, `concerns/api_responses.rb` | Mancano 500 generico, `InvalidForeignKey`, `ArgumentError`, `UnknownAttributeReference`. `ParameterMissing` dovrebbe dare 400. 401/403 in formato diverso e solo in italiano. `AddressSerializer` aggiunto in T2 |
 | 5d | Test: ≥1 test di modello e ≥1 request test | fatto (T1) | backend | `test/test_helper.rb`, `test/fixtures/*`, `test/models/{product,order}_test.rb`, `test/controllers/api/v1/products_controller_test.rb`, `test/controllers/auth/sessions_controller_test.rb` | – (i task successivi aggiungono i test dei bug che correggono) |
 | 6a | Nessun dato hardcoded per prodotti/carrello/ordini | parziale | frontend | `core/state/*` | Carrello e wishlist usano localStorage come fonte di verità |
 | 6b | Servizi dedicati | fatto | frontend | `core/http/*`, `core/services/*` | – |
@@ -102,4 +102,5 @@ Legenda stato: **fatto** / **parziale** / **mancante**.
 | T5 | Basi HTTP del frontend | **fatto** |
 | T9 | Catalogo e auth (parte frontend): ricerca, paginazione, signup, adminGuard, wishlist ospiti | **fatto** (lista completa categorie in attesa del BE) |
 | T10a | i18n frontend (selettore lingua, testi, paginatore, pipe) | **fatto** |
-| T2 | Sicurezza e auth backend | in corso |
+| T2 | Sicurezza e auth backend | **fatto** |
+| T2-FE | Adeguamento frontend a T2 (token OAuth nel fragment, POST logout) | da fare |

@@ -8,18 +8,18 @@ class Api::V1::CurrentUserController < Api::V1::AuthenticatedController
 
   # PUT /auth/me
   def update
-    # Se l'utente durante la modifica dei suoi dati, fornisce la password,
-    # allora si aggiorna anche quella, altrimenti si procede con un normale update.
-    # Devise mette a disposizione un helper update_with_password, per gestire
-    # facilmente il cambio password.
+    # La modifica di password o email richiede la password attuale (current_password):
+    # Devise mette a disposizione l'helper update_with_password, che la verifica.
+    # Gli altri dati si aggiornano con un normale update.
+    attributes = user_params
 
-    update_successfull = if user_params[:password].present?
-      current_user.update_with_password(user_params)
+    update_successful = if requires_current_password?(attributes)
+      current_user.update_with_password(attributes)
     else
-      current_user.update(user_params.exept(:current_password))
+      current_user.update(attributes.except(:current_password, :password, :password_confirmation))
     end
 
-    if update_successfull
+    if update_successful
       render_success(
         message: :info_updated_successfully,
         data: serialize_resource(current_user, UserSerializer)
@@ -50,6 +50,10 @@ class Api::V1::CurrentUserController < Api::V1::AuthenticatedController
 
   private
   def user_params
-    params.expect(user: [ :name, :email, :password, :password_confirmation, :current_password  ])
+    params.expect(user: [ :first_name, :last_name, :email, :number, :date_of_birth, :password, :password_confirmation, :current_password ])
+  end
+
+  def requires_current_password?(attributes)
+    attributes[:password].present? || (attributes.key?(:email) && attributes[:email] != current_user.email)
   end
 end

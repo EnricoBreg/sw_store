@@ -49,11 +49,71 @@ class OrderTest < ActiveSupport::TestCase
   end
 
   test "shipping data cannot change once the order is shipped" do
-    order = build_order
-    order.save!
-    order.update!(status: :shipped)
+    order = orders(:customer_shipped)
 
     assert_not order.update(city: "Torino")
-    assert order.errors[:base].any?
+    assert order.errors.of_kind?(:base, :not_editable)
+  end
+
+  test "shipping data can change while the order is pending" do
+    order = orders(:customer_pending)
+
+    assert order.update(city: "Torino")
+  end
+
+  test "allows the transitions of the order lifecycle" do
+    order = orders(:customer_pending)
+
+    %i[paid shipped delivered refunded].each do |status|
+      assert order.update(status: status), "transition to #{status} should be allowed"
+    end
+  end
+
+  test "rejects a status transition that skips the lifecycle" do
+    order = orders(:customer_pending)
+
+    assert_not order.update(status: :delivered)
+    assert order.errors.of_kind?(:status, :invalid_transition)
+    assert_equal "pending", order.reload.status
+  end
+
+  test "rejects an unknown status with a validation error" do
+    order = orders(:customer_pending)
+
+    assert_not order.update(status: "lost")
+    assert order.errors.of_kind?(:status, :inclusion)
+  end
+
+  test "only pending and paid orders are cancellable" do
+    assert orders(:customer_pending).cancellable?
+    assert_not orders(:customer_shipped).cancellable?
+  end
+
+  test "cancel restores the stock of the ordered products" do
+    order = orders(:customer_pending)
+
+    assert_difference -> { products(:headphones).reload.stock_quantity }, 2 do
+      assert order.cancel
+    end
+    assert order.reload.cancelled?
+  end
+
+  test "cancel is refused for shipped orders and leaves the stock untouched" do
+    order = orders(:customer_shipped)
+
+    assert_no_difference -> { products(:keyboard).reload.stock_quantity } do
+      assert_not order.cancel
+    end
+    assert order.errors.of_kind?(:status, :invalid_transition)
+    assert order.reload.shipped?
+  end
+
+  test "a cancelled order cannot be cancelled again" do
+    order = orders(:customer_pending)
+    order.cancel
+
+    assert_no_difference -> { products(:headphones).reload.stock_quantity } do
+      assert_not order.cancel
+    end
   end
 end

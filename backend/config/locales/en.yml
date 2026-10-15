@@ -94,6 +94,14 @@ en:
         created_at: "Joined on"
         updated_at: "Last profile update"
 
+    errors:
+      models:
+        order:
+          not_editable: "The details of an order that has already been shipped or closed cannot be changed (locked fields: %{fields})."
+          attributes:
+            status:
+              invalid_transition: "cannot change from %{from} to %{to}."
+
   api:
     errors:
       not_found: "The requested resource was not found."

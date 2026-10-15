@@ -100,9 +100,23 @@ Gli endpoint di lista accettano `page` e `limit` in query string e restituiscono
 
 `status` ∈ `pending` (default), `paid`, `shipped`, `delivered`, `cancelled`, `refunded`.
 
+Transizioni di stato consentite (ogni altra transizione, o uno stato sconosciuto, dà **422** con l'errore di validazione su `status`):
+
+| Da          | A                                  |
+| ----------- | ---------------------------------- |
+| `pending`   | `paid`, `cancelled`                |
+| `paid`      | `shipped`, `cancelled`, `refunded` |
+| `shipped`   | `delivered`, `refunded`            |
+| `delivered` | `refunded`                         |
+| `cancelled`, `refunded` | nessuna (stati finali) |
+
+- L'annullamento (`cancelled`) è possibile solo da `pending` o `paid` e **ripristina lo stock** dei prodotti dell'ordine.
+- Il rimborso (`refunded`) **non** ripristina lo stock: la merce resa non è necessariamente rivendibile; eventuali rientri a magazzino si gestiscono modificando il prodotto.
+- I dati di spedizione (`first_name`, `last_name`, `street`, `city`, `zip_code`, `country`, `stripe_payment_token`) sono modificabili solo finché l'ordine è `pending` o `paid`.
+
 **OrderItem**: `{ "id", "order_id", "unit_price", "quantity", "discount_percentage", "total_price", "product": Product }`
 
-**Address**: campi `first_name`, `last_name`, `street`, `city`, `zip_code`, `country`, `nickname`, `is_default` (vedi *Problemi noti*: il serializer non esiste).
+**Address**: `{ "id", "nickname", "first_name", "last_name", "street", "city", "zip_code", "country", "is_default" }`
 
 ---
 
@@ -111,7 +125,7 @@ Gli endpoint di lista accettano `page` e `limit` in query string e restituiscono
 | Metodo | Path                          | Auth     | Descrizione                          |
 | ------ | ----------------------------- | -------- | ------------------------------------ |
 | POST   | `/auth/login`                 | Pubblico | Login                                 |
-| DELETE | `/auth/logout`                | Utente   | Logout (revoca il token)              |
+| POST/DELETE | `/auth/logout`           | Utente   | Logout (revoca il token)              |
 | POST   | `/auth/signup`                | Pubblico | Registrazione                         |
 | POST   | `/auth/google_oauth2`         | Pubblico | Avvio login Google (redirect)         |
 | GET/POST | `/auth/google_oauth2/callback` | —     | Callback OAuth Google                 |
@@ -125,8 +139,10 @@ Gli endpoint di lista accettano `page` e `limit` in query string e restituiscono
 - **200:** `message: logged_in`, `data: User`, header `Authorization: Bearer <token>`.
 - **401:** credenziali non valide (risposta di Devise).
 
-### DELETE `/auth/logout`
+### POST `/auth/logout` (oppure DELETE)
 
+- `POST` è il metodo indicato dalle specifiche; `DELETE` resta disponibile con lo stesso comportamento.
+- Richiede l'header `Authorization`. Il token viene revocato: le richieste successive con lo stesso token ricevono **401**.
 - **200:** `message: logged_out`.
 - **401:** `message: not_logged_in`.
 
@@ -140,11 +156,27 @@ Le altre rotte generate da Devise (`/auth/signup/edit`, `/auth/signup/cancel`, `
 
 ### OAuth Google
 
-- `POST /auth/google_oauth2` avvia il flusso (la rotta è registrata solo in `POST`).
-- Al termine il backend fa redirect a:
-  - successo: `http://localhost:4200/oauth/callback?token=<jwt>`
-  - errore: `http://localhost:4200/login?error=oauth_failed`
-  - annullato: `http://localhost:4200/login?error=oauth_canceled`
+Flusso (il frontend non chiama questi endpoint con HttpClient, ma con una navigazione del browser):
+
+1. **Avvio:** il frontend invia un form HTML `POST {API}/auth/google_oauth2` (navigazione a pagina intera, nessun payload). La rotta esiste solo in `POST`. Il backend reindirizza a Google.
+2. **Callback:** Google richiama `GET|POST /auth/google_oauth2/callback` (gestita dal backend, non dal frontend).
+3. **Ritorno alla SPA:** il backend fa redirect a `FRONTEND_URL` (variabile d'ambiente del backend, default `http://localhost:4200`):
+
+| Esito      | Redirect                                      | Dove si legge il dato |
+| ---------- | --------------------------------------------- | --------------------- |
+| Successo   | `{FRONTEND_URL}/oauth/callback#token=<jwt>`   | **fragment** (dopo `#`), non nella query string |
+| Errore     | `{FRONTEND_URL}/login?error=oauth_failed`     | query string |
+| Annullato  | `{FRONTEND_URL}/login?error=oauth_canceled`   | query string |
+
+- Il token è nel **fragment** perché il browser non lo invia ai server: non finisce nei log di accesso né nell'header `Referer`. Il frontend lo legge dal fragment (es. `new URLSearchParams(fragment).get("token")`), lo usa come `Authorization: Bearer <jwt>` e poi toglie il fragment dalla barra degli indirizzi. Il valore è URL-encoded (form encoding).
+- Il token è equivalente a quello restituito da `POST /auth/login`: stessa scadenza (1 giorno), revocabile con `/auth/logout`, e non invalida le altre sessioni dell'utente.
+- Associazione dell'account, in quest'ordine:
+  1. utente già collegato a quell'account Google;
+  2. utente registrato con la **stessa email** (solo se verificata da Google), che viene collegato all'account Google;
+  3. nuovo utente.
+
+  Se Google non fornisce un'email verificata, il login fallisce (`oauth_failed`).
+- **Rischio residuo noto:** la richiesta di avvio non verifica un token CSRF (`request_validation_phase = nil`, vedi `config/initializers/oauth.rb`). Il rischio è basso: la callback è protetta dal parametro `state` di OAuth2, e un CSRF sull'avvio può solo far partire il login Google della vittima sul suo stesso account, perché non esiste il collegamento di un account Google a un utente già autenticato.
 
 ### GET `/auth/me`
 
@@ -152,10 +184,10 @@ Le altre rotte generate da Devise (`/auth/signup/edit`, `/auth/signup/cancel`, `
 
 ### PUT `/auth/me`
 
-- **Payload:** `{ "user": { "name", "email", "password", "password_confirmation", "current_password" } }`. Se `password` è presente serve anche `current_password`.
+- **Payload:** `{ "user": { "first_name", "last_name", "number", "date_of_birth", "email", "password", "password_confirmation", "current_password" } }`. Tutti i campi sono opzionali; gli altri campi (es. `admin`) vengono ignorati.
+- Per cambiare `password` o `email` serve anche `current_password` (password attuale), altrimenti **422**.
 - **200:** `message: info_updated_successfully`, `data: User`.
-- **422:** `message: info_update_error`, `errors: [...]`.
-- Vedi *Problemi noti*.
+- **422:** `message: info_update_error`, `errors: [...]` (validazioni, es. utente minorenne, email già usata, `current_password` mancante o errata); anche se manca l'oggetto `user` (`parameters_missing`).
 
 ### DELETE `/auth/me`
 
@@ -231,9 +263,10 @@ Le altre rotte generate da Devise (`/auth/signup/edit`, `/auth/signup/cancel`, `
   - Il totale è calcolato dal carrello. Per ogni riga crea un OrderItem con il prezzo scontato, decrementa lo stock e svuota il carrello, tutto in una transazione.
   - **201:** `message: checkout_successful`, `data: Order`.
   - **400:** `message: checkout_empty_cart` se il carrello è vuoto. **422:** `message: checkout_error`.
+- Gli endpoint `/orders/:id` agiscono solo sugli ordini dell'utente corrente: un ordine di un altro utente dà **404** (`not_found`).
 - `GET /orders/:id` → **200:** `data: Order`.
-- `PUT /orders/:id`: payload come `POST`. **200:** `order_updated_successfully`, `data: Order`. **422:** `order_update_error`.
-- `DELETE /orders/:id` → **200:** `order_deleted_successfully`. **422:** `order_delete_error`.
+- `PUT /orders/:id`: payload come `POST` (lo stato non è modificabile dall'utente). **200:** `order_updated_successfully`, `data: Order`. **422:** `order_update_error` (es. ordine già spedito, vedi *Transizioni di stato*).
+- `DELETE /orders/:id` → annulla l'ordine e ripristina lo stock. **200:** `order_deleted_successfully`. **422:** `order_delete_error` se l'ordine non è annullabile (già `shipped`, `delivered`, `cancelled` o `refunded`), con il motivo in `errors`.
 
 ## Indirizzi dell'utente
 
@@ -248,7 +281,7 @@ Le altre rotte generate da Devise (`/auth/signup/edit`, `/auth/signup/cancel`, `
 - **Payload** (create/update): `{ "address": { "first_name", "last_name", "street", "city", "zip_code", "country", "nickname", "is_default" } }`. Obbligatori tutti tranne `is_default`; `nickname` è unico per utente.
 - Risposte: `address_created_successfully` (201), `address_updated_successfully`, `address_deleted_successfully`; errori `address_create_error`, `address_update_error`, `address_delete_error` (422).
 - Accesso limitato agli indirizzi dell'utente corrente (404 per gli altri).
-- ⚠️ Al momento non funzionante, vedi *Problemi noti*.
+- **200/201:** `data: Address`; lista: `data: [Address]`, `meta`.
 
 ---
 
@@ -317,7 +350,8 @@ La creazione avviene solo tramite `/auth/signup`.
   - `order_by`, `order_direction`, `page`, `limit`.
   - Default: più recenti prima. **200:** `data: [Order]`, `meta`.
 - **Payload** (update): `{ "order": { "first_name", "last_name", "street", "city", "zip_code", "country", "stripe_payment_token", "status", "created_at" } }`.
-- Risposte: update **200** `order_updated_successfully`, `data: Order`; delete **200** `order_deleted_successfully`, `data: Order`. Errori **422** `order_update_error`.
+- `status` segue le *Transizioni di stato* (sezione Order): una transizione non consentita o uno stato sconosciuto dà **422**. Passare a `cancelled` ripristina lo stock.
+- Risposte: update **200** `order_updated_successfully`, `data: Order`; delete (annullamento, solo da `pending`/`paid`, ripristina lo stock) **200** `order_deleted_successfully`, `data: Order`. Errori **422** `order_update_error`.
 
 ---
 
@@ -329,16 +363,12 @@ La creazione avviene solo tramite `/auth/signup`.
 
 ---
 
-## Problemi noti (al tag `baseline-pre-team`)
+## Problemi noti
 
 Comportamenti attuali del backend che differiscono da quanto ci si aspetterebbe. Vanno risolti con task dedicati, poi questa sezione va aggiornata.
 
-1. **Indirizzi:** `AddressSerializer` non esiste in `app/serializers/`, quindi tutti gli endpoint `/addresses` che restituiscono dati vanno in errore 500.
-2. **`PUT /auth/me`:** senza `password` chiama `user_params.exept(...)` (refuso di `except`) e va in errore 500. Inoltre accetta `name`, che non è un attributo di User, al posto di `first_name`/`last_name`.
-3. **`GET /orders/:id`, `PUT`, `DELETE`** (utente): l'ordine è cercato con `Order.find` e non tra gli ordini dell'utente corrente, quindi un utente può leggere o modificare gli ordini di altri.
-4. **`GET /orders`:** il filtro `status` non viene applicato (il risultato di `where` è scartato).
-5. **`DELETE /cart/items/:product_id`:** se il prodotto non è nel carrello manca un `return` dopo la risposta 404: il codice prosegue su `nil` ed è un errore 500.
-6. **Admin, `order_by` / `order_direction`:** interpolati direttamente nella clausola SQL `ORDER BY` senza whitelist.
-7. **`PUT /admin/products/:id`** risponde `201` invece di `200`; **`PUT /admin/categories/:id`** usa il messaggio `category_created_successfully`.
-8. **Revoca JWT:** `jwt.revocation_requests` include `DELETE /admin/users`, che non corrisponde a nessuna rotta.
-9. **OAuth:** gli URL di redirect al frontend (`http://localhost:4200`) sono fissi nel codice.
+1. **`GET /orders`:** il filtro `status` non viene applicato (il risultato di `where` è scartato).
+2. **`DELETE /cart/items/:product_id`:** se il prodotto non è nel carrello manca un `return` dopo la risposta 404: il codice prosegue su `nil` ed è un errore 500.
+3. **Admin, `order_by` / `order_direction`:** interpolati direttamente nella clausola SQL `ORDER BY` senza whitelist.
+4. **`PUT /admin/products/:id`** risponde `201` invece di `200`; **`PUT /admin/categories/:id`** usa il messaggio `category_created_successfully`.
+5. **OAuth, request phase:** `POST /auth/google_oauth2` non verifica un token CSRF. Rischio accettato e basso, vedi *OAuth Google*.

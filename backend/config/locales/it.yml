@@ -83,7 +83,15 @@ it:
         number: "Numero di telefono"
         created_at: "Data iscrizione"
         updated_at: "Data ultimo aggiornamento"
-  
+
+    errors:
+      models:
+        order:
+          not_editable: "Non è possibile modificare i dettagli di un ordine già spedito o chiuso (campi bloccati: %{fields})."
+          attributes:
+            status:
+              invalid_transition: "non può passare da %{from} a %{to}."
+
   api:
     errors: 
       not_found: "La risorsa richiesta non è stata trovata."

@@ -1,0 +1,36 @@
+# Le fixture non eseguono generate_code: code e sequence_number sono espliciti
+# e alti, così non collidono con gli ordini creati dai test.
+DEFAULTS: &DEFAULTS
+  first_name: Carlo
+  last_name: Cliente
+  street: Via Roma 1
+  city: Milano
+  zip_code: "20100"
+  country: Italia
+  stripe_payment_token: tok_test
+
+customer_pending:
+  <<: *DEFAULTS
+  user: customer
+  code: ORD-FIX-90001
+  sequence_number: 90001
+  status: pending
+  total_amount: 179.82
+
+customer_shipped:
+  <<: *DEFAULTS
+  user: customer
+  code: ORD-FIX-90002
+  sequence_number: 90002
+  status: shipped
+  total_amount: 79.00
+
+other_customer_pending:
+  <<: *DEFAULTS
+  user: other_customer
+  first_name: Olga
+  last_name: Altra
+  code: ORD-FIX-90003
+  sequence_number: 90003
+  status: pending
+  total_amount: 349.00

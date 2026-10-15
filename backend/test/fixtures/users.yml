@@ -16,3 +16,12 @@ customer:
   date_of_birth: 1990-07-21
   admin: false
   jti: <%= SecureRandom.uuid %>
+
+other_customer:
+  email: other@test.swstore
+  encrypted_password: <%= Devise::Encryptor.digest(User, "password123") %>
+  first_name: Olga
+  last_name: Altra
+  date_of_birth: 1995-11-02
+  admin: false
+  jti: <%= SecureRandom.uuid %>
