@@ -75,11 +75,11 @@ Legenda stato: **fatto** / **parziale** / **mancante**.
 | # | Funzionalità | Stato | Parte | File coinvolti | Cosa manca |
 |---|---|---|---|---|---|
 | 7.1 | Area admin prodotti (ruolo admin + guard) | fatto | entrambi | `api/v1/admin/*`, `pages/admin/*`, `components/product-form`, `core/guards/admin*` | BE fatto (T8, T10b): PUT 200, whitelist, 409 su elementi referenziati, upload immagine multipart, `GET /admin/dashboard`, categorie con `products_count` e `all=true`. FE fatto (T10c): eliminazione con conferma, upload e rimozione immagini, CRUD categorie, cambio stato con sole transizioni ammesse, dashboard; E2E `e2e/admin.spec.ts` |
-| 7.2 | Storico ordini avanzato (filtri data/stato, dettaglio) | parziale | entrambi | `users/orders_controller.rb`, `pages/my-orders-page`, `pages/order-detail-page` | Dettaglio completo. Filtri lato utente assenti (BE e FE) |
-| 7.3 | Wishlist | parziale | entrambi | `users/wishlist*_controller.rb`, `core/services/wishlists.service.ts` | BE: niente unique/validazione, POST risponde 200. FE: stato dal server dal T6, pulsante nascosto agli ospiti dal T9 |
+| 7.2 | Storico ordini avanzato (filtri data/stato, dettaglio) | parziale (non scelta) | entrambi | `users/orders_controller.rb`, `pages/my-orders-page`, `pages/order-detail-page` | Dettaglio completo e filtro per stato (T7, T10b). Filtri per data non implementati: funzionalità non scelta dall'utente |
+| 7.3 | Wishlist | fatto (non scelta come avanzata) | entrambi | `users/wishlist*_controller.rb`, `core/services/wishlists.service.ts` | Funzionante e persistita sul backend; stato dal server (T6), regole di disponibilità sul move (T4). Minori: POST risponde 200 |
 | 7.4 | Coupon | mancante | entrambi | – | Tutto |
-| 7.5 | i18n it/en con scelta lingua | parziale | entrambi | `config/locales/*`, `src/locale/*`, `components/language-selector`, `core/i18n/*` | FE fatto (T10a): selettore di lingua, tutti i testi e toast tradotti, paginatore e pipe localizzati, E2E `e2e/i18n.spec.ts`. BE: 401/403, 404 generico (in italiano anche con `Accept-Language: en`) e messaggi dei modelli (T3) |
-| 7.6 | Test (3-4 BE, 2 service + 2 component FE, 1-2 E2E) | mancante | entrambi | – | Tutti |
+| 7.5 | i18n it/en con scelta lingua | fatto | entrambi | `config/locales/*`, `lib/request_locale.rb`, `src/locale/*`, `components/language-selector`, `core/i18n/*` | FE (T10a): selettore di lingua, testi, toast, paginatore e pipe; E2E `e2e/i18n.spec.ts`. BE (T3): tutte le risposte, errori compresi, nella lingua di `Accept-Language` |
+| 7.6 | Test (3-4 BE, 2 service + 2 component FE, 1-2 E2E) | fatto | entrambi | `backend/test/`, `frontend/src/**/*.spec.ts`, `frontend/e2e/` | BE 159 test (modelli e request); FE 112 unit (service e component, es. `cart.service.spec`, `orders.service.spec`, `products-grid.spec`, `checkout-page.spec`); 27 E2E, tra cui il flusso login → carrello → checkout → ordine |
 
 ## Consegna e qualità (§8, criteri)
 
