@@ -16,6 +16,7 @@ export interface SignUpData {
   email: string;
   password: string;
   passwordConfirmation: string;
+  dateOfBirth?: string | null; // formato ISO yyyy-MM-dd, facoltativo
 }
 
 @Injectable({
@@ -93,13 +94,15 @@ export class AuthService {
   }
 
   signUp(user: SignUpData) {
-    const { firstName, lastName, email, password, passwordConfirmation } = user;
+    const { firstName, lastName, email, password, passwordConfirmation, dateOfBirth } = user;
+    // Payload nel formato previsto da POST /auth/signup (vedi backend/API.md)
     const userRequest = {
       first_name: firstName,
       last_name: lastName,
       email,
       password,
-      passwordConfirmation
+      password_confirmation: passwordConfirmation,
+      ...(dateOfBirth ? { date_of_birth: dateOfBirth } : {}),
     };
     this.api.signUp(userRequest).subscribe({
       next: (response) => {

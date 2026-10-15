@@ -1,4 +1,10 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ReactiveFormsModule, FormControl } from '@angular/forms';
+import { MatFormField, MatLabel, MatPrefix, MatSuffix } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs';
 import { MatSidenavContainer, MatSidenavContent, MatSidenav, MatSidenavModule } from "@angular/material/sidenav"
 import CategoriesList from '../../components/categories-list/categories-list';
 import { ProductsService } from '../../core/services/products.service';
@@ -13,7 +19,9 @@ import { CartService } from '../../core/services/cart.service';
 import Product from '../../core/models/product';
 import { MatIconButton } from '@angular/material/button';
 import NoProductFound from '../../components/no-product-found/no-product-found';
-import ViewPanel from '../../core/directives/view-panel/view-panel';
+
+// Attesa (ms) dopo l'ultima digitazione prima di avviare la ricerca
+export const SEARCH_DEBOUNCE_MS = 400;
 
 @Component({
   selector: "app-products-grid",
@@ -30,6 +38,12 @@ import ViewPanel from '../../core/directives/view-panel/view-panel';
     MatIcon,
     MatIconButton,
     NoProductFound,
+    ReactiveFormsModule,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    MatPrefix,
+    MatSuffix,
   ],
   template: `
     <mat-sidenav-container class="mt-2 full-height-layout" hasBackdrop="false">
@@ -42,10 +56,37 @@ import ViewPanel from '../../core/directives/view-panel/view-panel';
       </mat-sidenav>
       <mat-sidenav-content>
         <section class="p-6 relative">
-          <h1 i18n="@@products" class="text-3xl font-bold text-gray-900">I nostri prodotti</h1>
+          <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <h1 i18n="@@products" class="text-3xl font-bold text-gray-900">I nostri prodotti</h1>
 
-          @if (productsCount()) {
-            <div class="text-red-500 text-lg">
+            <mat-form-field class="w-full md:max-w-sm" subscriptSizing="dynamic">
+              <mat-label i18n="@@productsGrid.search.label">Cerca prodotti</mat-label>
+              <mat-icon matPrefix>search</mat-icon>
+              <input
+                matInput
+                type="search"
+                data-testid="products-search"
+                [formControl]="searchControl"
+                i18n-placeholder="@@productsGrid.search.placeholder"
+                placeholder="Nome del prodotto"
+              />
+              @if (searchControl.value) {
+                <button
+                  matSuffix
+                  matIconButton
+                  type="button"
+                  i18n-aria-label="@@productsGrid.search.clear"
+                  aria-label="Cancella la ricerca"
+                  (click)="searchControl.setValue('')"
+                >
+                  <mat-icon>close</mat-icon>
+                </button>
+              }
+            </mat-form-field>
+          </div>
+
+          @if (errorMessage()) {
+            <div role="alert" class="text-red-500 text-lg">
               {{ errorMessage() }}
             </div>
           }
@@ -62,7 +103,12 @@ import ViewPanel from '../../core/directives/view-panel/view-panel';
                   </ng-content>
 
                   <ng-content addToCartButton>
-                    <button matIconButton (click)="addToCart(product)">
+                    <button
+                      matIconButton
+                      i18n-aria-label="@@productsGrid.addToCart"
+                      aria-label="Aggiungi al carrello"
+                      (click)="addToCart(product)"
+                    >
                       <mat-icon>add_shopping_cart</mat-icon>
                     </button>
                   </ng-content>
@@ -89,10 +135,13 @@ import ViewPanel from '../../core/directives/view-panel/view-panel';
   `,
   styles: ``,
 })
-export default class ProductsGrid {
+export default class ProductsGrid implements OnInit {
   private productsService = inject(ProductsService);
   private categoriesService = inject(CategoriesService);
   private cartService = inject(CartService);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private destroyRef = inject(DestroyRef);
   readonly layoutService = inject(LayoutService);
 
   selectedCategory = this.categoriesService.selected;
@@ -102,26 +151,61 @@ export default class ProductsGrid {
 
   sidenavOpened = this.layoutService.sidenavOpened;
 
-  productsCount = computed(() => this.products().length);
+  // Campo di ricerca testuale, sincronizzato con il parametro ?q= dell'URL
+  readonly searchControl = new FormControl("", { nonNullable: true });
+  private searchTerm = "";
 
   ngOnInit() {
-    this.productsService.loadProducts();
+    // L'URL è la fonte di verità della ricerca: a ogni cambio di ?q= si riparte da pagina 1
+    this.route.queryParamMap
+      .pipe(
+        map((params) => (params.get("q") ?? "").trim()),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((searchTerm) => {
+        this.searchTerm = searchTerm;
+        if (this.searchControl.value.trim() !== searchTerm) {
+          this.searchControl.setValue(searchTerm, { emitEvent: false });
+        }
+        this.loadProducts(1);
+      });
+
+    // Digitazione: dopo una breve pausa il termine viene scritto nell'URL
+    this.searchControl.valueChanges
+      .pipe(
+        debounceTime(SEARCH_DEBOUNCE_MS),
+        map((value) => value.trim()),
+        distinctUntilChanged(),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((searchTerm) => {
+        if (searchTerm === this.searchTerm) return;
+        this.router.navigate([], {
+          relativeTo: this.route,
+          queryParams: { q: searchTerm || null },
+          queryParamsHandling: "merge",
+          replaceUrl: true,
+        });
+      });
   }
 
   onPageChangeEvent(event: { page: number; limit: number }) {
-    this.productsService.loadProducts(event.page, event.limit, {
-      categoryId: this.selectedCategory()?.id,
-    });
+    this.loadProducts(event.page, event.limit);
   }
 
   onCategorySelection(event: { id?: number; name?: string }) {
-    const categoryId = event.id;
-    this.productsService.loadProducts(this.pagination()?.page, this.pagination()?.limit, {
-      categoryId,
-    });
+    // Il cambio di categoria cambia l'insieme dei risultati: si torna alla prima pagina
+    this.loadProducts(1);
   }
 
   addToCart(product: Product) {
     this.cartService.addToCart(product, 1);
+  }
+
+  private loadProducts(page: number, limit = this.pagination()?.limit) {
+    this.productsService.loadProducts(page, limit, {
+      categoryId: this.selectedCategory()?.id,
+      searchTerm: this.searchTerm || undefined,
+    });
   }
 }

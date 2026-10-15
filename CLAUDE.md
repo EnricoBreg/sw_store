@@ -94,7 +94,7 @@ L'ambiente è attivo e utilizzabile: le applicazioni si possono avviare e il dat
 - `brakeman`: 1 warning (Weak, Redirect in `auth/omniauth_callbacks_controller.rb`). `bin/brakeman` esce con codice 5 perché forza `--ensure-latest` e la gem non è all'ultima versione: usare il comando della tabella.
 - `npx ng test`: ~~2 test su 3 falliscono in `src/app/app.spec.ts`~~ risolto in T5 (2026-10-15): tutti verdi.
 - `npx ng build`: ok.
-- `npx playwright test`: configurato; dal T5 tutti verdi. Gli E2E usano l'utente `e2e.user@swstore.test` del DB di sviluppo (override con `E2E_USER_EMAIL` / `E2E_USER_PASSWORD`); il seed non distruttivo (T8) dovrà crearlo.
+- `npx playwright test`: configurato; dal T5 tutti verdi (9 dopo T9). Gli E2E usano l'utente `e2e.user@swstore.test` del DB di sviluppo (override con `E2E_USER_EMAIL` / `E2E_USER_PASSWORD`); il seed non distruttivo (T8) dovrà crearlo.
 
 Quando un fallimento della baseline viene risolto, aggiornare questa sezione.
 

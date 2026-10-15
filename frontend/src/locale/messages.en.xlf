@@ -442,6 +442,10 @@
         <source>Es. Mario Rossi o ID ordine</source>
         <target>Eg. Mario Rossi or Order ID</target>
       </trans-unit>
+      <trans-unit id="signUp.dateOfBirth.label" datatype="html">
+        <source>Data di nascita (facoltativa)</source>
+        <target state="translated">Date of birth (optional)</target>
+      </trans-unit>
       <trans-unit id="signUp.description" datatype="html">
         <source>Registrati per iniziare ora lo shopping.</source>
         <target state="new">Sign up to start shopping now.</target>
@@ -478,6 +482,10 @@
         <source>Ripeti la tua password</source>
         <target state="new">Repeat your password</target>
       </trans-unit>
+      <trans-unit id="signUp.passwordsMismatch" datatype="html">
+        <source> Le password non coincidono. </source>
+        <target state="translated">Passwords do not match.</target>
+      </trans-unit>
       <trans-unit id="signUp.submit" datatype="html">
         <source>Registrati</source>
         <target state="new">Sign Up</target>
@@ -497,6 +505,14 @@
       <trans-unit id="stockBadge.outOfStock" datatype="html">
         <source>Esaurito</source>
         <target state="new">Out of stock</target>
+      </trans-unit>
+      <trans-unit id="toggleWishlist.add" datatype="html">
+        <source>Aggiungi alla wishlist</source>
+        <target state="translated">Add to wishlist</target>
+      </trans-unit>
+      <trans-unit id="toggleWishlist.remove" datatype="html">
+        <source>Rimuovi dalla wishlist</source>
+        <target state="translated">Remove from wishlist</target>
       </trans-unit>
       <trans-unit id="tornaAiMieiOrdini" datatype="html">
         <source> Torna ai miei ordini </source>
@@ -833,6 +849,22 @@
       <trans-unit id="products" datatype="html">
         <source>I nostri prodotti</source>
         <target>Our Products</target>
+      </trans-unit>
+      <trans-unit id="productsGrid.addToCart" datatype="html">
+        <source>Aggiungi al carrello</source>
+        <target state="translated">Add to cart</target>
+      </trans-unit>
+      <trans-unit id="productsGrid.search.clear" datatype="html">
+        <source>Cancella la ricerca</source>
+        <target state="translated">Clear search</target>
+      </trans-unit>
+      <trans-unit id="productsGrid.search.label" datatype="html">
+        <source>Cerca prodotti</source>
+        <target state="translated">Search products</target>
+      </trans-unit>
+      <trans-unit id="productsGrid.search.placeholder" datatype="html">
+        <source>Nome del prodotto</source>
+        <target state="translated">Product name</target>
       </trans-unit>
       <trans-unit id="productsPage.addProduct" datatype="html">
         <source>Aggiungi prodotto</source>

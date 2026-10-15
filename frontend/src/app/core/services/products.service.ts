@@ -36,6 +36,7 @@ export class ProductsService {
     this.api.getProducts(page, perPage, searchQuery).subscribe({
       next: (response) => {
         // Popolamento dello store con i dati di risposta e di paginazione
+        this.#error.set(undefined);
         this.#products.set(response.data);
         this.#paginationMeta.set(response.meta);
       },
@@ -49,6 +50,7 @@ export class ProductsService {
   getById(productId: number) {
     this.api.getById(productId).subscribe({
       next: (response) => {
+        this.#error.set(undefined);
         this.#product.set(response.data);
       },
       error: (err) => {

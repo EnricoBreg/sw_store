@@ -6,12 +6,15 @@ export interface ApiResponse<T> {
   errors?: string[];  // Array di errori (stringhe) descrittive dell'eventuale errore verificatosi
 }
 
+// Metadati di paginazione inviati dal backend (Pagy). Le chiavi senza valore vengono omesse:
+// ad esempio sulla prima pagina mancano previous/previous_url, sull'ultima next/next_url.
 export interface PaginationMeta {
   count: number;  // Numero totale dei record provenienti dal Backend
   limit: number;  // Numero di record per richiesta (impostabile tramite ?limit=...)
   page: number;   // Numero corrente di pagina
-  next: number;   // Numero di pagina successivo
-  prev: number;   // Numero di pagina precedente
-  next_url: string; // URL per raggiungere la prossima pagina
-  prev_url: string; // URL per raggiungere la precedente pagina
+  pages: number;  // Numero totale di pagine
+  previous?: number;  // Numero di pagina precedente
+  next?: number;      // Numero di pagina successivo
+  previous_url?: string; // URL per raggiungere la precedente pagina
+  next_url?: string;     // URL per raggiungere la prossima pagina
 }
