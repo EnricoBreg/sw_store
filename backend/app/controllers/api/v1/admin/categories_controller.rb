@@ -3,7 +3,6 @@ class Api::V1::Admin::CategoriesController < Api::V1::AdminController
 
   # GET /admin/categories
   def index
-    # TODO: implementare filtri
     categories = Category.all.order(name: :asc)
     categories = search_by_name(categories) if params[:q].present?
 
@@ -46,9 +45,8 @@ class Api::V1::Admin::CategoriesController < Api::V1::AdminController
   def update
     if @category.update(category_params)
       render_success(
-        message: I18n.t("api.messages.category_created_successfully", name: @category.name),
-        data: serialize_resource(@category, CategorySerializer),
-        status: :ok
+        message: I18n.t("api.messages.category_updated_successfully", name: @category.name),
+        data: serialize_resource(@category, CategorySerializer)
       )
     else
       render_error(
@@ -61,11 +59,18 @@ class Api::V1::Admin::CategoriesController < Api::V1::AdminController
 
   # DELETE /admin/categories/:id
   def destroy
-    @category.destroy!
-    render_success(
-      message: I18n.t("api.messages.category_deleted_successfully", name: @category.name),
-      status: :ok
-    )
+    # Una categoria con prodotti non si elimina (restrict_with_error): 409 con il motivo.
+    if @category.destroy
+      render_success(
+        message: I18n.t("api.messages.category_deleted_successfully", name: @category.name)
+      )
+    else
+      render_error(
+        message: I18n.t("api.messages.category_delete_error", name: @category.name),
+        errors: @category.errors.full_messages,
+        status: :conflict
+      )
+    end
   end
 
   private
@@ -76,9 +81,5 @@ class Api::V1::Admin::CategoriesController < Api::V1::AdminController
 
   def category_params
     params.expect(category: [ :name, :description ])
-  end
-
-  def search_by_name(scope)
-    scope.where("name ILIKE ?", "%#{params[:q]}%")
   end
 end

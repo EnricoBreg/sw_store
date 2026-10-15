@@ -1,15 +1,11 @@
 class Api::V1::Admin::OrdersController < Api::V1::AdminController
+  SORTABLE_COLUMNS = %w[id code status total_amount created_at updated_at].freeze
+
   before_action :set_order, only: [ :show, :update, :destroy ]
 
   # GET /admin/orders
   def index
-    if params[:order_by].present?
-      order_by = params[:order_by]
-      order_direction = params[:order_direction] || "asc"
-      orders = Order.all.order("#{order_by} #{order_direction}")
-    else
-      orders = Order.all.order(created_at: :desc)
-    end
+    orders = apply_sorting(Order.all, allowed: SORTABLE_COLUMNS, default: { created_at: :desc })
 
     orders = search_by_customer_name_or_id(orders) if params[:q].present?
 
@@ -21,10 +17,10 @@ class Api::V1::Admin::OrdersController < Api::V1::AdminController
       orders = orders.where(created_at: from_date..to_date)
     elsif params[:from_date].present?
       from_date = Time.parse(params[:from_date]).beginning_of_day
-      orders = orders.where("created_at >= ?", from_date)
+      orders = orders.where(created_at: from_date..)
     elsif params[:to_date].present?
       to_date = Time.parse(params[:to_date]).end_of_day
-      orders = orders.where("created_at <= ?", to_date)
+      orders = orders.where(created_at: ..to_date)
     end
 
     if params[:min_total_amount].present? && params[:max_total_amount].present?
@@ -33,10 +29,10 @@ class Api::V1::Admin::OrdersController < Api::V1::AdminController
       orders = orders.where(total_amount: min_total_amount..max_total_amount)
     elsif params[:min_total_amount].present?
       min_total_amount = params[:min_total_amount].to_f
-      orders = orders.where("total_amount >= ?", min_total_amount)
+      orders = orders.where(total_amount: min_total_amount..)
     elsif params[:max_total_amount].present?
       max_total_amount = params[:max_total_amount].to_f
-      orders = orders.where("total_amount <= ?", max_total_amount)
+      orders = orders.where(total_amount: ..max_total_amount)
     end
 
     @pagy, @orders = pagy(orders, page: params[:page], items: params[:limit])

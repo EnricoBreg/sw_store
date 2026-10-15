@@ -9,6 +9,10 @@ class ErrorProbeController < Api::V1::BaseController
   def record_invalid
     User.new.save!
   end
+
+  def conflict
+    raise ActiveRecord::RecordNotUnique, "duplicate key value violates unique constraint"
+  end
 end
 
 class Api::V1::ErrorHandlingTest < ActionDispatch::IntegrationTest
@@ -115,15 +119,26 @@ class Api::V1::ErrorHandlingTest < ActionDispatch::IntegrationTest
   test "deleting a product referenced by orders returns 409 and keeps the product" do
     delete api_v1_admin_product_path(products(:headphones)), headers: auth_headers(users(:admin), EN)
 
-    assert_error_format :conflict, "Operation not allowed: the resource is linked to other data."
+    assert_error_format :conflict, "Unable to delete the product #{products(:headphones).name}."
+    assert_equal [ "Cannot delete record because dependent orders exist" ], json_response["errors"]
     assert Product.exists?(products(:headphones).id)
   end
 
-  test "deleting a category whose products are referenced by orders returns 409" do
+  test "deleting a category that still has products returns 409" do
     delete api_v1_admin_category_path(categories(:electronics)), headers: auth_headers(users(:admin))
 
-    assert_error_format :conflict, "Operazione non consentita: la risorsa è collegata ad altri dati."
+    assert_error_format :conflict, "Impossibile eliminare la categoria Elettronica."
+    assert_equal [ "Il record non può essere cancellato perchè esistono prodotti dipendenti" ], json_response["errors"]
     assert Category.exists?(categories(:electronics).id)
+  end
+
+  test "an integrity violation not handled by the endpoint returns the generic 409" do
+    with_routing do |set|
+      set.draw { get "probe/conflict", to: "error_probe#conflict" }
+      get "/probe/conflict", headers: EN
+
+      assert_error_format :conflict, "Operation not allowed: the resource is linked to other data."
+    end
   end
 
   # --- 500 ---

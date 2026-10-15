@@ -1,16 +1,11 @@
 class Api::V1::Admin::UsersController < Api::V1::AdminController
+  SORTABLE_COLUMNS = %w[id first_name last_name email admin created_at].freeze
+
   before_action :set_user, only: [ :show, :update, :destroy ]
 
   # GET /admin/users
   def index
-    # TODO: implementare filtri
-    if params[:order_by].present?
-      order_by = params[:order_by]
-      order_direction = params[:order_direction] || "asc"
-      users = User.all.order("#{order_by} #{order_direction}")
-    else
-      users = User.all.order(last_name: :asc, first_name: :asc)
-    end
+    users = apply_sorting(User.all, allowed: SORTABLE_COLUMNS, default: { last_name: :asc, first_name: :asc })
     users = search_by_txt(users) if params[:q].present?
 
     @pagy, @users = pagy(users, page: params[:page], items: params[:limit])
@@ -46,6 +41,13 @@ class Api::V1::Admin::UsersController < Api::V1::AdminController
 
   # DELETE /admin/users/:id
   def destroy
+    # L'admin non può eliminare sé stesso da qui (resterebbe senza accesso all'area admin):
+    # per il proprio account si usa DELETE /auth/me.
+    if @user == current_user
+      render_error(message: :cannot_delete_self, status: :forbidden)
+      return
+    end
+
     if @user.destroy
       render_success(
         message: I18n.t("api.messages.user_deleted_successfully", name: "#{@user.first_name} #{@user.last_name}"),
