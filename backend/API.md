@@ -86,7 +86,7 @@ Gli endpoint che lo prevedono accettano `order_by` (uno dei valori ammessi indic
   "orders_count": 0, "last_order_date": "dd/mm/yyyy" | null, "addresses_count": 0 }
 ```
 
-**Category**: `{ "id", "name", "description" }`
+**Category**: `{ "id", "name", "description" }`; negli endpoint `/admin/categories` anche `"products_count"` (utile per sapere se la categoria è eliminabile: con prodotti, `DELETE` dà 409).
 
 **Product**
 
@@ -314,7 +314,7 @@ Regole di disponibilità (POST e PATCH): il prodotto deve essere attivo (`active
 | PUT/PATCH | `/orders/:id` | Utente | Modifica dati di spedizione                    |
 | DELETE | `/orders/:id`    | Utente | Annullamento (soft: `status = cancelled`)      |
 
-- `GET /orders`: query `page`, `limit` (`status` è letto ma non applicato, vedi *Problemi noti*). **200:** `data: [Order]`, `meta`.
+- `GET /orders`: query `status` (uno stato o più stati separati da virgola, es. `status=paid,shipped`), `page`, `limit`. Più recenti prima. **200:** `data: [Order]`, `meta`. **400:** stato sconosciuto (in `errors` i valori ammessi).
 - `POST /orders`
   - **Payload:** `{ "order": { "first_name", "last_name", "street", "city", "zip_code", "country", "stripe_payment_token" } }` (tutti obbligatori).
   - In un'unica transazione, con lock sui prodotti: verifica che ogni prodotto sia attivo e con stock sufficiente, crea l'ordine con un OrderItem per riga (prezzo e sconto attuali fissati in `unit_price`), decrementa lo stock e svuota il carrello. Se qualcosa fallisce non viene modificato nulla (carrello e stock restano invariati).
@@ -349,6 +349,28 @@ Regole di disponibilità (POST e PATCH): il prodotto deve essere attivo (`active
 
 Tutti gli endpoint `/admin/*` richiedono livello **Admin**.
 
+### Dashboard
+
+`GET /admin/dashboard`: statistiche riassuntive per la home dell'area admin. Query opzionale `low_stock_threshold` (intero ≥ 0, default 5): soglia sotto cui (inclusa) un prodotto ha stock basso. Un valore non valido dà **400**.
+
+**200:**
+
+```json
+{ "data": {
+    "orders_count": 42,
+    "orders_by_status": { "pending": 3, "paid": 5, "shipped": 4, "delivered": 25, "cancelled": 3, "refunded": 2 },
+    "revenue": "12345.67",          // somma di total_amount degli ordini non cancelled e non refunded
+    "products_count": 68,
+    "active_products_count": 43,
+    "users_count": 35,
+    "low_stock_threshold": 5,
+    "low_stock_products": [ Product ], // prodotti attivi con stock_quantity <= soglia, dal meno disponibile (max 10)
+    "latest_orders": [ Order ]         // ultimi 5 ordini, dal più recente
+} }
+```
+
+`orders_by_status` contiene sempre tutti gli stati, anche quelli con 0 ordini.
+
 ### Prodotti
 
 | Metodo | Path                    | Descrizione  |
@@ -360,7 +382,14 @@ Tutti gli endpoint `/admin/*` richiedono livello **Admin**.
 | DELETE | `/admin/products/:id`   | Cancellazione |
 
 - `GET`: query `q` (nome), `category_id`, `order_by`, `order_direction` (vedi *Ordinamento*), `page`, `limit`. Include anche i prodotti inattivi. **200:** `data: [Product]`, `meta`. **400:** `order_by` non ammesso.
-- **Payload** (create/update): `{ "product": { "name", "description", "price", "discount_percentage", "stock_quantity", "active", "category_id", "image" } }`. Per caricare `image` serve `multipart/form-data`.
+- **Payload** (create/update): `{ "product": { "name", "description", "price", "discount_percentage", "stock_quantity", "active", "category_id" } }`, in JSON oppure in `multipart/form-data`. In update tutti i campi sono opzionali.
+- **Immagine:** si invia solo con `multipart/form-data`, nello stesso `POST`/`PUT` del prodotto:
+  - campo `product[image]`: file JPEG, PNG o WebP, al massimo 5 MB. Sostituisce l'eventuale immagine precedente;
+  - campo `product[remove_image]=true`: rimuove l'immagine attuale;
+  - gli altri campi vanno nella forma `product[name]`, `product[price]`, ecc. (i valori arrivano come stringhe e vengono convertiti: `active` accetta `true`/`false`);
+  - tipo o dimensione non validi → **422** `product_create_error` / `product_update_error`, `errors` con il motivo tradotto;
+  - in risposta `image_url` e `thumbnail_url` (100×100) puntano all'immagine.
+  - Esempio Angular: `const fd = new FormData(); fd.append("product[name]", name); fd.append("product[image]", file); http.post(url, fd)` (non impostare a mano `Content-Type`: lo fa il browser con il boundary).
   - Validazioni: `name` obbligatorio; `description` obbligatoria, almeno 10 caratteri; `price` ≥ 0; `discount_percentage` 0–100 (opzionale); `stock_quantity` ≥ 0. `active` è opzionale: default `true`.
 - Risposte: create **201** `product_created_successfully`; update **200** `product_updated_successfully`; delete **200** `product_deleted_successfully`. Errori **422** `product_create_error` / `product_update_error`.
 - Delete di un prodotto presente in ordini: **409** `product_delete_error`, `errors: [...]`. Il prodotto resta; per toglierlo dal catalogo si imposta `active: false`. Le righe di carrelli e wishlist che lo contengono vengono rimosse insieme al prodotto.
@@ -375,7 +404,8 @@ Tutti gli endpoint `/admin/*` richiedono livello **Admin**.
 | PUT/PATCH | `/admin/categories/:id` | Modifica    |
 | DELETE | `/admin/categories/:id`   | Cancellazione |
 
-- `GET`: query `q`, `page`, `limit`.
+- `GET`: query `q`, `page`, `limit`, oppure `all=true` per averle tutte senza paginazione (come `GET /categories`). Ogni categoria include `products_count` (numero di prodotti, attivi e non).
+- `GET /admin/categories/:id`: **200** `data: Category`. **404** se non esiste.
 - **Payload:** `{ "category": { "name", "description" } }` (`name` obbligatorio e unico).
 - Risposte: create **201** `category_created_successfully`; update **200** `category_updated_successfully`; delete **200** `category_deleted_successfully`. Errori **422** `category_create_error` / `category_update_error`.
 - Delete di una categoria che contiene prodotti: **409** `category_delete_error`, `errors: [...]`. Prima vanno spostati o eliminati i prodotti: non c'è più l'eliminazione a cascata.
@@ -392,7 +422,8 @@ Tutti gli endpoint `/admin/*` richiedono livello **Admin**.
 La creazione avviene solo tramite `/auth/signup`.
 
 - `GET`: query `q` (nome, cognome, email, telefono), `order_by`, `order_direction`, `page`, `limit`. Default: ordinati per cognome e nome. **200:** `data: [User]`, `meta`.
-- **Payload** (update): `{ "user": { "first_name", "last_name", "email", "number", "password", "password_confirmation", "date_of_birth" } }`.
+- `GET /admin/users/:id`: **200** `data: User`. **404** se non esiste.
+- **Payload** (update): `{ "user": { "first_name", "last_name", "email", "number", "password", "password_confirmation", "date_of_birth" } }`. Tutti opzionali; il ruolo `admin` non è modificabile via API (campo ignorato).
 - `GET`: `order_by` vedi *Ordinamento*; **400** se non ammesso.
 - Risposte: `user_updated_successfully`, `user_deleted_successfully` (200); errori `user_update_error`, `user_delete_error` (422).
 - Un admin non può eliminare il proprio account da qui: **403** `cannot_delete_self`. Per eliminare il proprio account si usa `DELETE /auth/me`. 403 perché la richiesta è valida, ma l'azione non è permessa a chi la esegue.
@@ -408,7 +439,7 @@ La creazione avviene solo tramite `/auth/signup`.
 
 - `GET`: query
   - `q`: ID ordine, nome, cognome o email del cliente;
-  - `status`;
+  - `status`: uno stato o più stati separati da virgola (es. `pending,paid`); stato sconosciuto → **400**;
   - `from_date`, `to_date` (date, estremi inclusi);
   - `min_total_amount`, `max_total_amount`;
   - `order_by`, `order_direction` (vedi *Ordinamento*), `page`, `limit`.
@@ -448,5 +479,4 @@ Sono credenziali di sviluppo, da non usare in produzione.
 
 Comportamenti attuali del backend che differiscono da quanto ci si aspetterebbe. Vanno risolti con task dedicati, poi questa sezione va aggiornata.
 
-1. **`GET /orders`:** il filtro `status` non viene applicato (il risultato di `where` è scartato).
-2. **OAuth, request phase:** `POST /auth/google_oauth2` non verifica un token CSRF. Rischio accettato e basso, vedi *OAuth Google*.
+1. **OAuth, request phase:** `POST /auth/google_oauth2` non verifica un token CSRF. Rischio accettato e basso, vedi *OAuth Google*.

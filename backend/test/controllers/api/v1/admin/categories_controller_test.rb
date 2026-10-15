@@ -29,4 +29,22 @@ class Api::V1::Admin::CategoriesControllerTest < ActionDispatch::IntegrationTest
     assert_response :conflict
     assert Category.exists?(categories(:videogames).id)
   end
+
+  test "GET /admin/categories includes products_count and supports all=true" do
+    Category.create!(name: "Vuota")
+
+    get api_v1_admin_categories_path, params: { all: true }, headers: @headers
+
+    assert_response :ok
+    counts = json_response["data"].to_h { |category| [ category["name"], category["products_count"] ] }
+    assert_equal({ "Elettronica" => 2, "Videogiochi" => 1, "Vuota" => 0 }, counts)
+    assert_equal({ "count" => 3 }, json_response["meta"])
+  end
+
+  test "GET /admin/categories/:id includes products_count" do
+    get api_v1_admin_category_path(categories(:electronics)), headers: @headers
+
+    assert_response :ok
+    assert_equal 2, json_response["data"]["products_count"]
+  end
 end

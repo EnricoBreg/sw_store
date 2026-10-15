@@ -75,6 +75,7 @@ en:
         unit_price: "Unit price"
 
       product:
+        image: "Image"
         order_items: "Orders"
         <<: *common_timestamps
         name: "Name"
@@ -98,6 +99,11 @@ en:
 
     errors:
       models:
+        product:
+          attributes:
+            image:
+              invalid_content_type: "must be a %{allowed} file."
+              too_large: "cannot be larger than %{max}."
         user:
           attributes:
             date_of_birth:

@@ -1,7 +1,7 @@
 # Analisi dei requisiti – SW Store
 
 Stato del progetto rispetto a `docs/Progetto_di_sistemi_web_Specifiche.pdf`.
-Ultimo aggiornamento: 2026-10-15 (Fase 2: chiusi T0, T1, T2, T2-FE, T3, T4, T5, T6, T8, T9, T10a, T11a).
+Ultimo aggiornamento: 2026-10-15 (Fase 2: chiusi T0, T1, T2, T2-FE, T3, T4, T5, T6, T8, T9, T10a, T10b, T11a).
 Path backend relativi a `backend/app/` salvo indicazione, path frontend relativi a `frontend/src/app/`. Tutte le rotte hanno prefisso `/api/v1`.
 
 Legenda stato: **fatto** / **parziale** / **mancante**.
@@ -10,7 +10,7 @@ Legenda stato: **fatto** / **parziale** / **mancante**.
 
 | Comando | Esito |
 |---|---|
-| `bin/rails test` | Dopo T8: 146 test, 476 asserzioni, tutti verdi |
+| `bin/rails test` | Dopo T10b: 159 test, 522 asserzioni, tutti verdi |
 | `bin/rubocop` | 88 file, 0 offese |
 | `brakeman` | Dopo T2: 0 warning (il Redirect della baseline è risolto) |
 | `npx ng test --watch=false` | Dopo T6: 84/84 verdi |
@@ -49,7 +49,7 @@ Legenda stato: **fatto** / **parziale** / **mancante**.
 | 4.2d | Carrello guest (plus) | mancante | entrambi | – | Non supportato |
 | 4.3a | Modelli Order / OrderItem | fatto | backend | `models/order.rb`, `models/order_item.rb` | Transizioni di stato non vincolate (es. cancelled→pending); messaggio di errore non tradotto |
 | 4.3b | `POST /orders` dal carrello, svuota carrello | fatto (T4) | backend | `users/orders_controller.rb:24-70`, `serializers/order_item_serializer.rb` | Transazione con lock dei prodotti, controllo di stock e prodotto attivo, 422 con `errors` (anche carrello vuoto), doppio sconto corretto |
-| 4.3c | `GET /orders`, `GET /orders/:id` solo dell'utente | parziale | backend | `users/orders_controller.rb`, `models/order.rb` | Fatto in T2: scoping sull'utente (404 sugli ordini altrui), transizioni di stato vincolate, annullamento con ripristino dello stock. Resta: filtro `status` ignorato (7.2) |
+| 4.3c | `GET /orders`, `GET /orders/:id` solo dell'utente | parziale | backend | `users/orders_controller.rb`, `models/order.rb` | Fatto in T2: scoping sull'utente (404 sugli ordini altrui), transizioni di stato vincolate, annullamento con ripristino dello stock. Filtro `status` (anche multiplo) sistemato in T10b |
 | 4.3d | Checkout: Reactive Forms + OrderService, loading, conferma, errore con retry | parziale | frontend | `pages/checkout-page`, `core/services/orders.service.ts` | Loading solo globale. Dopo il successo solo un toast e redirect a /products, nessuna conferma. Nessun "Riprova". L'errore resta visibile quando si torna sulla pagina. Il carrello non viene ricaricato dal server |
 | 4.3e | Pagina lista ordini | parziale | frontend | `pages/my-orders-page`, `pages/order-detail-page`, `core/http/orders-api.service.ts` | Paginatore dentro il `@for`; `paginationMeta` mai impostato; viene inviato `per_page` invece di `limit` |
 | 4.4a | `POST /auth/login`, `POST /auth/logout`, `GET /auth/me` | fatto (T2) | backend | `auth/sessions_controller.rb`, `config/initializers/devise.rb`, `api/v1/current_user_controller.rb` | `POST /auth/logout` aggiunto (DELETE resta); `PUT /auth/me` corretto (cambio email/password richiede `current_password`) |
@@ -74,7 +74,7 @@ Legenda stato: **fatto** / **parziale** / **mancante**.
 
 | # | Funzionalità | Stato | Parte | File coinvolti | Cosa manca |
 |---|---|---|---|---|---|
-| 7.1 | Area admin prodotti (ruolo admin + guard) | parziale | entrambi | `api/v1/admin/*`, `pages/admin/*`, `components/product-form`, `core/guards/admin*` | BE: rifinito in T8 (PUT 200, whitelist, 409 su elementi referenziati, niente cascata, admin non può eliminare sé stesso). FE: eliminazione prodotto non implementata, dashboard placeholder, label del form non i18n |
+| 7.1 | Area admin prodotti (ruolo admin + guard) | parziale | entrambi | `api/v1/admin/*`, `pages/admin/*`, `components/product-form`, `core/guards/admin*` | BE fatto (T8, T10b): PUT 200, whitelist, 409 su elementi referenziati, upload immagine multipart, `GET /admin/dashboard`, categorie con `products_count` e `all=true`. FE: eliminazione prodotto non implementata, dashboard placeholder, label del form non i18n |
 | 7.2 | Storico ordini avanzato (filtri data/stato, dettaglio) | parziale | entrambi | `users/orders_controller.rb`, `pages/my-orders-page`, `pages/order-detail-page` | Dettaglio completo. Filtri lato utente assenti (BE e FE) |
 | 7.3 | Wishlist | parziale | entrambi | `users/wishlist*_controller.rb`, `core/services/wishlists.service.ts` | BE: niente unique/validazione, POST risponde 200. FE: stato dal server dal T6, pulsante nascosto agli ospiti dal T9 |
 | 7.4 | Coupon | mancante | entrambi | – | Tutto |
@@ -107,10 +107,12 @@ Legenda stato: **fatto** / **parziale** / **mancante**.
 | T11a | Accessibilità, pulizia, budget del bundle | **fatto** |
 | T4 | Carrello e checkout robusti (backend) | **fatto** |
 | T6 | Carrello e wishlist frontend sul nuovo contratto | **fatto** |
-| T10b | Area admin, parte backend (immagini, dashboard, coerenza CRUD, filtro status utente) | in corso |
+| T10b | Area admin, parte backend (immagini, dashboard, coerenza CRUD, filtro status utente) | **fatto** |
+| T7 | Checkout e ordini (frontend) | in corso |
 | T3 | Errori uniformi (backend) | **fatto** |
 | T8 | Prodotti attivi, categorie (`q`, `all`), whitelist ordinamento, rifiniture admin, seed non distruttivo | **fatto** |
 
 Problemi segnalati, da includere nei task successivi:
 - Admin ordini: il link "Modifica" punta a `orders/:id/edit`, rotta inesistente (task Area admin).
 - "I miei ordini": paginatore dentro il `@for` (T7).
+- Produzione: `config/environments/production.rb` senza `default_url_options`, quindi `image_url` fallirebbe (task di consegna/Docker).

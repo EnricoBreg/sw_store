@@ -7,7 +7,7 @@ class Api::V1::BaseController < ApplicationController
   rescue_from ArgumentError, ActiveRecord::UnknownAttributeReference, ActionDispatch::Http::Parameters::ParseError,
     with: :render_bad_request
   rescue_from ActionController::ParameterMissing, with: :render_parameters_missing
-  rescue_from Sortable::InvalidParameterError, with: :render_invalid_parameter
+  rescue_from InvalidParameterError, with: :render_invalid_parameter
   rescue_from ActiveRecord::InvalidForeignKey, ActiveRecord::RecordNotUnique, with: :render_conflict
   rescue_from ActiveRecord::RecordNotFound, with: :render_not_found
   rescue_from ActiveRecord::RecordInvalid, with: :render_record_invalid

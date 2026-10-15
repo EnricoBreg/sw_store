@@ -1,4 +1,6 @@
 class Api::V1::Admin::OrdersController < Api::V1::AdminController
+  include OrderStatusFilter
+
   SORTABLE_COLUMNS = %w[id code status total_amount created_at updated_at].freeze
 
   before_action :set_order, only: [ :show, :update, :destroy ]
@@ -9,7 +11,7 @@ class Api::V1::Admin::OrdersController < Api::V1::AdminController
 
     orders = search_by_customer_name_or_id(orders) if params[:q].present?
 
-    orders = orders.where(status: params[:status]) if params[:status].present?
+    orders = filter_by_status(orders)
 
     if params[:from_date].present? && params[:to_date].present?
       from_date = Time.parse(params[:from_date]).beginning_of_day

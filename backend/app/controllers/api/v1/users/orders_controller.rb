@@ -1,9 +1,10 @@
 class Api::V1::Users::OrdersController < Api::V1::AuthenticatedController
+  include OrderStatusFilter
+
   before_action :set_order, only: [ :show, :update, :destroy ]
 
   def index
-    orders = current_user.orders.order(created_at: :desc)
-    orders.where(status: params[:status]) if params[:status].present?
+    orders = filter_by_status(current_user.orders.order(created_at: :desc))
 
     @pagy, @orders = pagy(orders, page: params[:page], items: params[:limit])
 
