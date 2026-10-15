@@ -75,7 +75,7 @@ export class AuthService {
       },
       error: (error) => {
         this.router.navigate(["/login"]);
-        this.toaster.error("Authenticazione OAuth fallita. Riprova.");
+        this.toaster.error($localize`:@@toast.oauthFailed:Autenticazione con Google non riuscita. Riprova.`);
       },
     });
   }
@@ -120,7 +120,7 @@ export class AuthService {
         }
       },
       error: (error) => {
-        this.toaster.error("Registrazione non riuscita. Riprova.");
+        this.toaster.error($localize`:@@toast.signUpFailed:Registrazione non riuscita. Riprova.`);
         this.#error.set(getApiError(error, $localize`:@@authService.signUpError:Registrazione fallita. Riprova.`));
       },
     });

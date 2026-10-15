@@ -18,11 +18,11 @@ import ViewPanel from "../../core/directives/view-panel/view-panel";
 
       <div class="space-y-1 text-lg">
         <div class="flex justify-between pt-2 font-bold text-xl">
-          <span>Totale</span>
+          <span i18n="@@summarizeOrder.total">Totale</span>
           <span>{{ total() | currency: "EUR" }}</span>
         </div>
         <div class="flex justify-between text-sm text-gray-600">
-          <span>Di cui IVA (22%)</span>
+          <span i18n="@@summarizeOrder.vat">Di cui IVA (22%)</span>
           <span>{{ tax() | currency: "EUR" }}</span>
         </div>
       </div>

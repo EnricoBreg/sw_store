@@ -74,7 +74,7 @@ export class WishlistsService {
     this.api.addToWishlist(product).subscribe({
       next: (response) => {
         this.#wishlist.set(response.data);
-        this.toaster.success(response.message || "Prodotto aggiunto alla tua wishlist");
+        this.toaster.success(response.message || $localize`:@@toast.addedToWishlist:Prodotto aggiunto alla tua wishlist`);
       },
       error: (err) => {
         // Rollback allo stato precedente in caso di errore nella chiamata
@@ -103,7 +103,7 @@ export class WishlistsService {
       this.api.removeFromWishlist(product).subscribe({
         next: (response) => {
           this.#wishlist.set(response.data);
-          this.toaster.success(response.message || "Prodotto rimosso dal tuo carrello");
+          this.toaster.success(response.message || $localize`:@@toast.removedFromWishlist:Prodotto rimosso dalla tua wishlist`);
         },
         error: (err) => {
           this.#wishlist.set(previousWishlist);
@@ -138,7 +138,7 @@ export class WishlistsService {
         next: (response) => {
           this.#wishlist.set(response.data);
           this.cartService.loadCart();
-          this.toaster.success(response.message || "Prodotto spostato nel carrello");
+          this.toaster.success(response.message || $localize`:@@toast.movedToCart:Prodotto spostato nel carrello`);
         },
         error: (err) => {
           this.#wishlist.set(previousWishlist);

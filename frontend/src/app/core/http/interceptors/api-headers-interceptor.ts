@@ -2,10 +2,10 @@ import { HttpEvent, HttpHandlerFn, HttpRequest } from "@angular/common/http";
 import { inject, LOCALE_ID } from "@angular/core";
 import { Observable } from "rxjs";
 import { AuthService } from "../../services/auth.service";
+import { normalizeLocale } from "../../i18n/locales";
 
-// Lingue supportate dal backend per i messaggi (header Accept-Language)
-export const apiLanguageFromLocale = (locale: string): "it" | "en" =>
-  locale.toLowerCase().startsWith("en") ? "en" : "it";
+// Lingua dei messaggi del backend (header Accept-Language): la stessa dell'interfaccia
+export const apiLanguageFromLocale = normalizeLocale;
 
 export function apiHeadersInterceptor(
   req: HttpRequest<unknown>,

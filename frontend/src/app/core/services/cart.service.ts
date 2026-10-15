@@ -47,7 +47,7 @@ export class CartService {
         switchMap(({ cartItem, newQuantity, previousCart }) =>
           this.api.updateQuantity(cartItem.product, newQuantity).pipe(
             tap({
-              next: () => this.toaster.success("Quantità aggiornata."),
+              next: () => this.toaster.success($localize`:@@toast.quantityUpdated:Quantità aggiornata.`),
               error: (err) => {
                 this.#cart.set(previousCart);
                 this.toaster.error(getApiErrorMessage(err, $localize`:@@cartService.updateError:Errore durante l'aggiornamento del carrello.`));
@@ -112,7 +112,7 @@ export class CartService {
     this.api.addToCart(product, quantity).subscribe({
       next: (response) => {
         this.#cart.set(response.data);
-        this.toaster.success("Prodotto aggiunto al tuo carrello");
+        this.toaster.success($localize`:@@toast.addedToCart:Prodotto aggiunto al tuo carrello`);
       },
       error: (err) => {
         // Rollback allo stato precedente in caso di errore nella chiamata
@@ -141,7 +141,7 @@ export class CartService {
       this.api.removeFromCart(product).subscribe({
         next: (response) => {
           this.#cart.set(response.data);
-          this.toaster.success("Prodotto rimosso dal tuo carrello");
+          this.toaster.success($localize`:@@toast.removedFromCart:Prodotto rimosso dal tuo carrello`);
         },
         error: (err) => {
           this.#cart.set(previousCart);

@@ -79,7 +79,7 @@ export class AdminOrdersService {
         next: (response) => {
           this.#error.set(undefined);
           this.#order.set(response.data);
-          this.toaster.success("Stato dell'ordine aggiornato con successo.");
+          this.toaster.success($localize`:@@toast.orderStatusUpdated:Stato dell'ordine aggiornato con successo.`);
         },
         error: (error) => {
           this.toaster.error(

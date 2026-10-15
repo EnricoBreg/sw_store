@@ -77,7 +77,7 @@ import { LoadingService } from "../../core/http/services/loading.service";
             </button>
           </mat-form-field>
 
-          <button matButton="filled" type="submit" class="w-full" [disabled]="signInForm.invalid || isLoading()">Accedi</button>
+          <button matButton="filled" type="submit" class="w-full" [disabled]="signInForm.invalid || isLoading()" i18n="@@login.submit">Accedi</button>
         </form>
 
         <div class="w-full flex flex-col justify-center items-center">

@@ -21,7 +21,7 @@ import { CategoriesService } from '../../core/services/categories.service';
           [activated]="!selectedCategory()"
           (click)="onCategorySelectEvent({ id: undefined, name: undefined })"
         >
-          <span matListItemTitle class="font-medium"> Tutte </span>
+          <span matListItemTitle class="font-medium" i18n="@@categoriesList.all">Tutte</span>
         </mat-list-item>
         @for (category of categories(); track category) {
           <mat-list-item

@@ -37,11 +37,18 @@ import { LoadingService } from "../../core/http/services/loading.service";
     <div class="p-8 max-w-[400px] flex flex-col">
       <div class="flex justify-between mb-3">
         <div>
-          <h2 class="text-xl font-medium mb-1">
+          <h2 class="text-xl font-medium mb-1" i18n="@@changeOrderStatus.title">
             Aggiorna lo stato dell'ordine: {{ data.orderCode }}
           </h2>
         </div>
-        <button tabindex="-1" matIconButton class="-mt-2 -mr-2" mat-dialog-close>
+        <button
+          tabindex="-1"
+          matIconButton
+          class="-mt-2 -mr-2"
+          mat-dialog-close
+          i18n-aria-label="@@dialog.close"
+          aria-label="Chiudi"
+        >
           <mat-icon>close</mat-icon>
         </button>
       </div>
@@ -50,12 +57,12 @@ import { LoadingService } from "../../core/http/services/loading.service";
         <app-expandable-content>
           <ng-container title>
             <div class="flex items-center gap-1">
-              <img src="/assets/warning_icon.svg" alt="Warning" class="inline w-6 h-6" />
-              <span class="text-yellow-700 font-semibold">Attenzione!</span>
+              <img src="assets/warning_icon.svg" alt="" class="inline w-6 h-6" />
+              <span class="text-yellow-700 font-semibold" i18n="@@changeOrderStatus.warning">Attenzione!</span>
             </div>
           </ng-container>
           <ng-container content>
-            <p class="text-sm text-gray-500">
+            <p class="text-sm text-gray-500" i18n="@@changeOrderStatus.warning.description">
               Il cambio dello stato dell'ordine è un'azione importante che può influire sulla
               gestione dell'inventario, sulle notifiche al cliente e sui processi di spedizione.
               <span class="font-semibold"
@@ -63,7 +70,7 @@ import { LoadingService } from "../../core/http/services/loading.service";
                 dell'ordine.</span
               >
             </p>
-            <p class="text-sm text-gray-500">
+            <p class="text-sm text-gray-500" i18n="@@changeOrderStatus.warning.notifications">
               Al cambio dello stato dell'ordine, potrebbero essere inviate notifiche al cliente e
               aggiornamenti al sistema di gestione dell'inventario. Assicurati di comunicare
               eventuali cambiamenti significativi al cliente, soprattutto se lo stato dell'ordine
@@ -73,7 +80,7 @@ import { LoadingService } from "../../core/http/services/loading.service";
         </app-expandable-content>
       </app-accordion>
 
-      <p class="mt-3">La modifica afrà il seguente effetto:</p>
+      <p class="mt-3" i18n="@@changeOrderStatus.effect">La modifica avrà il seguente effetto:</p>
       <div class="my-3 flex items-center justify-between">
         <app-order-status-badge [status]="data.initialStatus"></app-order-status-badge>
         <mat-icon>arrow_forward</mat-icon>
@@ -82,7 +89,7 @@ import { LoadingService } from "../../core/http/services/loading.service";
 
       <form class="mt-6" [formGroup]="changeOrderStatusForm" (ngSubmit)="submitChangeOrderStatus()">
         <mat-form-field>
-          <mat-label>Nuovo stato</mat-label>
+          <mat-label i18n="@@changeOrderStatus.newStatus">Nuovo stato</mat-label>
           <mat-select formControlName="status" #statusSelect>
             @for (option of statusOptions; track option.key) {
               <mat-option [value]="option.key">
@@ -92,7 +99,7 @@ import { LoadingService } from "../../core/http/services/loading.service";
           </mat-select>
         </mat-form-field>
 
-        <button type="submit" matButton="filled" class="w-full" [disabled]="disableButton()">
+        <button type="submit" matButton="filled" class="w-full" [disabled]="disableButton()" i18n="@@changeOrderStatus.submit">
           Aggiorna stato
         </button>
       </form>

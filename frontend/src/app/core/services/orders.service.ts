@@ -94,7 +94,7 @@ export class OrdersService {
 
     this.api.checkout(parsedOrderData).subscribe({
       next: (response) => {
-        this.toaster.success("Ordine effettuato con successo!");
+        this.toaster.success($localize`:@@toast.orderPlaced:Ordine effettuato con successo!`);
         this.cartService.clearCart();
         this.router.navigate(["/products"]);
       },
@@ -102,7 +102,7 @@ export class OrdersService {
         this.#error.set(
           getApiError(err, $localize`:@@ordersService.checkoutError:Errore durante il checkout. Riprova.`),
         );
-        this.toaster.error("Errore durante il checkout.");
+        this.toaster.error($localize`:@@toast.checkoutFailed:Errore durante il checkout.`);
       },
     });
   }
