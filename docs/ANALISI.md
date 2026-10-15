@@ -1,7 +1,7 @@
 # Analisi dei requisiti – SW Store
 
 Stato del progetto rispetto a `docs/Progetto_di_sistemi_web_Specifiche.pdf`.
-Ultimo aggiornamento: 2026-10-15 (Fase 2: chiusi T0, T1, T2, T2-FE, T3, T4, T5, T6, T8, T9, T10a, T10b, T11a).
+Ultimo aggiornamento: 2026-10-15 (Fase 2: chiusi T0, T1, T2, T2-FE, T3, T4, T5, T6, T7, T8, T9, T10a, T10b, T11a, T12-BE, T13).
 Path backend relativi a `backend/app/` salvo indicazione, path frontend relativi a `frontend/src/app/`. Tutte le rotte hanno prefisso `/api/v1`.
 
 Legenda stato: **fatto** / **parziale** / **mancante**.
@@ -13,9 +13,9 @@ Legenda stato: **fatto** / **parziale** / **mancante**.
 | `bin/rails test` | Dopo T10b: 159 test, 522 asserzioni, tutti verdi |
 | `bin/rubocop` | 88 file, 0 offese |
 | `brakeman` | Dopo T2: 0 warning (il Redirect della baseline è risolto) |
-| `npx ng test --watch=false` | Dopo T6: 84/84 verdi |
+| `npx ng test --watch=false` | Dopo T7: 97/97 verdi |
 | `npx ng build` | ok (it + en), nessun warning (budget initial portato a 800 kB / 1 MB in T11a; 727 kB raw, ~178 kB gzip) |
-| `npx playwright test` | Dopo T6: 21/21 verdi (1 fallimento non riproducibile su 10 run consecutivi, con backend lento); `npm run e2e:i18n` 3/3 verdi |
+| `npx playwright test` | Dopo T7: 24/24 verdi in 5 run consecutive; `npm run e2e:i18n` 3/3 verdi |
 
 ## Decisioni dell'utente (2026-10-15)
 
@@ -50,12 +50,12 @@ Legenda stato: **fatto** / **parziale** / **mancante**.
 | 4.3a | Modelli Order / OrderItem | fatto | backend | `models/order.rb`, `models/order_item.rb` | Transizioni di stato non vincolate (es. cancelled→pending); messaggio di errore non tradotto |
 | 4.3b | `POST /orders` dal carrello, svuota carrello | fatto (T4) | backend | `users/orders_controller.rb:24-70`, `serializers/order_item_serializer.rb` | Transazione con lock dei prodotti, controllo di stock e prodotto attivo, 422 con `errors` (anche carrello vuoto), doppio sconto corretto |
 | 4.3c | `GET /orders`, `GET /orders/:id` solo dell'utente | parziale | backend | `users/orders_controller.rb`, `models/order.rb` | Fatto in T2: scoping sull'utente (404 sugli ordini altrui), transizioni di stato vincolate, annullamento con ripristino dello stock. Filtro `status` (anche multiplo) sistemato in T10b |
-| 4.3d | Checkout: Reactive Forms + OrderService, loading, conferma, errore con retry | parziale | frontend | `pages/checkout-page`, `core/services/orders.service.ts` | Loading solo globale. Dopo il successo solo un toast e redirect a /products, nessuna conferma. Nessun "Riprova". L'errore resta visibile quando si torna sulla pagina. Il carrello non viene ricaricato dal server |
-| 4.3e | Pagina lista ordini | parziale | frontend | `pages/my-orders-page`, `pages/order-detail-page`, `core/http/orders-api.service.ts` | Paginatore dentro il `@for`; `paginationMeta` mai impostato; viene inviato `per_page` invece di `limit` |
+| 4.3d | Checkout: Reactive Forms + OrderService, loading, conferma, errore con retry | fatto (T7) | frontend | `pages/checkout-page`, `pages/order-confirmation-page`, `core/services/orders.service.ts` | Loading locale, pagina di conferma, errore del backend con "Riprova", carrello riletto dal server. E2E `e2e/checkout.spec.ts` (flusso completo della demo) |
+| 4.3e | Pagina lista ordini | fatto (T7) | frontend | `pages/my-orders-page`, `pages/order-detail-page`, `core/http/orders-api.service.ts` | Paginazione corretta, filtro per stato, stato vuoto, dettaglio |
 | 4.4a | `POST /auth/login`, `POST /auth/logout`, `GET /auth/me` | fatto (T2) | backend | `auth/sessions_controller.rb`, `config/initializers/devise.rb`, `api/v1/current_user_controller.rb` | `POST /auth/logout` aggiunto (DELETE resta); `PUT /auth/me` corretto (cambio email/password richiede `current_password`) |
 | 4.4b | Login Google OAuth2 | fatto | entrambi | `models/user.rb`, `auth/omniauth_callbacks_controller.rb`, `pages/auth-callback` | BE fatto in T2 (uid corretto, collegamento per email verificata, token nel fragment, `FRONTEND_URL`). FE fatto in T2-FE: token letto dal fragment e rimosso dall'URL, messaggi `oauth_failed`/`oauth_canceled`, logout con `POST` |
 | 4.4c | Login, token, HttpInterceptor | parziale | frontend | `pages/login-page.ts/`, `core/services/auth.service.ts`, `core/http/interceptors/*` | fatto (T5, T9): interceptor, signup con `password_confirmation`, `date_of_birth` e validator di uguaglianza |
-| 4.4d | Route guard | parziale | frontend | `core/guards/*`, `app.routes.ts` | `adminGuard` corretto in T9 (ospite → /login, non admin → /forbidden). Manca il guard su `/my-orders/:orderId` (T7) |
+| 4.4d | Route guard | fatto | frontend | `core/guards/*`, `app.routes.ts` | `adminGuard` corretto in T9 (ospite → /login, non admin → /forbidden). Guard su `/my-orders/:orderId` e sulla conferma aggiunto in T7 |
 
 ## Requisiti tecnici (§5, §6)
 
@@ -108,7 +108,7 @@ Legenda stato: **fatto** / **parziale** / **mancante**.
 | T4 | Carrello e checkout robusti (backend) | **fatto** |
 | T6 | Carrello e wishlist frontend sul nuovo contratto | **fatto** |
 | T10b | Area admin, parte backend (immagini, dashboard, coerenza CRUD, filtro status utente) | **fatto** |
-| T7 | Checkout e ordini (frontend) | in corso |
+| T7 | Checkout e ordini (frontend) | **fatto** |
 | T12-BE | Consegna, parte backend (config da ENV, Dockerfile, README backend, CI in root) | **fatto** |
 | T13 | Aggiornamento gem di sicurezza (patch/minor, Rails 8.1.4), bundler-audit pulito | **fatto** |
 | T3 | Errori uniformi (backend) | **fatto** |
@@ -116,4 +116,3 @@ Legenda stato: **fatto** / **parziale** / **mancante**.
 
 Problemi segnalati, da includere nei task successivi:
 - Admin ordini: il link "Modifica" punta a `orders/:id/edit`, rotta inesistente (task Area admin).
-- "I miei ordini": paginatore dentro il `@for` (T7).
