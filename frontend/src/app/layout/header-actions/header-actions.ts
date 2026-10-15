@@ -8,6 +8,7 @@ import { MatDivider } from "@angular/material/divider";
 import { MatBadgeModule } from "@angular/material/badge";
 import { CartService } from "../../core/services/cart.service";
 import { WishlistsService } from "../../core/services/wishlists.service";
+import LanguageSelector from "../../components/language-selector/language-selector";
 
 @Component({
   selector: "app-header-actions",
@@ -21,13 +22,17 @@ import { WishlistsService } from "../../core/services/wishlists.service";
     MatMenuTrigger,
     MatDivider,
     MatBadgeModule,
+    LanguageSelector,
   ],
   template: `
     <div class="flex items-center gap-2">
+      <app-language-selector />
       @if (authService.user(); as user) {
         <button
           matIconButton
           routerLink="/wishlist"
+          i18n-aria-label="@@headerAction.wishlist"
+          aria-label="Wishlist"
           [matBadge]="wishlistItemCount()"
           [matBadgeHidden]="!wishlistItemCount()"
         >
@@ -37,6 +42,8 @@ import { WishlistsService } from "../../core/services/wishlists.service";
         <button
           matIconButton
           routerLink="/cart"
+          i18n-aria-label="@@headerAction.cart"
+          aria-label="Carrello"
           [matBadge]="cartItemCount()"
           [matBadgeHidden]="!cartItemCount()"
         >
@@ -44,7 +51,12 @@ import { WishlistsService } from "../../core/services/wishlists.service";
         </button>
 
         <p class="text-sm">{{ greetUtente() }}</p>
-        <button matIconButton [matMenuTriggerFor]="userMenu">
+        <button
+          matIconButton
+          [matMenuTriggerFor]="userMenu"
+          i18n-aria-label="@@headerAction.userMenu"
+          aria-label="Menu utente"
+        >
           <mat-icon>person</mat-icon>
         </button>
 

@@ -43,6 +43,7 @@ Regole di collaborazione:
 - Codice in `src/app/`: `core/` (servizi, modelli, pipe), `components/`, `pages/`, `layout/`.
 - Traduzioni in `src/locale/`: `messages.xlf` (sorgente italiano) e `messages.en.xlf`. Dopo aver aggiunto o modificato testi marcati per l'i18n eseguire `npm run i18n` (estrazione + merge con `ng-extract-i18n-merge`) e completare le traduzioni inglesi.
 - Test E2E Playwright in `frontend/e2e/` (fuori da `src/`, così non vengono raccolti da Vitest).
+- i18n a build time: `ng serve` serve una sola lingua (base `/`), quindi il selettore di lingua si prova sulla build (`npx ng build && node e2e/serve-dist.mjs`, poi http://localhost:4200/it/ o /en/).
 
 ## Ambiente di sviluppo
 
@@ -86,6 +87,7 @@ L'ambiente è attivo e utilizzabile: le applicazioni si possono avviare e il dat
 | Frontend | `npx ng test --watch=false` | Test unitari Vitest |
 | Frontend | `npx ng build` | Build di produzione (it + en) |
 | Frontend | `npx playwright test` | E2E, con entrambi i server avviati |
+| Frontend | `npm run e2e:i18n` | E2E del cambio lingua sulla build localizzata: rails su :3000 attivo, `ng serve` **fermo** (Playwright avvia `e2e/serve-dist.mjs` su :4200, che serve `/it/` e `/en/`) |
 
 ### Baseline al tag `baseline-pre-team`
 

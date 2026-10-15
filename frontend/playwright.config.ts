@@ -13,6 +13,8 @@ import { defineConfig, devices } from "@playwright/test";
  */
 export default defineConfig({
   testDir: "./e2e",
+  /* Gli E2E di i18n girano sulla build localizzata: vedi playwright.i18n.config.ts */
+  testIgnore: /i18n\.spec\.ts$/,
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */

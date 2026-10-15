@@ -37,22 +37,24 @@ import { handleImageError } from "../../core/utils";
       <section formGroupName="product">
         <!-- Nome -->
         <mat-form-field>
-          <mat-label>Nome</mat-label>
+          <mat-label i18n="@@productForm.name.label">Nome</mat-label>
           <input
             matInput
             type="text"
             formControlName="name"
+            i18n-placeholder="@@productForm.name.placeholder"
             placeholder="Inserisci il nome del prodotto"
           />
         </mat-form-field>
 
         <!-- Descrizione -->
         <mat-form-field>
-          <mat-label>Descrizione</mat-label>
+          <mat-label i18n="@@productForm.description.label">Descrizione</mat-label>
           <textarea
             matInput
             type="text"
             formControlName="description"
+            i18n-placeholder="@@productForm.description.placeholder"
             placeholder="Inserisci una descrizione"
           ></textarea>
         </mat-form-field>
@@ -60,47 +62,50 @@ import { handleImageError } from "../../core/utils";
         <!-- Prezzo - Sconto - Stock quantity -->
         <div class="flex items-center gap-3">
           <mat-form-field>
-            <mat-label>Prezzo</mat-label>
+            <mat-label i18n="@@productForm.price.label">Prezzo</mat-label>
             <input
               matInput
               type="number"
               step="0.01"
               formControlName="price"
+              i18n-placeholder="@@productForm.price.placeholder"
               placeholder="Inserisci il prezzo"
             />
             <span matSuffix class="mr-5 text-gray-500">€</span>
           </mat-form-field>
 
           <mat-form-field>
-            <mat-label>Sconto</mat-label>
+            <mat-label i18n="@@productForm.discount.label">Sconto</mat-label>
             <input
               matInput
               type="number"
               formControlName="discountPercentage"
+              i18n-placeholder="@@productForm.discount.placeholder"
               placeholder="Inserisci una percentuale di sconto"
             />
             <span matSuffix class="mr-5 text-gray-500">%</span>
           </mat-form-field>
 
           <mat-form-field class="ms-10">
-            <mat-label>Quantità in stock</mat-label>
+            <mat-label i18n="@@productForm.stock.label">Quantità in stock</mat-label>
             <input
               matInput
               type="number"
               formControlName="stockQuantity"
+              i18n-placeholder="@@productForm.stock.placeholder"
               placeholder="Inserisci la quantità disponibile"
             />
-            <span matSuffix class="mr-5 text-gray-500">Pezzi</span>
+            <span matSuffix class="mr-5 text-gray-500" i18n="@@productForm.stock.unit">Pezzi</span>
           </mat-form-field>
         </div>
 
         <!-- Active -->
-        <mat-checkbox formControlName="active">Attivo / Disponibile</mat-checkbox>
+        <mat-checkbox formControlName="active" i18n="@@productForm.active">Attivo / Disponibile</mat-checkbox>
 
         <!-- Categoria -->
         <div class="lg:w-1/2">
           <mat-form-field class="mt-5">
-            <mat-label>Categoria prodotto</mat-label>
+            <mat-label i18n="@@productForm.category.label">Categoria prodotto</mat-label>
             <mat-select formControlName="category">
               @for (cat of categories(); track cat.id) {
                 <mat-option [value]="cat.id">
@@ -115,7 +120,7 @@ import { handleImageError } from "../../core/utils";
         </div>
 
         <div class="mb-6 flex items-center gap-4">
-          <p class="text-sm text-gray-600">Immagine dimostrativa del prodotto:</p>
+          <p class="text-sm text-gray-600" i18n="@@productForm.image.label">Immagine dimostrativa del prodotto:</p>
           <input
             #fileInput
             type="file"
@@ -123,7 +128,7 @@ import { handleImageError } from "../../core/utils";
             class="hidden"
             (change)="onFileSelected($event)"
           />
-          <button type="button" mat-stroked-button (click)="fileInput.click()">
+          <button type="button" mat-stroked-button (click)="fileInput.click()" i18n="@@productForm.image.choose">
             Scegli immagine
           </button>
           @if (selectedFileName) {
@@ -135,7 +140,7 @@ import { handleImageError } from "../../core/utils";
       <!-- Submit -->
       <div class="mt-4">
         <button type="submit" mat-flat-button [disabled]="productForm.invalid || isLoading()">
-          {{ isLoading() ? "Salvataggio..." : product() ? "Aggiorna prodotto" : "Crea prodotto" }}
+          {{ isLoading() ? savingLabel : product() ? updateLabel : createLabel }}
         </button>
       </div>
     </form>
@@ -170,6 +175,10 @@ export default class ProductForm implements OnInit {
   });
 
   readonly handleImageError = handleImageError;
+
+  readonly savingLabel = $localize`:@@productForm.submit.saving:Salvataggio...`;
+  readonly updateLabel = $localize`:@@productForm.submit.update:Aggiorna prodotto`;
+  readonly createLabel = $localize`:@@productForm.submit.create:Crea prodotto`;
 
   constructor() {
     // Uso di effect() per fa si che il signal 'product' venga intercettato correttamente

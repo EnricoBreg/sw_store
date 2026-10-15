@@ -11,7 +11,7 @@ export type DateFormatType = "medium" | "default" | "custom";
     @if (relative()) {
       <span>{{ date() | relativeTime }}</span>
     } @else {
-      <span>{{ date() | date: "dd/MM/yyyy HH:mm" }}</span>
+      <span>{{ date() | date: "short" }}</span>
     }
   `,
   styles: ``,

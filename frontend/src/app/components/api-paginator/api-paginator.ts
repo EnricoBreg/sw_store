@@ -1,11 +1,14 @@
 import { Component, input, output } from '@angular/core';
 import { PaginationMeta } from '../../core/models/api-types';
-import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatPaginatorIntl, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { LocalizedPaginatorIntl } from '../../core/i18n/localized-paginator-intl';
 
 
 @Component({
   selector: 'app-api-paginator',
   imports: [MatPaginatorModule],
+  // Testi del paginatore tradotti (fornito qui per non portare il paginatore nel bundle iniziale)
+  providers: [{ provide: MatPaginatorIntl, useClass: LocalizedPaginatorIntl }],
   template: `
     @if (meta(); as m) {
       <mat-paginator
@@ -24,7 +27,7 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 export default class ApiPaginator {
   meta = input<PaginationMeta | null>();
   pageSizeOptions = input<number[]>([5, 10, 20, 30]);
-  ariaLabel = input<string>("Selezione pagina");
+  ariaLabel = input<string>($localize`:@@paginator.ariaLabel:Selezione pagina`);
   pageChangeEvent = output<{ page: number; limit: number; }>();
 
   onPaginatorPageEvent(event: PageEvent): void {

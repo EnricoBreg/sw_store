@@ -2,6 +2,10 @@
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
   <file source-language="it" datatype="plaintext" original="ng2.template">
     <body>
+      <trans-unit id="languageSelector.ariaLabel" datatype="html">
+        <source>Cambia lingua</source>
+        <target state="translated">Change language</target>
+      </trans-unit>
       <trans-unit id="login.description" datatype="html">
         <source>Accedi al tuo account per continuare lo shopping</source>
         <target state="new">Log in to your account to continue shopping</target>
@@ -29,6 +33,10 @@
       <trans-unit id="login.signUp" datatype="html">
         <source>Registrati ora</source>
         <target state="new">Sign up now</target>
+      </trans-unit>
+      <trans-unit id="login.submit" datatype="html">
+        <source>Accedi</source>
+        <target state="translated">Log in</target>
       </trans-unit>
       <trans-unit id="login.title" datatype="html">
         <source>Accedi al tuo account</source>
@@ -142,6 +150,14 @@
         <source>La tua lista dei desideri</source>
         <target state="new">Your wishlist</target>
       </trans-unit>
+      <trans-unit id="wishlistList.empty" datatype="html">
+        <source> La tua lista dei desideri è vuota. Aggiungi subito dei prodotti!😁 </source>
+        <target state="translated">Your wishlist is empty. Add some products now!😁</target>
+      </trans-unit>
+      <trans-unit id="wishlistList.moveToCart" datatype="html">
+        <source>Sposta nel carrello</source>
+        <target state="translated">Move to cart</target>
+      </trans-unit>
       <trans-unit id="wishlistService.loadError" datatype="html">
         <source>Errore nel caricamento della wishlist.</source>
         <target state="translated">Error loading the wishlist.</target>
@@ -154,6 +170,38 @@
         <source>Errore durante l&apos;aggiornamento della wishlist.</source>
         <target state="translated">Error updating the wishlist.</target>
       </trans-unit>
+      <trans-unit id="paginator.ariaLabel" datatype="html">
+        <source>Selezione pagina</source>
+        <target state="translated">Page selection</target>
+      </trans-unit>
+      <trans-unit id="paginator.firstPage" datatype="html">
+        <source>Prima pagina</source>
+        <target state="translated">First page</target>
+      </trans-unit>
+      <trans-unit id="paginator.itemsPerPage" datatype="html">
+        <source>Elementi per pagina:</source>
+        <target state="translated">Items per page:</target>
+      </trans-unit>
+      <trans-unit id="paginator.lastPage" datatype="html">
+        <source>Ultima pagina</source>
+        <target state="translated">Last page</target>
+      </trans-unit>
+      <trans-unit id="paginator.nextPage" datatype="html">
+        <source>Pagina successiva</source>
+        <target state="translated">Next page</target>
+      </trans-unit>
+      <trans-unit id="paginator.previousPage" datatype="html">
+        <source>Pagina precedente</source>
+        <target state="translated">Previous page</target>
+      </trans-unit>
+      <trans-unit id="paginator.range" datatype="html">
+        <source><x id="start" equiv-text="startIndex + 1"/> – <x id="end" equiv-text="endIndex"/> di <x id="total" equiv-text="length"/></source>
+        <target state="translated"><x id="start" equiv-text="startIndex + 1"/> – <x id="end" equiv-text="endIndex"/> of <x id="total" equiv-text="length"/></target>
+      </trans-unit>
+      <trans-unit id="paginator.rangeEmpty" datatype="html">
+        <source>0 di <x id="total" equiv-text="length"/></source>
+        <target state="translated">0 of <x id="total" equiv-text="length"/></target>
+      </trans-unit>
       <trans-unit id="prodotti" datatype="html">
         <source>Prodotti</source>
         <target>Products</target>
@@ -165,6 +213,10 @@
       <trans-unit id="headerAction.areaAdmin" datatype="html">
         <source>Area Admin</source>
         <target>Admin Area</target>
+      </trans-unit>
+      <trans-unit id="headerAction.cart" datatype="html">
+        <source>Carrello</source>
+        <target state="translated">Cart</target>
       </trans-unit>
       <trans-unit id="headerAction.myOrders" datatype="html">
         <source>I miei ordini</source>
@@ -181,6 +233,14 @@
       <trans-unit id="headerAction.signUp" datatype="html">
         <source>Registrati</source>
         <target>Sign Up</target>
+      </trans-unit>
+      <trans-unit id="headerAction.userMenu" datatype="html">
+        <source>Menu utente</source>
+        <target state="translated">User menu</target>
+      </trans-unit>
+      <trans-unit id="headerAction.wishlist" datatype="html">
+        <source>Wishlist</source>
+        <target state="translated">Wishlist</target>
       </trans-unit>
       <trans-unit id="httpError.network" datatype="html">
         <source>Impossibile connettersi al server. Controlla la tua connessione.</source>
@@ -506,6 +566,66 @@
         <source>Esaurito</source>
         <target state="new">Out of stock</target>
       </trans-unit>
+      <trans-unit id="summarizeOrder.total" datatype="html">
+        <source>Totale</source>
+        <target state="translated">Total</target>
+      </trans-unit>
+      <trans-unit id="summarizeOrder.vat" datatype="html">
+        <source>Di cui IVA (22%)</source>
+        <target state="translated">Including VAT (22%)</target>
+      </trans-unit>
+      <trans-unit id="toast.addedToCart" datatype="html">
+        <source>Prodotto aggiunto al tuo carrello</source>
+        <target state="translated">Product added to your cart</target>
+      </trans-unit>
+      <trans-unit id="toast.addedToWishlist" datatype="html">
+        <source>Prodotto aggiunto alla tua wishlist</source>
+        <target state="translated">Product added to your wishlist</target>
+      </trans-unit>
+      <trans-unit id="toast.checkoutFailed" datatype="html">
+        <source>Errore durante il checkout.</source>
+        <target state="translated">Error during checkout.</target>
+      </trans-unit>
+      <trans-unit id="toast.movedToCart" datatype="html">
+        <source>Prodotto spostato nel carrello</source>
+        <target state="translated">Product moved to the cart</target>
+      </trans-unit>
+      <trans-unit id="toast.oauthFailed" datatype="html">
+        <source>Autenticazione con Google non riuscita. Riprova.</source>
+        <target state="translated">Google sign-in failed. Please try again.</target>
+      </trans-unit>
+      <trans-unit id="toast.orderPlaced" datatype="html">
+        <source>Ordine effettuato con successo!</source>
+        <target state="translated">Order placed successfully!</target>
+      </trans-unit>
+      <trans-unit id="toast.orderStatusUpdated" datatype="html">
+        <source>Stato dell&apos;ordine aggiornato con successo.</source>
+        <target state="translated">Order status updated successfully.</target>
+      </trans-unit>
+      <trans-unit id="toast.productCreated" datatype="html">
+        <source>Prodotto creato con successo.</source>
+        <target state="translated">Product created successfully.</target>
+      </trans-unit>
+      <trans-unit id="toast.productUpdated" datatype="html">
+        <source>Prodotto aggiornato con successo.</source>
+        <target state="translated">Product updated successfully.</target>
+      </trans-unit>
+      <trans-unit id="toast.quantityUpdated" datatype="html">
+        <source>Quantità aggiornata.</source>
+        <target state="translated">Quantity updated.</target>
+      </trans-unit>
+      <trans-unit id="toast.removedFromCart" datatype="html">
+        <source>Prodotto rimosso dal tuo carrello</source>
+        <target state="translated">Product removed from your cart</target>
+      </trans-unit>
+      <trans-unit id="toast.removedFromWishlist" datatype="html">
+        <source>Prodotto rimosso dalla tua wishlist</source>
+        <target state="translated">Product removed from your wishlist</target>
+      </trans-unit>
+      <trans-unit id="toast.signUpFailed" datatype="html">
+        <source>Registrazione non riuscita. Riprova.</source>
+        <target state="translated">Sign-up failed. Please try again.</target>
+      </trans-unit>
       <trans-unit id="toggleWishlist.add" datatype="html">
         <source>Aggiungi alla wishlist</source>
         <target state="translated">Add to wishlist</target>
@@ -557,6 +677,98 @@
       <trans-unit id="orderStatus.all" datatype="html">
         <source>Tutti gli stati</source>
         <target>All statuses</target>
+      </trans-unit>
+      <trans-unit id="footer.contacts" datatype="html">
+        <source>Contatti</source>
+        <target state="translated">Contacts</target>
+      </trans-unit>
+      <trans-unit id="footer.dataSettings" datatype="html">
+        <source>Impostazioni dati</source>
+        <target state="translated">Data settings</target>
+      </trans-unit>
+      <trans-unit id="footer.faq" datatype="html">
+        <source>Domande frequenti</source>
+        <target state="translated">Frequently asked questions</target>
+      </trans-unit>
+      <trans-unit id="footer.faq.certifications" datatype="html">
+        <source>Certificazioni dei prodotti</source>
+        <target state="translated">Product certifications</target>
+      </trans-unit>
+      <trans-unit id="footer.faq.editAccount" datatype="html">
+        <source>Come modifico i dati del mio account</source>
+        <target state="translated">How do I edit my account details</target>
+      </trans-unit>
+      <trans-unit id="footer.faq.newsletter" datatype="html">
+        <source>Iscriviti alla nostra newsletter</source>
+        <target state="translated">Subscribe to our newsletter</target>
+      </trans-unit>
+      <trans-unit id="footer.faq.order" datatype="html">
+        <source>Come effettuare un ordine</source>
+        <target state="translated">How to place an order</target>
+      </trans-unit>
+      <trans-unit id="footer.faq.paymentMethods" datatype="html">
+        <source>Metodi di pagamento</source>
+        <target state="translated">Payment methods</target>
+      </trans-unit>
+      <trans-unit id="footer.faq.return" datatype="html">
+        <source>Come effettuare un reso</source>
+        <target state="translated">How to return an item</target>
+      </trans-unit>
+      <trans-unit id="footer.faq.shippingTimes" datatype="html">
+        <source>Tempi di spedizione</source>
+        <target state="translated">Shipping times</target>
+      </trans-unit>
+      <trans-unit id="footer.faq.whereIsMyOrder" datatype="html">
+        <source>Dove si trova il mio ordine</source>
+        <target state="translated">Where is my order</target>
+      </trans-unit>
+      <trans-unit id="footer.followUs" datatype="html">
+        <source>Seguici su</source>
+        <target state="translated">Follow us on</target>
+      </trans-unit>
+      <trans-unit id="footer.legal" datatype="html">
+        <source>Informazioni legali</source>
+        <target state="translated">Legal information</target>
+      </trans-unit>
+      <trans-unit id="footer.paymentMethods" datatype="html">
+        <source>Metodi di pagamento</source>
+        <target state="translated">Payment methods</target>
+      </trans-unit>
+      <trans-unit id="footer.phone" datatype="html">
+        <source>Telefono: 00393338087889</source>
+        <target state="translated">Phone: 00393338087889</target>
+      </trans-unit>
+      <trans-unit id="footer.privacy" datatype="html">
+        <source>Informativa sulla privacy</source>
+        <target state="translated">Privacy policy</target>
+      </trans-unit>
+      <trans-unit id="footer.registeredOffice" datatype="html">
+        <source>Sede legale: Via del Commercio, 55, 45100, Rovigo, Italia</source>
+        <target state="translated">Registered office: Via del Commercio, 55, 45100, Rovigo, Italy</target>
+      </trans-unit>
+      <trans-unit id="footer.shareCapital" datatype="html">
+        <source>Capitale sociale: 10.000€</source>
+        <target state="translated">Share capital: €10,000</target>
+      </trans-unit>
+      <trans-unit id="footer.shippedBy" datatype="html">
+        <source>Spedito da</source>
+        <target state="translated">Shipped by</target>
+      </trans-unit>
+      <trans-unit id="footer.taxCode" datatype="html">
+        <source>Codice Fiscale: 1234567890</source>
+        <target state="translated">Tax code: 1234567890</target>
+      </trans-unit>
+      <trans-unit id="footer.terms" datatype="html">
+        <source>CGV</source>
+        <target state="translated">Terms of sale</target>
+      </trans-unit>
+      <trans-unit id="footer.vatNumber" datatype="html">
+        <source>Partita IVA: 1234567890</source>
+        <target state="translated">VAT number: 1234567890</target>
+      </trans-unit>
+      <trans-unit id="footer.withdrawal" datatype="html">
+        <source>Diritto di recesso</source>
+        <target state="translated">Right of withdrawal</target>
       </trans-unit>
       <trans-unit id="forbidden.description" datatype="html">
         <source> Sembra che tu non abbia i permessi necessari per accedere a questa risorsa. </source>
@@ -678,6 +890,14 @@
         <source>Azioni</source>
         <target>Actions</target>
       </trans-unit>
+      <trans-unit id="cartList.empty" datatype="html">
+        <source> Il tuo carrello è vuoto. Aggiungi subito dei prodotti!😁 </source>
+        <target state="translated">Your cart is empty. Add some products now!😁</target>
+      </trans-unit>
+      <trans-unit id="cartList.itemsCount" datatype="html">
+        <source> Articoli nel carrello: <x id="INTERPOLATION" equiv-text="{{ cartService.cartItemCount() }}"/> </source>
+        <target state="translated">Items in cart: <x id="INTERPOLATION" equiv-text="{{ cartService.cartItemCount() }}"/></target>
+      </trans-unit>
       <trans-unit id="cartPage.checkout" datatype="html">
         <source>Procedi al checkout</source>
         <target state="new">Proceed to Checkout</target>
@@ -698,6 +918,10 @@
         <source>Categorie</source>
         <target>Categories</target>
       </trans-unit>
+      <trans-unit id="categoriesList.all" datatype="html">
+        <source>Tutte</source>
+        <target state="translated">All</target>
+      </trans-unit>
       <trans-unit id="categoriesService.loadError" datatype="html">
         <source>Errore nel caricamento delle categorie.</source>
         <target state="translated">Error loading categories.</target>
@@ -709,6 +933,34 @@
       <trans-unit id="categorySelect.label" datatype="html">
         <source>Categoria prodotto</source>
         <target state="new">Product category</target>
+      </trans-unit>
+      <trans-unit id="changeOrderStatus.effect" datatype="html">
+        <source>La modifica avrà il seguente effetto:</source>
+        <target state="translated">The change will have the following effect:</target>
+      </trans-unit>
+      <trans-unit id="changeOrderStatus.newStatus" datatype="html">
+        <source>Nuovo stato</source>
+        <target state="translated">New status</target>
+      </trans-unit>
+      <trans-unit id="changeOrderStatus.submit" datatype="html">
+        <source> Aggiorna stato </source>
+        <target state="translated">Update status</target>
+      </trans-unit>
+      <trans-unit id="changeOrderStatus.title" datatype="html">
+        <source> Aggiorna lo stato dell&apos;ordine: <x id="INTERPOLATION" equiv-text="{{ data.orderCode }}"/> </source>
+        <target state="translated">Update order status: <x id="INTERPOLATION" equiv-text="{{ data.orderCode }}"/></target>
+      </trans-unit>
+      <trans-unit id="changeOrderStatus.warning" datatype="html">
+        <source>Attenzione!</source>
+        <target state="translated">Warning!</target>
+      </trans-unit>
+      <trans-unit id="changeOrderStatus.warning.description" datatype="html">
+        <source> Il cambio dello stato dell&apos;ordine è un&apos;azione importante che può influire sulla gestione dell&apos;inventario, sulle notifiche al cliente e sui processi di spedizione. <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;font-semibold&quot; &gt;"/>Assicurati di selezionare lo stato corretto in base alla situazione attuale dell&apos;ordine.<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span &gt;"/></source>
+        <target state="translated">Changing the order status is an important action that can affect inventory management, customer notifications and shipping processes. <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;font-semibold&quot; &gt;"/>Make sure you select the correct status based on the current state of the order.<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span &gt;"/></target>
+      </trans-unit>
+      <trans-unit id="changeOrderStatus.warning.notifications" datatype="html">
+        <source> Al cambio dello stato dell&apos;ordine, potrebbero essere inviate notifiche al cliente e aggiornamenti al sistema di gestione dell&apos;inventario. Assicurati di comunicare eventuali cambiamenti significativi al cliente, soprattutto se lo stato dell&apos;ordine passa a &quot;spedito&quot;, &quot;consegnato&quot; o &quot;cancellato&quot;. </source>
+        <target state="translated">When the order status changes, notifications may be sent to the customer and updates to the inventory management system. Make sure to communicate any significant changes to the customer, especially if the order moves to &quot;shipped&quot;, &quot;delivered&quot; or &quot;cancelled&quot;.</target>
       </trans-unit>
       <trans-unit id="checkoutPage.completaOrdine" datatype="html">
         <source> Completa il tuo ordine </source>
@@ -778,6 +1030,10 @@
         <source>Elimina</source>
         <target state="new">Delete</target>
       </trans-unit>
+      <trans-unit id="dialog.close" datatype="html">
+        <source>Chiudi</source>
+        <target state="translated">Close</target>
+      </trans-unit>
       <trans-unit id="discountBadge.noDiscount" datatype="html">
         <source>Nessuno sconto applicato</source>
         <target state="new">No discount applied</target>
@@ -785,6 +1041,10 @@
       <trans-unit id="edit" datatype="html">
         <source>Modifica</source>
         <target state="new">Edit</target>
+      </trans-unit>
+      <trans-unit id="emptyCart.explore" datatype="html">
+        <source>Esplora i prodotti</source>
+        <target state="translated">Explore products</target>
       </trans-unit>
       <trans-unit id="productDetail.backButton" datatype="html">
         <source>Torna alla lista dei prodotti</source>
@@ -845,6 +1105,78 @@
       <trans-unit id="productDetail.title" datatype="html">
         <source>Dettagli prodotto</source>
         <target state="new">Product Details</target>
+      </trans-unit>
+      <trans-unit id="productForm.active" datatype="html">
+        <source>Attivo / Disponibile</source>
+        <target state="translated">Active / Available</target>
+      </trans-unit>
+      <trans-unit id="productForm.category.label" datatype="html">
+        <source>Categoria prodotto</source>
+        <target state="translated">Product category</target>
+      </trans-unit>
+      <trans-unit id="productForm.description.label" datatype="html">
+        <source>Descrizione</source>
+        <target state="translated">Description</target>
+      </trans-unit>
+      <trans-unit id="productForm.description.placeholder" datatype="html">
+        <source>Inserisci una descrizione</source>
+        <target state="translated">Enter a description</target>
+      </trans-unit>
+      <trans-unit id="productForm.discount.label" datatype="html">
+        <source>Sconto</source>
+        <target state="translated">Discount</target>
+      </trans-unit>
+      <trans-unit id="productForm.discount.placeholder" datatype="html">
+        <source>Inserisci una percentuale di sconto</source>
+        <target state="translated">Enter a discount percentage</target>
+      </trans-unit>
+      <trans-unit id="productForm.image.choose" datatype="html">
+        <source> Scegli immagine </source>
+        <target state="translated">Choose image</target>
+      </trans-unit>
+      <trans-unit id="productForm.image.label" datatype="html">
+        <source>Immagine dimostrativa del prodotto:</source>
+        <target state="translated">Product image:</target>
+      </trans-unit>
+      <trans-unit id="productForm.name.label" datatype="html">
+        <source>Nome</source>
+        <target state="translated">Name</target>
+      </trans-unit>
+      <trans-unit id="productForm.name.placeholder" datatype="html">
+        <source>Inserisci il nome del prodotto</source>
+        <target state="translated">Enter the product name</target>
+      </trans-unit>
+      <trans-unit id="productForm.price.label" datatype="html">
+        <source>Prezzo</source>
+        <target state="translated">Price</target>
+      </trans-unit>
+      <trans-unit id="productForm.price.placeholder" datatype="html">
+        <source>Inserisci il prezzo</source>
+        <target state="translated">Enter the price</target>
+      </trans-unit>
+      <trans-unit id="productForm.stock.label" datatype="html">
+        <source>Quantità in stock</source>
+        <target state="translated">Quantity in stock</target>
+      </trans-unit>
+      <trans-unit id="productForm.stock.placeholder" datatype="html">
+        <source>Inserisci la quantità disponibile</source>
+        <target state="translated">Enter the available quantity</target>
+      </trans-unit>
+      <trans-unit id="productForm.stock.unit" datatype="html">
+        <source>Pezzi</source>
+        <target state="translated">Pieces</target>
+      </trans-unit>
+      <trans-unit id="productForm.submit.create" datatype="html">
+        <source>Crea prodotto</source>
+        <target state="translated">Create product</target>
+      </trans-unit>
+      <trans-unit id="productForm.submit.saving" datatype="html">
+        <source>Salvataggio...</source>
+        <target state="translated">Saving...</target>
+      </trans-unit>
+      <trans-unit id="productForm.submit.update" datatype="html">
+        <source>Aggiorna prodotto</source>
+        <target state="translated">Update product</target>
       </trans-unit>
       <trans-unit id="products" datatype="html">
         <source>I nostri prodotti</source>

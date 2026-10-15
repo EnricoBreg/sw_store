@@ -28,7 +28,12 @@ import EmptyCart from "../empty-cart/empty-cart";
                 </ng-content>
 
                 <ng-content addToCartButton>
-                  <button matIconButton (click)="moveToCart(item.product)">
+                  <button
+                    matIconButton
+                    i18n-aria-label="@@wishlistList.moveToCart"
+                    aria-label="Sposta nel carrello"
+                    (click)="moveToCart(item.product)"
+                  >
                     <mat-icon>add_shopping_cart</mat-icon>
                   </button>
                 </ng-content>
@@ -37,7 +42,7 @@ import EmptyCart from "../empty-cart/empty-cart";
           </div>
         } @else {
           <app-empty-cart>
-            <p message class="text-gray-500 font-semibold text-lg">
+            <p message class="text-gray-500 font-semibold text-lg" i18n="@@wishlistList.empty">
               La tua lista dei desideri è vuota. Aggiungi subito dei prodotti!😁
             </p>
           </app-empty-cart>

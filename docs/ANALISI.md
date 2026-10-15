@@ -1,7 +1,7 @@
 # Analisi dei requisiti – SW Store
 
 Stato del progetto rispetto a `docs/Progetto_di_sistemi_web_Specifiche.pdf`.
-Ultimo aggiornamento: 2026-10-15 (Fase 2: chiusi T0, T1, T5, T9).
+Ultimo aggiornamento: 2026-10-15 (Fase 2: chiusi T0, T1, T5, T9, T10a).
 Path backend relativi a `backend/app/` salvo indicazione, path frontend relativi a `frontend/src/app/`. Tutte le rotte hanno prefisso `/api/v1`.
 
 Legenda stato: **fatto** / **parziale** / **mancante**.
@@ -13,9 +13,9 @@ Legenda stato: **fatto** / **parziale** / **mancante**.
 | `bin/rails test` | Dopo T1: 24 test, 67 asserzioni, tutti verdi |
 | `bin/rubocop` | 88 file, 0 offese |
 | `brakeman` | 1 warning (Redirect, `auth/omniauth_callbacks_controller.rb:8`), come la baseline |
-| `npx ng test --watch=false` | Dopo T9: 43/43 verdi |
+| `npx ng test --watch=false` | Dopo T10a: 61/61 verdi |
 | `npx ng build` | ok (it + en); warning sul budget (initial 719 kB > 500 kB) |
-| `npx playwright test` | Dopo T9: 9/9 verdi (`smoke`, `http-basics`, `catalog-and-auth`) |
+| `npx playwright test` | Dopo T10a: 9/9 verdi; `npm run e2e:i18n` 3/3 verdi |
 
 ## Decisioni dell'utente (2026-10-15)
 
@@ -78,7 +78,7 @@ Legenda stato: **fatto** / **parziale** / **mancante**.
 | 7.2 | Storico ordini avanzato (filtri data/stato, dettaglio) | parziale | entrambi | `users/orders_controller.rb`, `pages/my-orders-page`, `pages/order-detail-page` | Dettaglio completo. Filtri lato utente assenti (BE e FE) |
 | 7.3 | Wishlist | parziale | entrambi | `users/wishlist*_controller.rb`, `core/services/wishlists.service.ts` | BE: niente unique/validazione, POST risponde 200. FE: localStorage e side effect come il carrello (pulsante nascosto agli ospiti dal T9) |
 | 7.4 | Coupon | mancante | entrambi | – | Tutto |
-| 7.5 | i18n it/en con scelta lingua | parziale | entrambi | `config/locales/*`, `src/locale/*` | FE: manca il selettore di lingua; `Accept-Language` fisso; circa 14 toast e testi non marcati; paginatore e pipe non localizzati. BE: 401/403 e messaggi dei modelli |
+| 7.5 | i18n it/en con scelta lingua | parziale | entrambi | `config/locales/*`, `src/locale/*`, `components/language-selector`, `core/i18n/*` | FE fatto (T10a): selettore di lingua, tutti i testi e toast tradotti, paginatore e pipe localizzati, E2E `e2e/i18n.spec.ts`. BE: 401/403, 404 generico (in italiano anche con `Accept-Language: en`) e messaggi dei modelli (T3) |
 | 7.6 | Test (3-4 BE, 2 service + 2 component FE, 1-2 E2E) | mancante | entrambi | – | Tutti |
 
 ## Consegna e qualità (§8, criteri)
@@ -101,4 +101,5 @@ Legenda stato: **fatto** / **parziale** / **mancante**.
 | T1 | Infrastruttura test backend | **fatto** |
 | T5 | Basi HTTP del frontend | **fatto** |
 | T9 | Catalogo e auth (parte frontend): ricerca, paginazione, signup, adminGuard, wishlist ospiti | **fatto** (lista completa categorie in attesa del BE) |
+| T10a | i18n frontend (selettore lingua, testi, paginatore, pipe) | **fatto** |
 | T2 | Sicurezza e auth backend | in corso |

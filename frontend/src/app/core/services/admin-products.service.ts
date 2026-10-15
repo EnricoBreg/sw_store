@@ -62,7 +62,7 @@ export class AdminProductsService {
   createProduct(formData: FormData) {
     return this.api.create(formData).subscribe({
       next: () => {
-        this.toaster.success("Prodotto creato con successo.");
+        this.toaster.success($localize`:@@toast.productCreated:Prodotto creato con successo.`);
         this.router.navigate(["/admin/products"]);
       },
       error: (err) => {
@@ -79,7 +79,7 @@ export class AdminProductsService {
   updateProduct(productId: number, formData: FormData) {
     return this.api.update(productId, formData).subscribe({
       next: () => {
-        this.toaster.success("Prodotto aggiornato con successo.");
+        this.toaster.success($localize`:@@toast.productUpdated:Prodotto aggiornato con successo.`);
         this.router.navigate(["/admin/products"]);
       },
       error: (err) => {

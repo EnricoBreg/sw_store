@@ -1,9 +1,12 @@
-import { Pipe, PipeTransform } from "@angular/core";
+import { inject, LOCALE_ID, Pipe, PipeTransform } from "@angular/core";
 
 @Pipe({
   name: "relativeTime",
 })
 export class RelativeTimePipe implements PipeTransform {
+  // Lingua dell'interfaccia (it/en) decisa dalla build localizzata
+  private readonly locale = inject(LOCALE_ID);
+
   transform(value: string | Date | number, ...args: unknown[]): string {
     if (!value) {
       return "";
@@ -25,7 +28,7 @@ export class RelativeTimePipe implements PipeTransform {
       { unit: "second", ms: 1000 },
     ];
 
-    const rtf = new Intl.RelativeTimeFormat("it", { numeric: "auto" });
+    const rtf = new Intl.RelativeTimeFormat(this.locale, { numeric: "auto" });
 
     for (const { unit, ms } of units) {
       if (absElapsed >= ms || unit === "second") {

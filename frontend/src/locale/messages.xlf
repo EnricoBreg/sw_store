@@ -2,6 +2,9 @@
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
   <file source-language="it" datatype="plaintext" original="ng2.template">
     <body>
+      <trans-unit id="languageSelector.ariaLabel" datatype="html">
+        <source>Cambia lingua</source>
+      </trans-unit>
       <trans-unit id="login.description" datatype="html">
         <source>Accedi al tuo account per continuare lo shopping</source>
       </trans-unit>
@@ -22,6 +25,9 @@
       </trans-unit>
       <trans-unit id="login.signUp" datatype="html">
         <source>Registrati ora</source>
+      </trans-unit>
+      <trans-unit id="login.submit" datatype="html">
+        <source>Accedi</source>
       </trans-unit>
       <trans-unit id="login.title" datatype="html">
         <source>Accedi al tuo account</source>
@@ -107,6 +113,12 @@
       <trans-unit id="wishlist.title" datatype="html">
         <source>La tua lista dei desideri</source>
       </trans-unit>
+      <trans-unit id="wishlistList.empty" datatype="html">
+        <source> La tua lista dei desideri è vuota. Aggiungi subito dei prodotti!😁 </source>
+      </trans-unit>
+      <trans-unit id="wishlistList.moveToCart" datatype="html">
+        <source>Sposta nel carrello</source>
+      </trans-unit>
       <trans-unit id="wishlistService.loadError" datatype="html">
         <source>Errore nel caricamento della wishlist.</source>
       </trans-unit>
@@ -116,6 +128,30 @@
       <trans-unit id="wishlistService.updateError" datatype="html">
         <source>Errore durante l&apos;aggiornamento della wishlist.</source>
       </trans-unit>
+      <trans-unit id="paginator.ariaLabel" datatype="html">
+        <source>Selezione pagina</source>
+      </trans-unit>
+      <trans-unit id="paginator.firstPage" datatype="html">
+        <source>Prima pagina</source>
+      </trans-unit>
+      <trans-unit id="paginator.itemsPerPage" datatype="html">
+        <source>Elementi per pagina:</source>
+      </trans-unit>
+      <trans-unit id="paginator.lastPage" datatype="html">
+        <source>Ultima pagina</source>
+      </trans-unit>
+      <trans-unit id="paginator.nextPage" datatype="html">
+        <source>Pagina successiva</source>
+      </trans-unit>
+      <trans-unit id="paginator.previousPage" datatype="html">
+        <source>Pagina precedente</source>
+      </trans-unit>
+      <trans-unit id="paginator.range" datatype="html">
+        <source><x id="start" equiv-text="startIndex + 1"/> – <x id="end" equiv-text="endIndex"/> di <x id="total" equiv-text="length"/></source>
+      </trans-unit>
+      <trans-unit id="paginator.rangeEmpty" datatype="html">
+        <source>0 di <x id="total" equiv-text="length"/></source>
+      </trans-unit>
       <trans-unit id="prodotti" datatype="html">
         <source>Prodotti</source>
       </trans-unit>
@@ -124,6 +160,9 @@
       </trans-unit>
       <trans-unit id="headerAction.areaAdmin" datatype="html">
         <source>Area Admin</source>
+      </trans-unit>
+      <trans-unit id="headerAction.cart" datatype="html">
+        <source>Carrello</source>
       </trans-unit>
       <trans-unit id="headerAction.myOrders" datatype="html">
         <source>I miei ordini</source>
@@ -136,6 +175,12 @@
       </trans-unit>
       <trans-unit id="headerAction.signUp" datatype="html">
         <source>Registrati</source>
+      </trans-unit>
+      <trans-unit id="headerAction.userMenu" datatype="html">
+        <source>Menu utente</source>
+      </trans-unit>
+      <trans-unit id="headerAction.wishlist" datatype="html">
+        <source>Wishlist</source>
       </trans-unit>
       <trans-unit id="httpError.network" datatype="html">
         <source>Impossibile connettersi al server. Controlla la tua connessione.</source>
@@ -380,6 +425,51 @@
       <trans-unit id="stockBadge.outOfStock" datatype="html">
         <source>Esaurito</source>
       </trans-unit>
+      <trans-unit id="summarizeOrder.total" datatype="html">
+        <source>Totale</source>
+      </trans-unit>
+      <trans-unit id="summarizeOrder.vat" datatype="html">
+        <source>Di cui IVA (22%)</source>
+      </trans-unit>
+      <trans-unit id="toast.addedToCart" datatype="html">
+        <source>Prodotto aggiunto al tuo carrello</source>
+      </trans-unit>
+      <trans-unit id="toast.addedToWishlist" datatype="html">
+        <source>Prodotto aggiunto alla tua wishlist</source>
+      </trans-unit>
+      <trans-unit id="toast.checkoutFailed" datatype="html">
+        <source>Errore durante il checkout.</source>
+      </trans-unit>
+      <trans-unit id="toast.movedToCart" datatype="html">
+        <source>Prodotto spostato nel carrello</source>
+      </trans-unit>
+      <trans-unit id="toast.oauthFailed" datatype="html">
+        <source>Autenticazione con Google non riuscita. Riprova.</source>
+      </trans-unit>
+      <trans-unit id="toast.orderPlaced" datatype="html">
+        <source>Ordine effettuato con successo!</source>
+      </trans-unit>
+      <trans-unit id="toast.orderStatusUpdated" datatype="html">
+        <source>Stato dell&apos;ordine aggiornato con successo.</source>
+      </trans-unit>
+      <trans-unit id="toast.productCreated" datatype="html">
+        <source>Prodotto creato con successo.</source>
+      </trans-unit>
+      <trans-unit id="toast.productUpdated" datatype="html">
+        <source>Prodotto aggiornato con successo.</source>
+      </trans-unit>
+      <trans-unit id="toast.quantityUpdated" datatype="html">
+        <source>Quantità aggiornata.</source>
+      </trans-unit>
+      <trans-unit id="toast.removedFromCart" datatype="html">
+        <source>Prodotto rimosso dal tuo carrello</source>
+      </trans-unit>
+      <trans-unit id="toast.removedFromWishlist" datatype="html">
+        <source>Prodotto rimosso dalla tua wishlist</source>
+      </trans-unit>
+      <trans-unit id="toast.signUpFailed" datatype="html">
+        <source>Registrazione non riuscita. Riprova.</source>
+      </trans-unit>
       <trans-unit id="toggleWishlist.add" datatype="html">
         <source>Aggiungi alla wishlist</source>
       </trans-unit>
@@ -418,6 +508,75 @@
       </trans-unit>
       <trans-unit id="orderStatus.all" datatype="html">
         <source>Tutti gli stati</source>
+      </trans-unit>
+      <trans-unit id="footer.contacts" datatype="html">
+        <source>Contatti</source>
+      </trans-unit>
+      <trans-unit id="footer.dataSettings" datatype="html">
+        <source>Impostazioni dati</source>
+      </trans-unit>
+      <trans-unit id="footer.faq" datatype="html">
+        <source>Domande frequenti</source>
+      </trans-unit>
+      <trans-unit id="footer.faq.certifications" datatype="html">
+        <source>Certificazioni dei prodotti</source>
+      </trans-unit>
+      <trans-unit id="footer.faq.editAccount" datatype="html">
+        <source>Come modifico i dati del mio account</source>
+      </trans-unit>
+      <trans-unit id="footer.faq.newsletter" datatype="html">
+        <source>Iscriviti alla nostra newsletter</source>
+      </trans-unit>
+      <trans-unit id="footer.faq.order" datatype="html">
+        <source>Come effettuare un ordine</source>
+      </trans-unit>
+      <trans-unit id="footer.faq.paymentMethods" datatype="html">
+        <source>Metodi di pagamento</source>
+      </trans-unit>
+      <trans-unit id="footer.faq.return" datatype="html">
+        <source>Come effettuare un reso</source>
+      </trans-unit>
+      <trans-unit id="footer.faq.shippingTimes" datatype="html">
+        <source>Tempi di spedizione</source>
+      </trans-unit>
+      <trans-unit id="footer.faq.whereIsMyOrder" datatype="html">
+        <source>Dove si trova il mio ordine</source>
+      </trans-unit>
+      <trans-unit id="footer.followUs" datatype="html">
+        <source>Seguici su</source>
+      </trans-unit>
+      <trans-unit id="footer.legal" datatype="html">
+        <source>Informazioni legali</source>
+      </trans-unit>
+      <trans-unit id="footer.paymentMethods" datatype="html">
+        <source>Metodi di pagamento</source>
+      </trans-unit>
+      <trans-unit id="footer.phone" datatype="html">
+        <source>Telefono: 00393338087889</source>
+      </trans-unit>
+      <trans-unit id="footer.privacy" datatype="html">
+        <source>Informativa sulla privacy</source>
+      </trans-unit>
+      <trans-unit id="footer.registeredOffice" datatype="html">
+        <source>Sede legale: Via del Commercio, 55, 45100, Rovigo, Italia</source>
+      </trans-unit>
+      <trans-unit id="footer.shareCapital" datatype="html">
+        <source>Capitale sociale: 10.000€</source>
+      </trans-unit>
+      <trans-unit id="footer.shippedBy" datatype="html">
+        <source>Spedito da</source>
+      </trans-unit>
+      <trans-unit id="footer.taxCode" datatype="html">
+        <source>Codice Fiscale: 1234567890</source>
+      </trans-unit>
+      <trans-unit id="footer.terms" datatype="html">
+        <source>CGV</source>
+      </trans-unit>
+      <trans-unit id="footer.vatNumber" datatype="html">
+        <source>Partita IVA: 1234567890</source>
+      </trans-unit>
+      <trans-unit id="footer.withdrawal" datatype="html">
+        <source>Diritto di recesso</source>
       </trans-unit>
       <trans-unit id="forbidden.description" datatype="html">
         <source> Sembra che tu non abbia i permessi necessari per accedere a questa risorsa. </source>
@@ -509,6 +668,12 @@
       <trans-unit id="order.number_of_items.sort" datatype="html">
         <source>Ordina per numero di articoli</source>
       </trans-unit>
+      <trans-unit id="cartList.empty" datatype="html">
+        <source> Il tuo carrello è vuoto. Aggiungi subito dei prodotti!😁 </source>
+      </trans-unit>
+      <trans-unit id="cartList.itemsCount" datatype="html">
+        <source> Articoli nel carrello: <x id="INTERPOLATION" equiv-text="{{ cartService.cartItemCount() }}"/> </source>
+      </trans-unit>
       <trans-unit id="cartPage.checkout" datatype="html">
         <source>Procedi al checkout</source>
       </trans-unit>
@@ -524,6 +689,9 @@
       <trans-unit id="categories" datatype="html">
         <source>Categorie</source>
       </trans-unit>
+      <trans-unit id="categoriesList.all" datatype="html">
+        <source>Tutte</source>
+      </trans-unit>
       <trans-unit id="categoriesService.loadError" datatype="html">
         <source>Errore nel caricamento delle categorie.</source>
       </trans-unit>
@@ -532,6 +700,27 @@
       </trans-unit>
       <trans-unit id="categorySelect.label" datatype="html">
         <source>Categoria prodotto</source>
+      </trans-unit>
+      <trans-unit id="changeOrderStatus.effect" datatype="html">
+        <source>La modifica avrà il seguente effetto:</source>
+      </trans-unit>
+      <trans-unit id="changeOrderStatus.newStatus" datatype="html">
+        <source>Nuovo stato</source>
+      </trans-unit>
+      <trans-unit id="changeOrderStatus.submit" datatype="html">
+        <source> Aggiorna stato </source>
+      </trans-unit>
+      <trans-unit id="changeOrderStatus.title" datatype="html">
+        <source> Aggiorna lo stato dell&apos;ordine: <x id="INTERPOLATION" equiv-text="{{ data.orderCode }}"/> </source>
+      </trans-unit>
+      <trans-unit id="changeOrderStatus.warning" datatype="html">
+        <source>Attenzione!</source>
+      </trans-unit>
+      <trans-unit id="changeOrderStatus.warning.description" datatype="html">
+        <source> Il cambio dello stato dell&apos;ordine è un&apos;azione importante che può influire sulla gestione dell&apos;inventario, sulle notifiche al cliente e sui processi di spedizione. <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;font-semibold&quot; &gt;"/>Assicurati di selezionare lo stato corretto in base alla situazione attuale dell&apos;ordine.<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span &gt;"/></source>
+      </trans-unit>
+      <trans-unit id="changeOrderStatus.warning.notifications" datatype="html">
+        <source> Al cambio dello stato dell&apos;ordine, potrebbero essere inviate notifiche al cliente e aggiornamenti al sistema di gestione dell&apos;inventario. Assicurati di comunicare eventuali cambiamenti significativi al cliente, soprattutto se lo stato dell&apos;ordine passa a &quot;spedito&quot;, &quot;consegnato&quot; o &quot;cancellato&quot;. </source>
       </trans-unit>
       <trans-unit id="checkoutPage.completaOrdine" datatype="html">
         <source> Completa il tuo ordine </source>
@@ -584,11 +773,17 @@
       <trans-unit id="delete" datatype="html">
         <source>Elimina</source>
       </trans-unit>
+      <trans-unit id="dialog.close" datatype="html">
+        <source>Chiudi</source>
+      </trans-unit>
       <trans-unit id="discountBadge.noDiscount" datatype="html">
         <source>Nessuno sconto applicato</source>
       </trans-unit>
       <trans-unit id="edit" datatype="html">
         <source>Modifica</source>
+      </trans-unit>
+      <trans-unit id="emptyCart.explore" datatype="html">
+        <source>Esplora i prodotti</source>
       </trans-unit>
       <trans-unit id="productDetail.backButton" datatype="html">
         <source>Torna alla lista dei prodotti</source>
@@ -634,6 +829,60 @@
       </trans-unit>
       <trans-unit id="productDetail.title" datatype="html">
         <source>Dettagli prodotto</source>
+      </trans-unit>
+      <trans-unit id="productForm.active" datatype="html">
+        <source>Attivo / Disponibile</source>
+      </trans-unit>
+      <trans-unit id="productForm.category.label" datatype="html">
+        <source>Categoria prodotto</source>
+      </trans-unit>
+      <trans-unit id="productForm.description.label" datatype="html">
+        <source>Descrizione</source>
+      </trans-unit>
+      <trans-unit id="productForm.description.placeholder" datatype="html">
+        <source>Inserisci una descrizione</source>
+      </trans-unit>
+      <trans-unit id="productForm.discount.label" datatype="html">
+        <source>Sconto</source>
+      </trans-unit>
+      <trans-unit id="productForm.discount.placeholder" datatype="html">
+        <source>Inserisci una percentuale di sconto</source>
+      </trans-unit>
+      <trans-unit id="productForm.image.choose" datatype="html">
+        <source> Scegli immagine </source>
+      </trans-unit>
+      <trans-unit id="productForm.image.label" datatype="html">
+        <source>Immagine dimostrativa del prodotto:</source>
+      </trans-unit>
+      <trans-unit id="productForm.name.label" datatype="html">
+        <source>Nome</source>
+      </trans-unit>
+      <trans-unit id="productForm.name.placeholder" datatype="html">
+        <source>Inserisci il nome del prodotto</source>
+      </trans-unit>
+      <trans-unit id="productForm.price.label" datatype="html">
+        <source>Prezzo</source>
+      </trans-unit>
+      <trans-unit id="productForm.price.placeholder" datatype="html">
+        <source>Inserisci il prezzo</source>
+      </trans-unit>
+      <trans-unit id="productForm.stock.label" datatype="html">
+        <source>Quantità in stock</source>
+      </trans-unit>
+      <trans-unit id="productForm.stock.placeholder" datatype="html">
+        <source>Inserisci la quantità disponibile</source>
+      </trans-unit>
+      <trans-unit id="productForm.stock.unit" datatype="html">
+        <source>Pezzi</source>
+      </trans-unit>
+      <trans-unit id="productForm.submit.create" datatype="html">
+        <source>Crea prodotto</source>
+      </trans-unit>
+      <trans-unit id="productForm.submit.saving" datatype="html">
+        <source>Salvataggio...</source>
+      </trans-unit>
+      <trans-unit id="productForm.submit.update" datatype="html">
+        <source>Aggiorna prodotto</source>
       </trans-unit>
       <trans-unit id="products" datatype="html">
         <source>I nostri prodotti</source>

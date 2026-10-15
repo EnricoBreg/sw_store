@@ -12,7 +12,7 @@ import EmptyCart from "../empty-cart/empty-cart";
   template: `
     <div appViewPanel>
       @if (!cartService.cartEmpty()) {
-        <h2 class="text-2xl font-bold mb-4">
+        <h2 class="text-2xl font-bold mb-4" i18n="@@cartList.itemsCount">
           Articoli nel carrello: {{ cartService.cartItemCount() }}
         </h2>
         
@@ -23,7 +23,7 @@ import EmptyCart from "../empty-cart/empty-cart";
         </div>
       } @else {
         <app-empty-cart>
-          <p message class="text-gray-500 font-semibold text-lg">
+          <p message class="text-gray-500 font-semibold text-lg" i18n="@@cartList.empty">
             Il tuo carrello è vuoto. Aggiungi subito dei prodotti!😁
           </p>
         </app-empty-cart>
