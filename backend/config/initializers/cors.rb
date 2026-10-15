@@ -7,7 +7,8 @@
 
 Rails.application.config.middleware.insert_before 0, Rack::Cors do
   allow do
-    origins "http://localhost:4200" # Any origins: TODO: da sostituire una volta in produzione con l'origine vera
+    # Origine della SPA Angular: FRONTEND_URL (default http://localhost:4200, vedi config/application.rb)
+    origins Rails.configuration.x.frontend_url
 
     resource "*",
       headers: :any,

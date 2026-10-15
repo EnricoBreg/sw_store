@@ -61,8 +61,9 @@ default: &default
   # For details on connection pooling, see Rails configuration guide
   # https://guides.rubyonrails.org/configuring.html#database-pooling
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  host: 100.82.90.49
-  port: 5432
+  # Server PostgreSQL di sviluppo; DB_HOST/DB_PORT permettono di cambiarlo (es. in CI).
+  host: <%= ENV.fetch("DB_HOST", "100.82.90.49") %>
+  port: <%= ENV.fetch("DB_PORT", 5432) %>
   schema_search_path: myapp,sharedapp,public
 
 development:
@@ -107,30 +108,27 @@ test:
   password: <%= ENV.fetch("DB_PASSWORD", "swstoredev") %>
   database: sw_store_test
 
-# As with config/credentials.yml, you never want to store sensitive information,
-# like your database password, in your source code. If your source code is
-# ever seen by anyone, they now have access to your database.
-#
-# Instead, provide the password or a full connection URL as an environment
-# variable when you boot the app. For example:
-#
-#   DATABASE_URL="postgres://myuser:mypass@localhost/somedatabase"
-#
-# If the connection URL is provided in the special DATABASE_URL environment
-# variable, Rails will automatically merge its configuration values on top of
-# the values provided in this file. Alternatively, you can specify a connection
-# URL environment variable explicitly:
-#
-#   production:
-#     url: <%= ENV["MY_APP_DATABASE_URL"] %>
-#
-# Read https://guides.rubyonrails.org/configuring.html#configuring-a-database
-# for a full overview on how database connection configuration can be specified.
-#
+# Produzione (es. Docker): tutta la configurazione arriva da variabili d'ambiente, nessuna credenziale nel file.
+#   DB_HOST (default localhost), DB_PORT (5432), DB_NAME (sw_store_production), DB_USERNAME (sw_store), DB_PASSWORD.
+# Solid Cache, Solid Queue e Solid Cable usano tre database separati sullo stesso server
+# (<DB_NAME>_cache, <DB_NAME>_queue, <DB_NAME>_cable), creati da `bin/rails db:prepare`.
 production:
-  <<: *default
-  database: sw_store_prod
-  username: swstoreprod
-  password: swstoreprod
-  password: <%= ENV["blog_DATABASE_PASSWORD"] %>
-
+  primary: &primary_production
+    <<: *default
+    host: <%= ENV.fetch("DB_HOST", "localhost") %>
+    port: <%= ENV.fetch("DB_PORT", 5432) %>
+    database: <%= ENV.fetch("DB_NAME", "sw_store_production") %>
+    username: <%= ENV.fetch("DB_USERNAME", "sw_store") %>
+    password: <%= ENV["DB_PASSWORD"] %>
+  cache:
+    <<: *primary_production
+    database: <%= ENV.fetch("DB_NAME", "sw_store_production") %>_cache
+    migrations_paths: db/cache_migrate
+  queue:
+    <<: *primary_production
+    database: <%= ENV.fetch("DB_NAME", "sw_store_production") %>_queue
+    migrations_paths: db/queue_migrate
+  cable:
+    <<: *primary_production
+    database: <%= ENV.fetch("DB_NAME", "sw_store_production") %>_cable
+    migrations_paths: db/cable_migrate
