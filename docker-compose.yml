@@ -1,0 +1,55 @@
+# Ambiente completo SW Store. Avvio: RAILS_MASTER_KEY=$(cat backend/config/master.key) docker compose up --build
+# Al primo avvio il backend crea i database, applica lo schema e carica i dati demo (bin/rails db:prepare).
+services:
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: sw_store
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-sw_store}
+      POSTGRES_DB: sw_store_production
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U sw_store -d sw_store_production" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build: ./backend
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      RAILS_MASTER_KEY: ${RAILS_MASTER_KEY:?Impostare RAILS_MASTER_KEY con il contenuto di backend/config/master.key}
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: sw_store_production
+      DB_USERNAME: sw_store
+      DB_PASSWORD: ${DB_PASSWORD:-sw_store}
+      # URL pubblico del backend (per image_url) e della SPA (CORS e redirect del login Google)
+      BACKEND_URL: http://localhost:3000
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:4200}
+      # Esegue i job (analisi immagini, purge) dentro Puma, senza un processo separato
+      SOLID_QUEUE_IN_PUMA: "true"
+    ports:
+      - "3000:80"
+    volumes:
+      - storage:/rails/storage
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        # URL dell'API usato dal BROWSER (non il nome del servizio): fissato al momento della build
+        API_URL: http://localhost:3000/api/v1
+    depends_on:
+      - api
+    # Porta 4200: è l'origine ammessa dal CORS del backend (FRONTEND_URL, default http://localhost:4200)
+    # e la destinazione del redirect dopo il login con Google. Se si cambia, aggiornare anche FRONTEND_URL.
+    ports:
+      - "4200:80"
+
+volumes:
+  db_data:
+  storage:

@@ -1,7 +1,7 @@
 # Analisi dei requisiti – SW Store
 
 Stato del progetto rispetto a `docs/Progetto_di_sistemi_web_Specifiche.pdf`.
-Ultimo aggiornamento: 2026-10-15 (Fase 2: chiusi T0, T1, T2, T2-FE, T3, T4, T5, T6, T7, T8, T9, T10a, T10b, T10c, T11a, T12-BE, T13).
+Ultimo aggiornamento: 2026-10-15 (Fase 2: chiusi T0, T1, T2, T2-FE, T3, T4, T5, T6, T7, T8, T9, T10a, T10b, T10c, T11a, T12, T12-BE, T12-FE, T13).
 Path backend relativi a `backend/app/` salvo indicazione, path frontend relativi a `frontend/src/app/`. Tutte le rotte hanno prefisso `/api/v1`.
 
 Legenda stato: **fatto** / **parziale** / **mancante**.
@@ -14,7 +14,7 @@ Legenda stato: **fatto** / **parziale** / **mancante**.
 | `bin/rubocop` | 88 file, 0 offese |
 | `brakeman` | Dopo T2: 0 warning (il Redirect della baseline è risolto) |
 | `npx ng test --watch=false` | Dopo T10c: 112/112 verdi |
-| `npx ng build` | ok (it + en), nessun warning (budget initial portato a 800 kB / 1 MB in T11a; 727 kB raw, ~178 kB gzip) |
+| `npx ng build` | ok (it + en), nessun warning (budget initial portato a 800 kB / 1 MB in T11a; 727 kB raw, ~180 kB gzip) |
 | `npx playwright test` | Dopo T10c: 27/27 verdi in 5 run consecutive; `npm run e2e:i18n` 3/3 verdi |
 
 ## Decisioni dell'utente (2026-10-15)
@@ -47,14 +47,14 @@ Legenda stato: **fatto** / **parziale** / **mancante**.
 | 4.2b | `GET /cart`, `POST /cart/items`, `PATCH`/`DELETE /cart/items/:id` | fatto (T4) | backend | `users/cart_items_controller.rb`, `config/routes.rb:43` | `:id` del CartItem come da specifiche; 404 su righe altrui; validazioni di stock e prodotto attivo; `items_count` e `total_amount` nel carrello. Il frontend deve adeguarsi (T6) |
 | 4.2c | CartService: init da `/cart`, sync a ogni modifica, sopravvive al reload | fatto (T6) | frontend | `core/services/cart.service.ts`, `core/models/normalize.ts`, `core/services/auth.service.ts` | Stato dal server (init all'avvio e al login), PATCH per riga con debounce e rollback, totali e badge dal backend, niente localStorage. E2E `e2e/cart.spec.ts` (incluso il reload) |
 | 4.2d | Carrello guest (plus) | mancante | entrambi | – | Non supportato |
-| 4.3a | Modelli Order / OrderItem | fatto | backend | `models/order.rb`, `models/order_item.rb` | Transizioni di stato non vincolate (es. cancelled→pending); messaggio di errore non tradotto |
+| 4.3a | Modelli Order / OrderItem | fatto | backend | `models/order.rb`, `models/order_item.rb` | Transizioni di stato vincolate e annullamento con ripristino dello stock (T2); messaggi tradotti (T3) |
 | 4.3b | `POST /orders` dal carrello, svuota carrello | fatto (T4) | backend | `users/orders_controller.rb:24-70`, `serializers/order_item_serializer.rb` | Transazione con lock dei prodotti, controllo di stock e prodotto attivo, 422 con `errors` (anche carrello vuoto), doppio sconto corretto |
-| 4.3c | `GET /orders`, `GET /orders/:id` solo dell'utente | parziale | backend | `users/orders_controller.rb`, `models/order.rb` | Fatto in T2: scoping sull'utente (404 sugli ordini altrui), transizioni di stato vincolate, annullamento con ripristino dello stock. Filtro `status` (anche multiplo) sistemato in T10b |
+| 4.3c | `GET /orders`, `GET /orders/:id` solo dell'utente | fatto | backend | `users/orders_controller.rb`, `models/order.rb` | Fatto in T2: scoping sull'utente (404 sugli ordini altrui), transizioni di stato vincolate, annullamento con ripristino dello stock. Filtro `status` (anche multiplo) sistemato in T10b |
 | 4.3d | Checkout: Reactive Forms + OrderService, loading, conferma, errore con retry | fatto (T7) | frontend | `pages/checkout-page`, `pages/order-confirmation-page`, `core/services/orders.service.ts` | Loading locale, pagina di conferma, errore del backend con "Riprova", carrello riletto dal server. E2E `e2e/checkout.spec.ts` (flusso completo della demo) |
 | 4.3e | Pagina lista ordini | fatto (T7) | frontend | `pages/my-orders-page`, `pages/order-detail-page`, `core/http/orders-api.service.ts` | Paginazione corretta, filtro per stato, stato vuoto, dettaglio |
 | 4.4a | `POST /auth/login`, `POST /auth/logout`, `GET /auth/me` | fatto (T2) | backend | `auth/sessions_controller.rb`, `config/initializers/devise.rb`, `api/v1/current_user_controller.rb` | `POST /auth/logout` aggiunto (DELETE resta); `PUT /auth/me` corretto (cambio email/password richiede `current_password`) |
 | 4.4b | Login Google OAuth2 | fatto | entrambi | `models/user.rb`, `auth/omniauth_callbacks_controller.rb`, `pages/auth-callback` | BE fatto in T2 (uid corretto, collegamento per email verificata, token nel fragment, `FRONTEND_URL`). FE fatto in T2-FE: token letto dal fragment e rimosso dall'URL, messaggi `oauth_failed`/`oauth_canceled`, logout con `POST` |
-| 4.4c | Login, token, HttpInterceptor | parziale | frontend | `pages/login-page.ts/`, `core/services/auth.service.ts`, `core/http/interceptors/*` | fatto (T5, T9): interceptor, signup con `password_confirmation`, `date_of_birth` e validator di uguaglianza |
+| 4.4c | Login, token, HttpInterceptor | fatto | frontend | `pages/login-page.ts/`, `core/services/auth.service.ts`, `core/http/interceptors/*` | fatto (T5, T9): interceptor, signup con `password_confirmation`, `date_of_birth` e validator di uguaglianza |
 | 4.4d | Route guard | fatto | frontend | `core/guards/*`, `app.routes.ts` | `adminGuard` corretto in T9 (ospite → /login, non admin → /forbidden). Guard su `/my-orders/:orderId` e sulla conferma aggiunto in T7 |
 
 ## Requisiti tecnici (§5, §6)
@@ -62,8 +62,8 @@ Legenda stato: **fatto** / **parziale** / **mancante**.
 | # | Requisito | Stato | Parte | File coinvolti | Cosa manca |
 |---|---|---|---|---|---|
 | 5a | Rails API mode, DB relazionale | fatto | backend | `config/application.rb`, `config/database.yml` | – |
-| 5b | Validazioni di base sui modelli | parziale | backend | `models/*` | CartItem, WishlistItem; `Product.active` senza default; messaggi custom non tradotti |
-| 5c | Gestione errori: status coerenti + JSON con messaggio | fatto (T3) | backend | `api/v1/base_controller.rb`, `concerns/authorization.rb`, `concerns/api_responses.rb`, `lib/custom_failure_app.rb`, `lib/request_locale.rb` | 400/401/403/404/409/422/500 tutti nel formato standard e tradotti (tabella in `API.md`). Resta: `order_by` su colonna inesistente dà 500 (whitelist in T8) |
+| 5b | Validazioni di base sui modelli | fatto | backend | `models/*` | Validazioni di CartItem (quantità, stock, prodotto attivo, unicità: T4), `Product.active` con default e NOT NULL (T8), messaggi tradotti it/en (T3). Elenco in `docs/ARCHITETTURA.md` |
+| 5c | Gestione errori: status coerenti + JSON con messaggio | fatto (T3) | backend | `api/v1/base_controller.rb`, `concerns/authorization.rb`, `concerns/api_responses.rb`, `lib/custom_failure_app.rb`, `lib/request_locale.rb` | 400/401/403/404/409/422/500 tutti nel formato standard e tradotti (tabella in `API.md`). `order_by` non ammesso → 400 (whitelist, T8) |
 | 5d | Test: ≥1 test di modello e ≥1 request test | fatto (T1) | backend | `test/test_helper.rb`, `test/fixtures/*`, `test/models/{product,order}_test.rb`, `test/controllers/api/v1/products_controller_test.rb`, `test/controllers/auth/sessions_controller_test.rb` | – (i task successivi aggiungono i test dei bug che correggono) |
 | 6a | Nessun dato hardcoded per prodotti/carrello/ordini | fatto (T6) | frontend | – | Store localStorage di carrello e wishlist eliminati |
 | 6b | Servizi dedicati | fatto | frontend | `core/http/*`, `core/services/*` | – |
@@ -85,13 +85,13 @@ Legenda stato: **fatto** / **parziale** / **mancante**.
 
 | # | Requisito | Stato | Parte | File coinvolti | Cosa manca |
 |---|---|---|---|---|---|
-| 8a | Seed iniziale prodotti | fatto (T8) | backend | `db/seeds.rb`, `db/seeds/images/*` | Idempotente e non distruttivo: 5 categorie, 12 prodotti attivi con immagini, utenti demo ed E2E (credenziali in `API.md`, "Dati demo") |
-| 8b | README principale | parziale | PM + entrambi | `README.md`, `backend/README.md` | `backend/README.md` scritto (T12-BE). Mancano README di root e frontend |
-| 8c | Documento di architettura | mancante | PM | – | `docs/ARCHITETTURA.md` |
-| 8d | docker-compose (opzionale) | parziale | entrambi | `backend/Dockerfile`, bozza compose | Dockerfile con libpq e config di produzione da ENV (T12-BE); `docker build` non verificato (docker assente nell'ambiente); `docker-compose.yml` in root dopo il servizio frontend |
+| 8a | Seed iniziale prodotti | fatto (T8) | backend | `db/seeds.rb`, `db/seeds/images/*` | Idempotente e non distruttivo: 4 categorie, 12 prodotti attivi con immagini, utenti demo ed E2E (credenziali in `API.md`, "Dati demo") |
+| 8b | README principale | fatto (T12) | PM + entrambi | `README.md`, `backend/README.md`, `frontend/README.md` | README di root (prerequisiti, setup DB, avvio, utenti demo, build, Docker, test) che rimanda ai README di area |
+| 8c | Documento di architettura | fatto (T12) | PM | `docs/ARCHITETTURA.md` | Panoramica, modelli (ER), autenticazione, flusso dell'ordine (stati), errori, stato e i18n del frontend, test, deploy. Diagrammi Mermaid verificati con il parser di mermaid |
+| 8d | docker-compose (opzionale) | fatto, non verificato | entrambi | `docker-compose.yml`, `backend/Dockerfile`, `frontend/Dockerfile`, `frontend/nginx.conf` | Servizi db, api (:3000), frontend nginx (:4200, `/it/` e `/en/`). Docker assente nell'ambiente: `docker compose up` mai eseguito |
 | Q1 | UX / a11y minima | fatto (T11a) | frontend | `components/*`, `pages/*`, `styles.scss`, `e2e/a11y.spec.ts` | alt, aria-label, mat-label, contrasto, navigazione da tastiera e focus visibile; axe WCAG A/AA senza violazioni su catalogo, login, signup, dettaglio |
-| Q2 | CI | parziale | – | `.github/workflows/ci.yml` | Spostata in root con job backend (Postgres, test, rubocop, brakeman, bundler-audit bloccante). Richiede il secret `RAILS_MASTER_KEY` su GitHub. Manca il job frontend |
-| Q3 | Contratto `backend/API.md` | parziale | backend | `backend/API.md` | Allineato alle rotte. Da aggiornare per i bug noti e per il formato reale di `meta` di Pagy (`previous`, `pages`) |
+| Q2 | CI | fatto (T12) | – | `.github/workflows/ci.yml` | Job backend (Postgres, test, rubocop, brakeman, bundler-audit bloccante) e job frontend (npm ci, Vitest, build). E2E solo in locale. Richiede il secret `RAILS_MASTER_KEY` su GitHub; mai eseguita (nessun push) |
+| Q3 | Contratto `backend/API.md` | fatto | backend | `backend/API.md` | Aggiornato a ogni task che cambia le API; `meta` di Pagy documentato (`previous`, `next`, `pages`...); tabella degli errori e dati demo |
 
 ## Avanzamento dei task (Fase 2)
 
@@ -110,10 +110,10 @@ Legenda stato: **fatto** / **parziale** / **mancante**.
 | T10b | Area admin, parte backend (immagini, dashboard, coerenza CRUD, filtro status utente) | **fatto** |
 | T7 | Checkout e ordini (frontend) | **fatto** |
 | T10c | Area admin, parte frontend (eliminazione e immagini prodotti, CRUD categorie, transizioni ordini, dashboard) | **fatto** |
-| T12 | Consegna: README di root, ARCHITETTURA.md, docker-compose, job frontend in CI | da fare |
+| T12 | Consegna: README di root, ARCHITETTURA.md, docker-compose, job frontend in CI | **fatto** |
 | T12-BE | Consegna, parte backend (config da ENV, Dockerfile, README backend, CI in root) | **fatto** |
+| T12-FE | Consegna, parte frontend (README frontend, Dockerfile + nginx, servizio compose, job CI) | **fatto** |
 | T13 | Aggiornamento gem di sicurezza (patch/minor, Rails 8.1.4), bundler-audit pulito | **fatto** |
 | T3 | Errori uniformi (backend) | **fatto** |
 | T8 | Prodotti attivi, categorie (`q`, `all`), whitelist ordinamento, rifiniture admin, seed non distruttivo | **fatto** |
 
-Problemi segnalati, da includere nei task successivi:
