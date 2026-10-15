@@ -68,8 +68,9 @@ default: &default
 
 development:
   <<: *default
-  username: swstoredev
-  password: swstoredev
+  # Credenziali sovrascrivibili per usare un proprio PostgreSQL (host e porta: DB_HOST/DB_PORT nella sezione default).
+  username: <%= ENV.fetch("DB_USERNAME", "swstoredev") %>
+  password: <%= ENV.fetch("DB_PASSWORD", "swstoredev") %>
   database: sw_store_dev
 
   # The specified database role being used to connect to postgres.

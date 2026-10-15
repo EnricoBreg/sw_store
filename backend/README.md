@@ -9,7 +9,7 @@ Il contratto degli endpoint (payload, risposte, errori, autenticazione) è in [`
 | -------- | -------- | ---- |
 | Ruby | 3.4.8 | vedi `.ruby-version` (es. con mise, rbenv o asdf) |
 | Bundler | incluso con Ruby | |
-| Rails | 8.1.3 | installato da `bundle install` |
+| Rails | 8.1.4 | installato da `bundle install` |
 | PostgreSQL | 17 (testato con 17.7) | serve un ruolo con permesso `CREATEDB` |
 | libvips | 8.x | anteprime delle immagini prodotto (Active Storage) |
 | libpq | client PostgreSQL | per compilare la gem `pg` (`libpq-dev` su Debian/Ubuntu) |
@@ -34,14 +34,14 @@ Senza master key l'app non si avvia (le chiavi JWT e OAuth sono lette all'avvio)
 | --------- | -------- | ------- | ----------- |
 | `RAILS_MASTER_KEY` | tutti | contenuto di `config/master.key` | decifra le credentials |
 | `DB_HOST`, `DB_PORT` | tutti | sviluppo/test: `100.82.90.49`, `5432`; produzione: `localhost`, `5432` | server PostgreSQL |
-| `DB_USERNAME`, `DB_PASSWORD` | test, produzione | test: `swstoredev`; produzione: `sw_store` e nessuna password | credenziali del database |
+| `DB_USERNAME`, `DB_PASSWORD` | tutti | sviluppo/test: `swstoredev` / `swstoredev`; produzione: `sw_store` e nessuna password | credenziali del database |
 | `DB_NAME` | produzione | `sw_store_production` | database principale; Solid Cache/Queue/Cable usano `<DB_NAME>_cache`, `_queue`, `_cable` |
 | `FRONTEND_URL` | tutti | `http://localhost:4200` | origine consentita da CORS e destinazione dei redirect del login Google |
 | `BACKEND_URL` | produzione | `http://localhost:3000` | URL pubblico dell'API, usato per generare `image_url` |
 | `SOLID_QUEUE_IN_PUMA` | produzione | non impostata | se `true` i job in background (analisi immagini) girano dentro Puma |
 | `PORT` | tutti | `3000` | porta di Puma |
 
-Le impostazioni di sviluppo (database `sw_store_dev`) sono in `config/database.yml`.
+Le impostazioni di sviluppo (database `sw_store_dev`) sono in `config/database.yml`. Per usare un proprio PostgreSQL basta impostare `DB_HOST`, `DB_PORT`, `DB_USERNAME` e `DB_PASSWORD`, senza modificare il file.
 
 ### Login con Google
 
