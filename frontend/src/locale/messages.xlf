@@ -48,10 +48,16 @@
         <source>Menu operazioni</source>
       </trans-unit>
       <trans-unit id="myOrders.description" datatype="html">
-        <source>Di seguito, gli ordini da te effettuati nel nostro e-commerce.</source>
+        <source> Di seguito, gli ordini da te effettuati nel nostro e-commerce. </source>
       </trans-unit>
       <trans-unit id="myOrders.empty" datatype="html">
         <source>Non hai ancora effettuato ordini🥺</source>
+      </trans-unit>
+      <trans-unit id="myOrders.emptyFiltered" datatype="html">
+        <source> Nessun ordine con gli stati selezionati. </source>
+      </trans-unit>
+      <trans-unit id="myOrders.statusFilter" datatype="html">
+        <source>Filtra per stato</source>
       </trans-unit>
       <trans-unit id="myOrders.title" datatype="html">
         <source>I miei ordini</source>
@@ -238,6 +244,33 @@
       </trans-unit>
       <trans-unit id="orderCard.orderTotal" datatype="html">
         <source> Totale: <x id="ORDERTOTALAMOUNT" equiv-text="{{ order().total_amount | currency: &quot;EUR&quot; ////i18n(ph=&quot;orderTotalAmount&quot;) }}"/> </source>
+      </trans-unit>
+      <trans-unit id="orderConfirmation.code" datatype="html">
+        <source> Codice ordine: <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong data-testid=&quot;order-code&quot;&gt;"/><x id="INTERPOLATION" equiv-text="{{ order.code }}"/><x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/></source>
+      </trans-unit>
+      <trans-unit id="orderConfirmation.continue" datatype="html">
+        <source>Continua lo shopping</source>
+      </trans-unit>
+      <trans-unit id="orderConfirmation.detail" datatype="html">
+        <source> Vedi il dettaglio dell&apos;ordine </source>
+      </trans-unit>
+      <trans-unit id="orderConfirmation.items" datatype="html">
+        <source>Articoli</source>
+      </trans-unit>
+      <trans-unit id="orderConfirmation.loading" datatype="html">
+        <source>Caricamento dell&apos;ordine...</source>
+      </trans-unit>
+      <trans-unit id="orderConfirmation.myOrders" datatype="html">
+        <source>I miei ordini</source>
+      </trans-unit>
+      <trans-unit id="orderConfirmation.shipping" datatype="html">
+        <source>Spedizione a</source>
+      </trans-unit>
+      <trans-unit id="orderConfirmation.title" datatype="html">
+        <source>Grazie! Il tuo ordine è stato registrato.</source>
+      </trans-unit>
+      <trans-unit id="orderConfirmation.total" datatype="html">
+        <source>Totale</source>
       </trans-unit>
       <trans-unit id="back" datatype="html">
         <source>Indietro</source>
@@ -481,9 +514,6 @@
       </trans-unit>
       <trans-unit id="toast.addedToWishlist" datatype="html">
         <source>Prodotto aggiunto alla tua wishlist</source>
-      </trans-unit>
-      <trans-unit id="toast.checkoutFailed" datatype="html">
-        <source>Errore durante il checkout.</source>
       </trans-unit>
       <trans-unit id="toast.movedToCart" datatype="html">
         <source>Prodotto spostato nel carrello</source>
@@ -779,6 +809,15 @@
       <trans-unit id="checkoutPage.completaOrdine" datatype="html">
         <source> Completa il tuo ordine </source>
       </trans-unit>
+      <trans-unit id="checkoutPage.emptyCart" datatype="html">
+        <source> Il tuo carrello è vuoto: non c&apos;è nulla da ordinare. </source>
+      </trans-unit>
+      <trans-unit id="checkoutPage.emptyCart.explore" datatype="html">
+        <source>Esplora i prodotti</source>
+      </trans-unit>
+      <trans-unit id="checkoutPage.loadingCart" datatype="html">
+        <source>Caricamento del carrello...</source>
+      </trans-unit>
       <trans-unit id="checkoutPage.pagamento.card" datatype="html">
         <source>Carta di debito/credito</source>
       </trans-unit>
@@ -787,6 +826,9 @@
       </trans-unit>
       <trans-unit id="checkoutPage.pagamento.title" datatype="html">
         <source> Dettagli di pagamento </source>
+      </trans-unit>
+      <trans-unit id="checkoutPage.retry" datatype="html">
+        <source>Riprova</source>
       </trans-unit>
       <trans-unit id="checkoutPage.riepilogo.title" datatype="html">
         <source>Riepilogo ordine</source>

@@ -164,7 +164,7 @@ export default class OrderDetailPage implements OnInit {
   private ordersService = inject(OrdersService);
 
   order = this.ordersService.order;
-  error = this.ordersService.error;
+  error = this.ordersService.orderError;
 
   currentStepIndex = computed(() => {
     const status = this.order()?.status;

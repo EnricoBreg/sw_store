@@ -60,6 +60,11 @@ export const routes: Routes = [
         canActivate: [loggedInGuard],
       },
       {
+        path: "checkout/confirmation/:orderId",
+        loadComponent: () => import("./pages/order-confirmation-page/order-confirmation-page"),
+        canActivate: [loggedInGuard],
+      },
+      {
         path: "my-orders",
         loadComponent: () => import("./pages/my-orders-page/my-orders-page"),
         canActivate: [loggedInGuard],
@@ -67,6 +72,7 @@ export const routes: Routes = [
       {
         path: "my-orders/:orderId",
         loadComponent: () => import("./pages/order-detail-page/order-detail-page"),
+        canActivate: [loggedInGuard],
       },
     ],
   },

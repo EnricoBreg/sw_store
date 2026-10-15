@@ -23,3 +23,18 @@ export async function apiEmptyCart(request: APIRequestContext, token: string) {
     await request.delete(`${API_URL}/cart/items/${item.id}`, { headers: { Authorization: `Bearer ${token}` } });
   }
 }
+
+/** Crea un utente via POST /auth/signup se non esiste ancora (200 creato, 422 già presente). */
+export async function apiEnsureUser(request: APIRequestContext, email: string, password: string, lastName: string) {
+  const response = await request.post(`${API_URL}/auth/signup`, {
+    data: { user: { email, password, password_confirmation: password, first_name: "E2E", last_name: lastName } },
+  });
+  expect([200, 422]).toContain(response.status());
+}
+
+/** Tra i prodotti del catalogo, quello attivo con lo stock più alto (gli ordini E2E ne scalano 1 pezzo). */
+export async function apiProductWithMostStock(request: APIRequestContext) {
+  const response = await request.get(`${API_URL}/products?limit=30`);
+  const products: { id: number; name: string; active: boolean; stock_quantity: number }[] = (await response.json()).data;
+  return products.filter((p) => p.active).sort((a, b) => b.stock_quantity - a.stock_quantity)[0];
+}

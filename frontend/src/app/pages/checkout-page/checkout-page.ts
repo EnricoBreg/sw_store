@@ -1,17 +1,19 @@
-import { Component, DestroyRef, inject, OnInit } from "@angular/core";
+import { Component, computed, DestroyRef, inject, OnInit } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { RouterLink } from "@angular/router";
+import { MatIcon } from "@angular/material/icon";
+import { MatProgressSpinner } from "@angular/material/progress-spinner";
 import SummarizeOrder from "../../components/summarize-order/summarize-order";
 import { CartService } from "../../core/services/cart.service";
 import { CurrencyPipe } from "@angular/common";
-import { computeDiscountPrice, handleImageError } from "../../core/utils";
+import { handleImageError } from "../../core/utils";
 import { BackButton } from "../../components/back-button/back-button";
 import ViewPanel from "../../core/directives/view-panel/view-panel";
 import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
 import { MatFormField, MatLabel } from "@angular/material/select";
 import { MatAnchor } from "@angular/material/button";
-import { LoadingService } from "../../core/http/services/loading.service";
 import { MatInput } from "@angular/material/input";
 import { MatRadioGroup, MatRadioButton } from "@angular/material/radio";
-import { Subject, takeUntil } from "rxjs";
 import { OrderData, OrdersService } from "../../core/services/orders.service";
 
 @Component({
@@ -28,6 +30,9 @@ import { OrderData, OrdersService } from "../../core/services/orders.service";
     MatInput,
     MatRadioGroup,
     MatRadioButton,
+    MatIcon,
+    MatProgressSpinner,
+    RouterLink,
   ],
   template: `
     <div class="mx-auto max-w-[1200px] py-6">
@@ -40,16 +45,42 @@ import { OrderData, OrdersService } from "../../core/services/orders.service";
       </h1>
 
       @if (error(); as error) {
-        <div class="border border-red-200 rounded-xl my-4 p-6 bg-red-100 text-red-600 font-medium">
-          <h4 class="text-lg font-semibold text-red-700 mb-3">{{ error.message }}</h4>
-          <div class="space-y-2">
-            @for (err of error.errors; track $index) {
-              <p class="ml-2">{{ err }}</p>
-            }
-          </div>
+        <div
+          role="alert"
+          data-testid="checkout-error"
+          class="border border-red-200 rounded-xl my-4 p-6 bg-red-100 text-red-700 font-medium"
+        >
+          <h2 class="text-lg font-semibold text-red-800 mb-3">{{ error.message }}</h2>
+          @if (error.errors.length) {
+            <ul class="space-y-2 list-disc list-inside">
+              @for (err of error.errors; track $index) {
+                <li>{{ err }}</li>
+              }
+            </ul>
+          }
+          <button
+            matButton="outlined"
+            type="button"
+            class="mt-4"
+            [disabled]="isSubmitting()"
+            (click)="retry()"
+          >
+            <mat-icon>refresh</mat-icon>
+            <span i18n="@@checkoutPage.retry">Riprova</span>
+          </button>
         </div>
       }
 
+      @if (!cart()) {
+        <p role="status" class="text-gray-600" i18n="@@checkoutPage.loadingCart">Caricamento del carrello...</p>
+      } @else if (cartEmpty()) {
+        <div appViewPanel role="status" data-testid="checkout-empty-cart" class="flex flex-col items-start gap-4">
+          <p class="text-lg text-gray-700" i18n="@@checkoutPage.emptyCart">
+            Il tuo carrello è vuoto: non c'è nulla da ordinare.
+          </p>
+          <a matButton="filled" routerLink="/products" i18n="@@checkoutPage.emptyCart.explore">Esplora i prodotti</a>
+        </div>
+      } @else {
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div class="lg:col-span-2">
           <!-- CAMPI DI FATTURAZIONE E SPEDIZIONE -->
@@ -151,9 +182,18 @@ import { OrderData, OrdersService } from "../../core/services/orders.service";
                 type="submit"
                 matButton="filled"
                 class="w-full"
-                [disabled]="checkoutForm.invalid || isLoading()"
+                data-testid="checkout-submit"
+                [disabled]="checkoutForm.invalid || isSubmitting()"
+                [attr.aria-busy]="isSubmitting()"
               >
-                {{ isLoading() ? invioInCorso : invioOrdine }}
+                @if (isSubmitting()) {
+                  <span class="inline-flex items-center gap-2">
+                    <mat-progress-spinner mode="indeterminate" diameter="18" aria-hidden="true" />
+                    {{ invioInCorso }}
+                  </span>
+                } @else {
+                  {{ invioOrdine }}
+                }
               </button>
             </div>
           </form>
@@ -190,6 +230,7 @@ import { OrderData, OrdersService } from "../../core/services/orders.service";
           </app-summarize-order>
         </div>
       </div>
+      }
     </div>
   `,
   styles: ``,
@@ -197,17 +238,16 @@ import { OrderData, OrdersService } from "../../core/services/orders.service";
 export default class CheckoutPage implements OnInit {
   private ordersService = inject(OrdersService);
   private cartService = inject(CartService);
-  private loadingService = inject(LoadingService);
   private readonly fb = inject(FormBuilder);
-  private destroyRef = new Subject<void>();
+  private readonly destroyRef = inject(DestroyRef);
 
   cart = this.cartService.cart;
+  cartEmpty = this.cartService.isEmpty;
 
-  isLoading = this.loadingService.isLoading;
-  error = this.ordersService.error;
+  error = this.ordersService.checkoutError;
+  isSubmitting = computed(() => this.ordersService.checkoutStatus() === "submitting");
 
   readonly handleImageError = handleImageError;
-  readonly computeDiscountPrice = computeDiscountPrice;
 
   invioOrdine = $localize`:@@checkoutPage.submit.default:Conferma ordine`;
   invioInCorso = $localize`:@@checkoutPage.submit.inProgress:Invio dell'ordine...`;
@@ -223,27 +263,35 @@ export default class CheckoutPage implements OnInit {
     }),
     payment: this.fb.group({
       payment_method: ["", Validators.required],
+      // Demo: nessun pagamento reale. Il backend richiede comunque stripe_payment_token (obbligatorio),
+      // quindi alla scelta del metodo viene generato un token fittizio, come farebbe Stripe Elements.
       stripe_payment_token: [null as string | null, Validators.required],
     }),
   });
 
   ngOnInit(): void {
+    // Ogni ingresso nella pagina parte da uno stato pulito e dal carrello aggiornato dal server
+    this.ordersService.resetCheckout();
+    this.cartService.loadCart();
+
     this.checkoutForm
       .get("payment.payment_method")!
-      .valueChanges.pipe(takeUntil(this.destroyRef))
+      .valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((method) => {
         if (method) {
-          const fakeToken = `tok_${Math.random().toString().substring(2, 10)}`;
-          this.checkoutForm
-            .get("payment.stripe_payment_token")
-            ?.setValue(fakeToken, { emitEvent: false });
+          const fakeToken = `tok_demo_${method}_${Math.random().toString(36).substring(2, 10)}`;
+          this.checkoutForm.get("payment.stripe_payment_token")?.setValue(fakeToken, { emitEvent: false });
         }
       });
   }
 
   onSubmit() {
-    if (this.checkoutForm.invalid) return;
-    this.ordersService.checkout(this.checkoutForm.value as OrderData);
+    if (this.checkoutForm.invalid || this.isSubmitting()) return;
+    this.ordersService.checkout(this.checkoutForm.getRawValue() as OrderData);
+  }
+
+  /** Rimanda la stessa richiesta: i dati del form restano quelli inseriti. */
+  retry() {
+    this.ordersService.retryCheckout();
   }
 }
-
