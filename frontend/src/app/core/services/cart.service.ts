@@ -5,6 +5,7 @@ import Product from "../models/product";
 import { CartStore } from "../state/cart.store";
 import { Toaster } from "./toaster";
 import { debounceTime, Subject, switchMap, tap } from "rxjs";
+import { getApiErrorMessage } from "../http/api-error";
 
 @Injectable({
   providedIn: "root",
@@ -49,7 +50,7 @@ export class CartService {
               next: () => this.toaster.success("Quantità aggiornata."),
               error: (err) => {
                 this.#cart.set(previousCart);
-                this.toaster.error("Errore durante l'aggiornamento");
+                this.toaster.error(getApiErrorMessage(err, $localize`:@@cartService.updateError:Errore durante l'aggiornamento del carrello.`));
               },
             }),
           ),
@@ -64,9 +65,9 @@ export class CartService {
         this.#cart.set(response.data);
       },
       error: (err) => {
-        const msg =
-          `${err?.error.error} - ${err?.error.exception}` || "Errore nel caricamento dei prodotti.";
-        this.#error.set(msg);
+        this.#error.set(
+          getApiErrorMessage(err, $localize`:@@cartService.loadError:Errore nel caricamento del carrello.`),
+        );
       },
     });
   }
@@ -116,9 +117,7 @@ export class CartService {
       error: (err) => {
         // Rollback allo stato precedente in caso di errore nella chiamata
         this.#cart.set(previousCart);
-        const msg =
-          `${err?.error?.error} - ${err?.error?.exception}` ||
-          "Errore durante aggiornamento del carrello";
+        const msg = getApiErrorMessage(err, $localize`:@@cartService.updateError:Errore durante l'aggiornamento del carrello.`);
 
         this.toaster.error(msg);
         this.#error.set(msg);
@@ -146,9 +145,7 @@ export class CartService {
         },
         error: (err) => {
           this.#cart.set(previousCart);
-          const msg =
-            `${err?.error?.error} - ${err?.error?.exception}` ||
-            "Errore durante aggiornamento del carrello";
+          const msg = getApiErrorMessage(err, $localize`:@@cartService.updateError:Errore durante l'aggiornamento del carrello.`);
 
           this.toaster.error(msg);
           this.#error.set(msg);
@@ -163,8 +160,6 @@ export class CartService {
   }
 
   updateCartItemQuantity(cartItem: CartItem, newQuantity: number) {
-    console.log("newQuantity", newQuantity);
-
     const previousCart = this.#cart();
 
     this.#cart.update((c) => {

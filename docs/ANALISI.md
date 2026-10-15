@@ -1,7 +1,7 @@
 # Analisi dei requisiti – SW Store
 
 Stato del progetto rispetto a `docs/Progetto_di_sistemi_web_Specifiche.pdf`.
-Ultimo aggiornamento: 2026-10-15 (Fase 1, analisi verificata da `backend` e `frontend` sul codice attuale).
+Ultimo aggiornamento: 2026-10-15 (Fase 2: chiuso T5).
 Path backend relativi a `backend/app/` salvo indicazione, path frontend relativi a `frontend/src/app/`. Tutte le rotte hanno prefisso `/api/v1`.
 
 Legenda stato: **fatto** / **parziale** / **mancante**.
@@ -13,9 +13,9 @@ Legenda stato: **fatto** / **parziale** / **mancante**.
 | `bin/rails test` | Non eseguibile: `backend/test/` non esiste, il DB `sw_store_test` non esiste e la sezione `test` di `database.yml` non ha credenziali |
 | `bin/rubocop` | 88 file, 0 offese |
 | `brakeman` | 1 warning (Redirect, `auth/omniauth_callbacks_controller.rb:8`), come la baseline |
-| `npx ng test --watch=false` | 3 test, 2 falliscono (`app.spec.ts`, NG0201), come la baseline |
+| `npx ng test --watch=false` | Dopo T5: 25/25 verdi |
 | `npx ng build` | ok (it + en); warning sul budget (initial 719 kB > 500 kB) |
-| `npx playwright test` | Configurato (`playwright.config.ts`, solo `e2e/smoke.spec.ts`), non ancora eseguito |
+| `npx playwright test` | Dopo T5: 4/4 verdi (`smoke`, `http-basics`) |
 
 ## Decisioni dell'utente (2026-10-15)
 
@@ -54,7 +54,7 @@ Legenda stato: **fatto** / **parziale** / **mancante**.
 | 4.3e | Pagina lista ordini | parziale | frontend | `pages/my-orders-page`, `pages/order-detail-page`, `core/http/orders-api.service.ts` | Paginatore dentro il `@for`; `paginationMeta` mai impostato; viene inviato `per_page` invece di `limit` |
 | 4.4a | `POST /auth/login`, `POST /auth/logout`, `GET /auth/me` | parziale | backend | `auth/sessions_controller.rb`, `config/initializers/devise.rb`, `api/v1/current_user_controller.rb` | Login e me ok. Logout solo `DELETE` (le specifiche chiedono `POST`). `PUT /auth/me` dà 500 (`exept`, parametri errati) |
 | 4.4b | Login Google OAuth2 | parziale | backend | `models/user.rb`, `auth/omniauth_callbacks_controller.rb` | S2, S4. Un utente già registrato con la stessa email non riesce ad accedere con Google. URL frontend hardcoded |
-| 4.4c | Login, token, HttpInterceptor | parziale | frontend | `pages/login-page.ts/`, `core/services/auth.service.ts`, `core/http/interceptors/*` | `apiHeadersInterceptor` sostituisce tutti gli header (`Bearer null`, `Accept-Language` sempre `it`); `auth-interceptor.ts` non usato; signup invia `passwordConfirmation` (camelCase) e non `date_of_birth` |
+| 4.4c | Login, token, HttpInterceptor | parziale | frontend | `pages/login-page.ts/`, `core/services/auth.service.ts`, `core/http/interceptors/*` | Interceptor sistemato in T5. Resta: signup invia `passwordConfirmation` (camelCase) e non `date_of_birth` |
 | 4.4d | Route guard | parziale | frontend | `core/guards/*`, `app.routes.ts` | Guard presente su /cart, /wishlist, /checkout, /my-orders. Manca su `/my-orders/:orderId`. `adminGuard` reindirizza a /login invece di /forbidden |
 
 ## Requisiti tecnici (§5, §6)
@@ -68,7 +68,7 @@ Legenda stato: **fatto** / **parziale** / **mancante**.
 | 6a | Nessun dato hardcoded per prodotti/carrello/ordini | parziale | frontend | `core/state/*` | Carrello e wishlist usano localStorage come fonte di verità |
 | 6b | Servizi dedicati | fatto | frontend | `core/http/*`, `core/services/*` | – |
 | 6c | Reactive Forms nel checkout | fatto | frontend | `pages/checkout-page` | – |
-| 6d | HttpClient + Interceptor, errori centralizzati | parziale | frontend | `core/http/interceptors/*`, tutti i service | Gestione errori rotta nei service (`err.error.error` lancia un TypeError); errorInterceptor manda a /not-found su ogni 404 e ha messaggi non i18n; URL del backend hardcoded in 4 punti, nessun environment |
+| 6d | HttpClient + Interceptor, errori centralizzati | fatto (T5) | frontend | `core/http/api-error.ts`, `core/http/api-config.ts`, `core/http/interceptors/*`, `environments/environment.ts`, tutti i service | Helper unico per gli errori, header corretti (token solo se presente, `Accept-Language` dal locale), URL del backend in un solo punto, 404 gestiti dalle pagine. Test: unit su helper e interceptor, E2E `e2e/http-basics.spec.ts` |
 
 ## Funzionalità avanzate (§7)
 
@@ -92,3 +92,11 @@ Legenda stato: **fatto** / **parziale** / **mancante**.
 | Q1 | UX / a11y minima | parziale | frontend | `components/*`, `pages/*` | alt errati o mancanti; bottoni icona senza aria-label; login senza mat-label; elementi cliccabili non raggiungibili da tastiera |
 | Q2 | CI | parziale | – | `backend/.github/workflows/ci.yml` | Il file sta in `backend/`, quindi GitHub non lo esegue; nessun job di test |
 | Q3 | Contratto `backend/API.md` | parziale | backend | `backend/API.md` | Allineato alle rotte. Da aggiornare per i bug noti e per il formato reale di `meta` di Pagy (`previous`, `pages`) |
+
+## Avanzamento dei task (Fase 2)
+
+| Task | Descrizione | Stato |
+|---|---|---|
+| T0 | Rotazione credentials (master key, `secret_key_base`, JWT, secret Google) | in attesa dell'esecuzione dello script da parte dell'utente |
+| T1 | Infrastruttura test backend | da fare (dopo T0) |
+| T5 | Basi HTTP del frontend | **fatto** |

@@ -6,6 +6,7 @@ import { Router } from "@angular/router";
 import { Toaster } from "./toaster";
 import { ProductsQuery } from "./products.service";
 import { AdminProductsApiService } from "../http/admin-products-api.service";
+import { getApiErrorMessage, getApiErrorStatus } from "../http/api-error";
 
 @Injectable({
   providedIn: "root",
@@ -35,9 +36,7 @@ export class AdminProductsService {
       },
       error: (err) => {
         // Gestione del messaggio di errore qualora si verifichi
-        const msg =
-          `${err?.error.error} - ${err?.error.exception}` || "Errore nel caricamento dei prodotti.";
-        this.#error.set(msg);
+        this.#error.set(getApiErrorMessage(err, $localize`:@@productsService.loadError:Errore nel caricamento dei prodotti.`));
       },
     });
   }
@@ -48,9 +47,14 @@ export class AdminProductsService {
         this.#product.set(response.data);
       },
       error: (err) => {
-        const msg =
-          `${err?.error.error} - ${err?.error.exception}` || "Errore nel caricamento dei prodotti.";
-        this.#error.set(msg);
+        // Il prodotto non esiste: la pagina di dettaglio non ha senso, si mostra "non trovato"
+        if (getApiErrorStatus(err) === 404) {
+          this.router.navigate(["/not-found"]);
+          return;
+        }
+        this.#error.set(
+          getApiErrorMessage(err, $localize`:@@productsService.loadProductError:Errore nel caricamento del prodotto.`),
+        );
       },
     });
   }
@@ -62,9 +66,10 @@ export class AdminProductsService {
         this.router.navigate(["/admin/products"]);
       },
       error: (err) => {
-        const msg =
-          `${err?.error.error} - ${err?.error.exception}` ||
-          "Errore nella creazione del nuovo prodotto.";
+        const msg = getApiErrorMessage(
+          err,
+          $localize`:@@adminProductsService.createError:Errore nella creazione del nuovo prodotto.`,
+        );
         this.toaster.error(msg);
         this.#error.set(msg);
       },
@@ -78,9 +83,10 @@ export class AdminProductsService {
         this.router.navigate(["/admin/products"]);
       },
       error: (err) => {
-        const msg =
-          `${err?.error.error} - ${err?.error.exception}` ||
-          "Errore nell'aggiornamento del prodotto.";
+        const msg = getApiErrorMessage(
+          err,
+          $localize`:@@adminProductsService.updateError:Errore nell'aggiornamento del prodotto.`,
+        );
         this.toaster.error(msg);
         this.#error.set(msg);
       },

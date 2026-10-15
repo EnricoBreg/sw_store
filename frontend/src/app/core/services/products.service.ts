@@ -4,6 +4,7 @@ import Product from '../models/product';
 import { PaginationMeta } from '../models/api-types';
 import { Router } from '@angular/router';
 import { Toaster } from './toaster';
+import { getApiErrorMessage, getApiErrorStatus } from "../http/api-error";
 
 export interface ProductsQuery {
   searchTerm?: string;
@@ -17,6 +18,7 @@ export interface ProductsQuery {
 })
 export class ProductsService {
   private readonly api = inject(ProductsApiService);
+  private readonly router = inject(Router);
 
   // Esposizione dei signals in modo trasparente al componente che li userà
   #products = signal<Product[]>([]);
@@ -39,9 +41,7 @@ export class ProductsService {
       },
       error: (err) => {
         // Gestione del messaggio di errore qualora si verifichi
-        const msg =
-          `${err?.error.error} - ${err?.error.exception}` || 'Errore nel caricamento dei prodotti.';
-        this.#error.set(msg);
+        this.#error.set(getApiErrorMessage(err, $localize`:@@productsService.loadError:Errore nel caricamento dei prodotti.`));
       },
     });
   }
@@ -52,9 +52,14 @@ export class ProductsService {
         this.#product.set(response.data);
       },
       error: (err) => {
-        const msg =
-          `${err?.error.error} - ${err?.error.exception}` || "Errore nel caricamento dei prodotti.";
-        this.#error.set(msg);
+        // Il prodotto non esiste: la pagina di dettaglio non ha senso, si mostra "non trovato"
+        if (getApiErrorStatus(err) === 404) {
+          this.router.navigate(["/not-found"]);
+          return;
+        }
+        this.#error.set(
+          getApiErrorMessage(err, $localize`:@@productsService.loadProductError:Errore nel caricamento del prodotto.`),
+        );
       }
     })
   }

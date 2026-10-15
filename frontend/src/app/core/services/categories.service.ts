@@ -2,6 +2,7 @@ import { inject, Injectable, signal } from '@angular/core';
 import { CategoriesApiService } from '../http/categories-api.service';
 import Category from '../models/category';
 import { PaginationMeta } from '../models/api-types';
+import { getApiErrorMessage } from "../http/api-error";
 
 @Injectable({
   providedIn: 'root',
@@ -28,10 +29,9 @@ export class CategoriesService {
       },
       error: (err) => {
         // Gestione del messaggio di errore qualora si verifichi
-        const msg =
-          `${err?.error.error} - ${err?.error.exception}` ||
-          'Errore nel caricamento delle categorie.';
-        this.#error.set(msg);
+        this.#error.set(
+          getApiErrorMessage(err, $localize`:@@categoriesService.loadError:Errore nel caricamento delle categorie.`),
+        );
       },
     });
   }
