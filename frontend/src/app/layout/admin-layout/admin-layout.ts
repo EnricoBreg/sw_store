@@ -49,6 +49,13 @@ import { LayoutService } from "../../core/services/layout.service";
               </span>
             </a>
 
+            <a mat-list-item class="my-2" routerLink="categories" routerLinkActive #categoriesLink="routerLinkActive" [activated]="categoriesLink.isActive">
+              <span matListItemTitle class="font-medium flex items-center gap-2">
+                <mat-icon>category</mat-icon>
+                <ng-container i18n="@@categorie">Categorie</ng-container>
+              </span>
+            </a>
+
             <a mat-list-item class="my-2" routerLink="orders" routerLinkActive #ordersLink="routerLinkActive" [activated]="ordersLink.isActive">
               <span matListItemTitle class="font-medium flex items-center gap-2">
                 <mat-icon>local_shipping</mat-icon>

@@ -16,16 +16,20 @@ import { BackButton } from "../../../../components/back-button/back-button";
     </app-back-button>
 
     <section>
-      <h1 i18n="@@newProduct.title" class="mb-2 text-2xl font-semibold">Nuovo prodotto</h1>
+      <h1 i18n="@@editProduct.title" class="mb-2 text-2xl font-semibold">Modifica prodotto</h1>
       <mat-divider></mat-divider>
-      <div>
-        <app-product-form [product]="product()" />
-      </div>
+      @if (product(); as product) {
+        <div class="mt-4">
+          <app-product-form [product]="product" />
+        </div>
+      } @else if (error(); as message) {
+        <p role="alert" class="mt-4 text-red-700">{{ message }}</p>
+      }
     </section>
   `,
   styles: ``,
 })
-export default class ProductDetailPage {
+export default class EditProductPage {
   productId = input.required<number>();
 
   productService = inject(AdminProductsService);

@@ -8,6 +8,10 @@ import { computeDiscountPrice, handleImageError } from "../../../../core/utils";
 import { BackButton } from "../../../../components/back-button/back-button";
 import StockBadge from "../../../../components/stock-badge/stock-badge";
 import DiscountBadge from "../../../../components/discount-badge/discount-badge";
+import { MatDialog } from "@angular/material/dialog";
+import ConfirmDialog, { ConfirmDialogData } from "../../../../components/confirm-dialog/confirm-dialog";
+import { ErrorPanel } from "../../../../core/directives/error-panel";
+import Product from "../../../../core/models/product";
 
 @Component({
   selector: "app-product-detail-page",
@@ -20,6 +24,7 @@ import DiscountBadge from "../../../../components/discount-badge/discount-badge"
     MatButton,
     StockBadge,
     DiscountBadge,
+    ErrorPanel,
   ],
   template: `
     <div>
@@ -120,12 +125,16 @@ import DiscountBadge from "../../../../components/discount-badge/discount-badge"
               <span i18n="@@edit">Modifica</span>
             </a>
 
-            <a matButton="outlined" color="warn" class="mt-6">
+            <button matButton="outlined" type="button" class="mt-6 danger" (click)="confirmDelete(prod)">
               <mat-icon>delete</mat-icon>
-              <span i18n="@@delete">Elimina</span> (non implementato)
-            </a>
+              <span i18n="@@delete">Elimina</span>
+            </button>
           </div>
-        } @else {
+
+          @if (error(); as message) {
+            <div appErrorPanel role="alert" data-testid="product-delete-error" class="mt-4">{{ message }}</div>
+          }
+        } @else if (error()) {
           <p i18n="@@productDetail.error" class="text-red-700">Non è stato possibile caricare i dettagli del prodotto.</p>
         }
       </div>
@@ -137,6 +146,7 @@ export default class ProductDetailPage {
   productId = input.required<number>();
 
   private readonly service = inject(AdminProductsService);
+  private readonly dialog = inject(MatDialog);
 
   readonly product = this.service.product;
   readonly error = this.service.error;
@@ -146,5 +156,19 @@ export default class ProductDetailPage {
 
   ngOnInit() {
     this.service.getById(this.productId());
+  }
+
+  confirmDelete(product: Product) {
+    const data: ConfirmDialogData = {
+      title: $localize`:@@adminProducts.delete.title:Eliminare il prodotto?`,
+      message: $localize`:@@adminProducts.delete.message:Il prodotto "${product.name}:productName:" verrà eliminato definitivamente. Se è già stato ordinato non potrà essere eliminato: in quel caso puoi disattivarlo.`,
+      confirmLabel: $localize`:@@delete:Elimina`,
+    };
+    this.dialog
+      .open(ConfirmDialog, { data })
+      .afterClosed()
+      .subscribe((confirmed) => {
+        if (confirmed) this.service.deleteProduct(product);
+      });
   }
 }

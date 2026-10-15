@@ -12,6 +12,19 @@ export const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
   refunded: $localize`:@@order.status.refunded:Rimborsato`,
 };
 
+/**
+ * Transizioni di stato consentite dal backend (vedi backend/API.md, "Transizioni di stato").
+ * Ogni altra transizione dà 422.
+ */
+export const ORDER_STATUS_TRANSITIONS: Record<OrderStatus, OrderStatus[]> = {
+  pending: ["paid", "cancelled"],
+  paid: ["shipped", "cancelled", "refunded"],
+  shipped: ["delivered", "refunded"],
+  delivered: ["refunded"],
+  cancelled: [],
+  refunded: [],
+};
+
 export interface Order {
   id: number;
   code: string;

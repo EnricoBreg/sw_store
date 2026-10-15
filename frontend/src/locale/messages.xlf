@@ -401,6 +401,18 @@
       <trans-unit id="adminOrdersService.updateStatusError" datatype="html">
         <source>Errore nell&apos;aggiornamento dello stato dell&apos;ordine.</source>
       </trans-unit>
+      <trans-unit id="adminProducts.delete.message" datatype="html">
+        <source>Il prodotto &quot;<x id="productName" equiv-text="product.name"/>&quot; verrà eliminato definitivamente. Se è già stato ordinato non potrà essere eliminato: in quel caso puoi disattivarlo.</source>
+      </trans-unit>
+      <trans-unit id="adminProducts.delete.title" datatype="html">
+        <source>Eliminare il prodotto?</source>
+      </trans-unit>
+      <trans-unit id="adminProducts.deleted" datatype="html">
+        <source>Prodotto eliminato con successo.</source>
+      </trans-unit>
+      <trans-unit id="adminProducts.deleteError" datatype="html">
+        <source>Impossibile eliminare il prodotto.</source>
+      </trans-unit>
       <trans-unit id="adminProductsService.createError" datatype="html">
         <source>Errore nella creazione del nuovo prodotto.</source>
       </trans-unit>
@@ -418,6 +430,117 @@
       </trans-unit>
       <trans-unit id="authService.signUpError" datatype="html">
         <source>Registrazione fallita. Riprova.</source>
+      </trans-unit>
+      <trans-unit id="adminCategories.caption" datatype="html">
+        <source>Elenco delle categorie</source>
+      </trans-unit>
+      <trans-unit id="adminCategories.col.actions" datatype="html">
+        <source>Azioni</source>
+      </trans-unit>
+      <trans-unit id="adminCategories.col.description" datatype="html">
+        <source>Descrizione</source>
+      </trans-unit>
+      <trans-unit id="adminCategories.col.name" datatype="html">
+        <source>Nome</source>
+      </trans-unit>
+      <trans-unit id="adminCategories.col.products" datatype="html">
+        <source>Prodotti</source>
+      </trans-unit>
+      <trans-unit id="adminCategories.delete" datatype="html">
+        <source>Elimina <x id="categoryName" equiv-text="category.name"/></source>
+      </trans-unit>
+      <trans-unit id="adminCategories.delete.message" datatype="html">
+        <source>La categoria &quot;<x id="categoryName" equiv-text="category.name"/>&quot; verrà eliminata definitivamente.</source>
+      </trans-unit>
+      <trans-unit id="adminCategories.delete.title" datatype="html">
+        <source>Eliminare la categoria?</source>
+      </trans-unit>
+      <trans-unit id="adminCategories.deleted" datatype="html">
+        <source>Categoria eliminata con successo.</source>
+      </trans-unit>
+      <trans-unit id="adminCategories.deleteError" datatype="html">
+        <source>Impossibile eliminare la categoria.</source>
+      </trans-unit>
+      <trans-unit id="adminCategories.description" datatype="html">
+        <source> Gestisci le categorie del catalogo. Una categoria che contiene prodotti non può essere eliminata. </source>
+      </trans-unit>
+      <trans-unit id="adminCategories.edit" datatype="html">
+        <source>Modifica <x id="categoryName" equiv-text="category.name"/></source>
+      </trans-unit>
+      <trans-unit id="adminCategories.empty" datatype="html">
+        <source> Nessuna categoria. </source>
+      </trans-unit>
+      <trans-unit id="adminCategories.new" datatype="html">
+        <source>Nuova categoria</source>
+      </trans-unit>
+      <trans-unit id="adminCategories.notEmpty" datatype="html">
+        <source>La categoria contiene prodotti: spostali o eliminali prima di eliminarla.</source>
+      </trans-unit>
+      <trans-unit id="adminCategories.saved" datatype="html">
+        <source>Categoria salvata con successo.</source>
+      </trans-unit>
+      <trans-unit id="adminCategories.title" datatype="html">
+        <source>Categorie</source>
+      </trans-unit>
+      <trans-unit id="adminDashboard.byStatus" datatype="html">
+        <source> Ordini per stato </source>
+      </trans-unit>
+      <trans-unit id="adminDashboard.col.code" datatype="html">
+        <source>Codice</source>
+      </trans-unit>
+      <trans-unit id="adminDashboard.col.customer" datatype="html">
+        <source>Cliente</source>
+      </trans-unit>
+      <trans-unit id="adminDashboard.col.date" datatype="html">
+        <source>Data</source>
+      </trans-unit>
+      <trans-unit id="adminDashboard.col.product" datatype="html">
+        <source>Prodotto</source>
+      </trans-unit>
+      <trans-unit id="adminDashboard.col.status" datatype="html">
+        <source>Stato</source>
+      </trans-unit>
+      <trans-unit id="adminDashboard.col.stock" datatype="html">
+        <source>Stock</source>
+      </trans-unit>
+      <trans-unit id="adminDashboard.col.total" datatype="html">
+        <source>Totale</source>
+      </trans-unit>
+      <trans-unit id="adminDashboard.latest" datatype="html">
+        <source>Ultimi ordini</source>
+      </trans-unit>
+      <trans-unit id="adminDashboard.latest.none" datatype="html">
+        <source>Nessun ordine.</source>
+      </trans-unit>
+      <trans-unit id="adminDashboard.loadError" datatype="html">
+        <source>Errore nel caricamento della dashboard.</source>
+      </trans-unit>
+      <trans-unit id="adminDashboard.loading" datatype="html">
+        <source>Caricamento della dashboard...</source>
+      </trans-unit>
+      <trans-unit id="adminDashboard.lowStock" datatype="html">
+        <source> Stock basso (≤ <x id="INTERPOLATION" equiv-text="{{ d.low_stock_threshold }}"/> pezzi) </source>
+      </trans-unit>
+      <trans-unit id="adminDashboard.lowStock.none" datatype="html">
+        <source>Nessun prodotto con stock basso.</source>
+      </trans-unit>
+      <trans-unit id="adminDashboard.orders" datatype="html">
+        <source>Ordini</source>
+      </trans-unit>
+      <trans-unit id="adminDashboard.products" datatype="html">
+        <source>Prodotti attivi / totali</source>
+      </trans-unit>
+      <trans-unit id="adminDashboard.revenue" datatype="html">
+        <source>Fatturato</source>
+      </trans-unit>
+      <trans-unit id="adminDashboard.summary" datatype="html">
+        <source>Riepilogo</source>
+      </trans-unit>
+      <trans-unit id="adminDashboard.title" datatype="html">
+        <source>Dashboard</source>
+      </trans-unit>
+      <trans-unit id="adminDashboard.users" datatype="html">
+        <source>Utenti</source>
       </trans-unit>
       <trans-unit id="adminOrdersPage.orderCount" datatype="html">
         <source> Numero di ordini presenti: <x id="ORDERCOUNT" equiv-text="{{ pagination()?.count //i18n(ph=&quot;orderCount&quot;) }}"/> </source>
@@ -770,6 +893,9 @@
       <trans-unit id="cartService.updateError" datatype="html">
         <source>Errore durante l&apos;aggiornamento del carrello.</source>
       </trans-unit>
+      <trans-unit id="categorie" datatype="html">
+        <source>Categorie</source>
+      </trans-unit>
       <trans-unit id="categories" datatype="html">
         <source>Categorie</source>
       </trans-unit>
@@ -779,6 +905,27 @@
       <trans-unit id="categoriesService.loadError" datatype="html">
         <source>Errore nel caricamento delle categorie.</source>
       </trans-unit>
+      <trans-unit id="categoryForm.description" datatype="html">
+        <source>Descrizione</source>
+      </trans-unit>
+      <trans-unit id="categoryForm.editTitle" datatype="html">
+        <source>Modifica categoria</source>
+      </trans-unit>
+      <trans-unit id="categoryForm.error" datatype="html">
+        <source>Impossibile salvare la categoria.</source>
+      </trans-unit>
+      <trans-unit id="categoryForm.name" datatype="html">
+        <source>Nome</source>
+      </trans-unit>
+      <trans-unit id="categoryForm.name.required" datatype="html">
+        <source>Il nome è obbligatorio.</source>
+      </trans-unit>
+      <trans-unit id="categoryForm.newTitle" datatype="html">
+        <source>Nuova categoria</source>
+      </trans-unit>
+      <trans-unit id="categoryForm.save" datatype="html">
+        <source>Salva</source>
+      </trans-unit>
       <trans-unit id="categorySelect.clearSelection" datatype="html">
         <source>Cancella selezione</source>
       </trans-unit>
@@ -787,6 +934,9 @@
       </trans-unit>
       <trans-unit id="changeOrderStatus.effect" datatype="html">
         <source>La modifica avrà il seguente effetto:</source>
+      </trans-unit>
+      <trans-unit id="changeOrderStatus.finalState" datatype="html">
+        <source> L&apos;ordine è in uno stato finale: non sono possibili altre modifiche. </source>
       </trans-unit>
       <trans-unit id="changeOrderStatus.newStatus" datatype="html">
         <source>Nuovo stato</source>
@@ -866,6 +1016,9 @@
       <trans-unit id="checkoutPage.tornaAlCarrello" datatype="html">
         <source>Rivedi carrello</source>
       </trans-unit>
+      <trans-unit id="confirmDialog.cancel" datatype="html">
+        <source>Annulla</source>
+      </trans-unit>
       <trans-unit id="delete" datatype="html">
         <source>Elimina</source>
       </trans-unit>
@@ -877,6 +1030,9 @@
       </trans-unit>
       <trans-unit id="edit" datatype="html">
         <source>Modifica</source>
+      </trans-unit>
+      <trans-unit id="editProduct.title" datatype="html">
+        <source>Modifica prodotto</source>
       </trans-unit>
       <trans-unit id="emptyCart.explore" datatype="html">
         <source>Esplora i prodotti</source>
@@ -932,11 +1088,20 @@
       <trans-unit id="productForm.category.label" datatype="html">
         <source>Categoria prodotto</source>
       </trans-unit>
+      <trans-unit id="productForm.category.required" datatype="html">
+        <source>Scegli una categoria.</source>
+      </trans-unit>
       <trans-unit id="productForm.description.label" datatype="html">
         <source>Descrizione</source>
       </trans-unit>
+      <trans-unit id="productForm.description.minLength" datatype="html">
+        <source> La descrizione è obbligatoria e deve avere almeno 10 caratteri. </source>
+      </trans-unit>
       <trans-unit id="productForm.description.placeholder" datatype="html">
         <source>Inserisci una descrizione</source>
+      </trans-unit>
+      <trans-unit id="productForm.discount.invalid" datatype="html">
+        <source>Lo sconto deve essere tra 0 e 100.</source>
       </trans-unit>
       <trans-unit id="productForm.discount.label" datatype="html">
         <source>Sconto</source>
@@ -945,10 +1110,31 @@
         <source>Inserisci una percentuale di sconto</source>
       </trans-unit>
       <trans-unit id="productForm.image.choose" datatype="html">
-        <source> Scegli immagine </source>
+        <source>Scegli immagine</source>
+      </trans-unit>
+      <trans-unit id="productForm.image.hint" datatype="html">
+        <source>JPEG, PNG o WebP, al massimo 5 MB.</source>
+      </trans-unit>
+      <trans-unit id="productForm.image.inputLabel" datatype="html">
+        <source>File dell&apos;immagine del prodotto</source>
+      </trans-unit>
+      <trans-unit id="productForm.image.invalidType" datatype="html">
+        <source>Formato non supportato: usa un&apos;immagine JPEG, PNG o WebP.</source>
       </trans-unit>
       <trans-unit id="productForm.image.label" datatype="html">
-        <source>Immagine dimostrativa del prodotto:</source>
+        <source> Immagine dimostrativa del prodotto: </source>
+      </trans-unit>
+      <trans-unit id="productForm.image.none" datatype="html">
+        <source> Nessuna immagine. </source>
+      </trans-unit>
+      <trans-unit id="productForm.image.remove" datatype="html">
+        <source>Rimuovi immagine</source>
+      </trans-unit>
+      <trans-unit id="productForm.image.replace" datatype="html">
+        <source>Sostituisci immagine</source>
+      </trans-unit>
+      <trans-unit id="productForm.image.tooLarge" datatype="html">
+        <source>L&apos;immagine supera la dimensione massima di 5 MB.</source>
       </trans-unit>
       <trans-unit id="productForm.name.label" datatype="html">
         <source>Nome</source>
@@ -956,11 +1142,20 @@
       <trans-unit id="productForm.name.placeholder" datatype="html">
         <source>Inserisci il nome del prodotto</source>
       </trans-unit>
+      <trans-unit id="productForm.name.required" datatype="html">
+        <source>Il nome è obbligatorio.</source>
+      </trans-unit>
+      <trans-unit id="productForm.price.invalid" datatype="html">
+        <source>Inserisci un prezzo maggiore o uguale a 0.</source>
+      </trans-unit>
       <trans-unit id="productForm.price.label" datatype="html">
         <source>Prezzo</source>
       </trans-unit>
       <trans-unit id="productForm.price.placeholder" datatype="html">
         <source>Inserisci il prezzo</source>
+      </trans-unit>
+      <trans-unit id="productForm.stock.invalid" datatype="html">
+        <source>Inserisci una quantità maggiore o uguale a 0.</source>
       </trans-unit>
       <trans-unit id="productForm.stock.label" datatype="html">
         <source>Quantità in stock</source>

@@ -1,6 +1,14 @@
 import { test, expect, Page } from "@playwright/test";
 import { submitLogin } from "./support/e2e-user";
-import { API_URL, apiEmptyCart, apiEnsureUser, apiGetCart, apiLogin, apiProductWithMostStock } from "./support/api";
+import {
+  API_URL,
+  apiCancelOrder,
+  apiEmptyCart,
+  apiEnsureUser,
+  apiGetCart,
+  apiLogin,
+  apiProductWithMostStock,
+} from "./support/api";
 
 // Utente dedicato al checkout: il suo carrello e i suoi ordini non interferiscono con gli altri test.
 // Ogni ordine creato scala 1 pezzo di stock: si usa il prodotto con lo stock più alto.
@@ -12,18 +20,31 @@ const checkoutUser = {
 test.describe.configure({ mode: "serial" });
 
 let token: string;
+// Ordini creati dal test corrente: vengono annullati alla fine (DELETE /orders/:id ripristina lo stock)
+let createdOrderIds: number[] = [];
 
 test.beforeAll(async ({ request }) => {
   await apiEnsureUser(request, checkoutUser.email, checkoutUser.password, "Checkout");
 });
 
-test.beforeEach(async ({ request }) => {
+test.beforeEach(async ({ page, request }) => {
   token = await apiLogin(request, checkoutUser.email, checkoutUser.password);
   await apiEmptyCart(request, token);
+
+  createdOrderIds = [];
+  page.on("response", async (response) => {
+    if (response.url().endsWith("/api/v1/orders") && response.request().method() === "POST" && response.status() === 201) {
+      createdOrderIds.push((await response.json()).data.id);
+    }
+  });
 });
 
 test.afterEach(async ({ request }) => {
   await apiEmptyCart(request, token);
+  for (const orderId of createdOrderIds) {
+    const cancelled = await apiCancelOrder(request, token, orderId);
+    expect(cancelled, `annullamento dell'ordine ${orderId}`).toBe(200);
+  }
 });
 
 /** Login, aggiunta di 1 pezzo del prodotto e apertura del checkout dal carrello. */

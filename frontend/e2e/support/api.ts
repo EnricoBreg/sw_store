@@ -38,3 +38,9 @@ export async function apiProductWithMostStock(request: APIRequestContext) {
   const products: { id: number; name: string; active: boolean; stock_quantity: number }[] = (await response.json()).data;
   return products.filter((p) => p.active).sort((a, b) => b.stock_quantity - a.stock_quantity)[0];
 }
+
+/** Annulla un ordine dell'utente (DELETE /orders/:id): da `pending`/`paid` ripristina lo stock. Restituisce lo status. */
+export async function apiCancelOrder(request: APIRequestContext, token: string, orderId: number): Promise<number> {
+  const response = await request.delete(`${API_URL}/orders/${orderId}`, { headers: { Authorization: `Bearer ${token}` } });
+  return response.status();
+}

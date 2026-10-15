@@ -40,11 +40,19 @@ export class AdminProductsApiService {
     return this.http.get<ApiResponse<Product>>(`${this.url}/${productId}`).pipe(mapData(normalizeProduct));
   }
 
+  /** Creazione in multipart/form-data (campi `product[...]`, eventuale `product[image]`). */
   create(formData: FormData): Observable<ApiResponse<Product>> {
-    return this.http.post<ApiResponse<Product>>(this.url, formData);
+    return this.http.post<ApiResponse<Product>>(this.url, formData).pipe(mapData(normalizeProduct));
   }
 
+  /** Modifica in multipart/form-data; `product[remove_image]=true` rimuove l'immagine attuale. */
   update(productId: number, formData: FormData): Observable<ApiResponse<Product>> {
-    return this.http.patch<ApiResponse<Product>>(`${this.url}/${productId}`, formData);
+    return this.http
+      .patch<ApiResponse<Product>>(`${this.url}/${productId}`, formData)
+      .pipe(mapData(normalizeProduct));
+  }
+
+  delete(productId: number): Observable<ApiResponse<unknown>> {
+    return this.http.delete<ApiResponse<unknown>>(`${this.url}/${productId}`);
   }
 }

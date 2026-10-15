@@ -281,14 +281,6 @@ import ISODateDisplayer from "../../../../data-displayer/data-displayer";
                     >
                       <mat-icon>visibility</mat-icon>
                     </a>
-                    <a
-                      matIconButton
-                      [routerLink]="[order.id, 'edit']"
-                      i18n-aria-label="@@table.edit"
-                      aria-label="Modifica"
-                    >
-                      <mat-icon>edit</mat-icon>
-                    </a>
                   </div>
                 </td>
               </ng-container>
