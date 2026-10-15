@@ -85,3 +85,7 @@ Rails.application.configure do
   # Skip DNS rebinding protection for the default health check endpoint.
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
 end
+
+# Host degli URL generati fuori dalle richieste (es. image_url nei serializer): dall'URL pubblico del backend.
+backend_url = URI(ENV.fetch("BACKEND_URL", "http://localhost:3000"))
+Rails.application.routes.default_url_options = { protocol: backend_url.scheme, host: backend_url.host, port: backend_url.port }

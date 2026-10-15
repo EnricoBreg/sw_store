@@ -1,0 +1,67 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [ main, development ]
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: sw_store
+          POSTGRES_PASSWORD: sw_store
+          POSTGRES_DB: sw_store_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      RAILS_ENV: test
+      DB_HOST: localhost
+      DB_PORT: 5432
+      DB_USERNAME: sw_store
+      DB_PASSWORD: sw_store
+      # Le credentials (segreto JWT, OAuth Google) servono già all'avvio dell'app:
+      # aggiungere il contenuto di backend/config/master.key come secret del repository.
+      RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          working-directory: backend
+          bundler-cache: true
+
+      - name: Prepare test database
+        run: bin/rails db:test:prepare
+
+      - name: Run tests
+        run: bin/rails test
+
+      - name: Lint (RuboCop)
+        run: bin/rubocop -f github
+
+      - name: Security scan (Brakeman)
+        # bin/brakeman forza --ensure-latest: si usa il comando del CLAUDE.md
+        run: bundle exec brakeman --no-pager -q
+
+      - name: Gem vulnerabilities (bundler-audit)
+        # Al momento segnala advisory su diverse gem (serve un aggiornamento di Gemfile.lock da concordare):
+        # finché non è fatto lo step è informativo e non blocca la pipeline.
+        continue-on-error: true
+        run: bin/bundler-audit

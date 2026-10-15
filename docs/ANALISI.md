@@ -86,11 +86,11 @@ Legenda stato: **fatto** / **parziale** / **mancante**.
 | # | Requisito | Stato | Parte | File coinvolti | Cosa manca |
 |---|---|---|---|---|---|
 | 8a | Seed iniziale prodotti | fatto (T8) | backend | `db/seeds.rb`, `db/seeds/images/*` | Idempotente e non distruttivo: 5 categorie, 12 prodotti attivi con immagini, utenti demo ed E2E (credenziali in `API.md`, "Dati demo") |
-| 8b | README principale | mancante | PM + entrambi | `README.md` (contiene la master key), `backend/README.md` (template) | Prerequisiti, setup DB, avvio |
+| 8b | README principale | parziale | PM + entrambi | `README.md`, `backend/README.md` | `backend/README.md` scritto (T12-BE). Mancano README di root e frontend |
 | 8c | Documento di architettura | mancante | PM | – | `docs/ARCHITETTURA.md` |
-| 8d | docker-compose (opzionale) | mancante | entrambi | `backend/Dockerfile` | Il Dockerfile installa sqlite e non libpq; compose assente |
+| 8d | docker-compose (opzionale) | parziale | entrambi | `backend/Dockerfile`, bozza compose | Dockerfile con libpq e config di produzione da ENV (T12-BE); `docker build` non verificato (docker assente nell'ambiente); `docker-compose.yml` in root dopo il servizio frontend |
 | Q1 | UX / a11y minima | fatto (T11a) | frontend | `components/*`, `pages/*`, `styles.scss`, `e2e/a11y.spec.ts` | alt, aria-label, mat-label, contrasto, navigazione da tastiera e focus visibile; axe WCAG A/AA senza violazioni su catalogo, login, signup, dettaglio |
-| Q2 | CI | parziale | – | `backend/.github/workflows/ci.yml` | Il file sta in `backend/`, quindi GitHub non lo esegue; nessun job di test |
+| Q2 | CI | parziale | – | `.github/workflows/ci.yml` | Spostata in root con job backend (Postgres, test, rubocop, brakeman, bundler-audit informativo). Richiede il secret `RAILS_MASTER_KEY` su GitHub. Manca il job frontend |
 | Q3 | Contratto `backend/API.md` | parziale | backend | `backend/API.md` | Allineato alle rotte. Da aggiornare per i bug noti e per il formato reale di `meta` di Pagy (`previous`, `pages`) |
 
 ## Avanzamento dei task (Fase 2)
@@ -109,10 +109,11 @@ Legenda stato: **fatto** / **parziale** / **mancante**.
 | T6 | Carrello e wishlist frontend sul nuovo contratto | **fatto** |
 | T10b | Area admin, parte backend (immagini, dashboard, coerenza CRUD, filtro status utente) | **fatto** |
 | T7 | Checkout e ordini (frontend) | in corso |
+| T12-BE | Consegna, parte backend (config da ENV, Dockerfile, README backend, CI in root) | **fatto** |
 | T3 | Errori uniformi (backend) | **fatto** |
 | T8 | Prodotti attivi, categorie (`q`, `all`), whitelist ordinamento, rifiniture admin, seed non distruttivo | **fatto** |
 
 Problemi segnalati, da includere nei task successivi:
 - Admin ordini: il link "Modifica" punta a `orders/:id/edit`, rotta inesistente (task Area admin).
 - "I miei ordini": paginatore dentro il `@for` (T7).
-- Produzione: `config/environments/production.rb` senza `default_url_options`, quindi `image_url` fallirebbe (task di consegna/Docker).
+- `bundler-audit` segnala advisory (anche High) su diverse gem: aggiornamento conservativo da fare (T13).
