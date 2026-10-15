@@ -6,10 +6,16 @@ class Api::V1::Admin::CategoriesController < Api::V1::AdminController
     categories = Category.all.order(name: :asc)
     categories = search_by_name(categories) if params[:q].present?
 
+    # Con all=true restituisce tutte le categorie senza paginazione, come GET /categories.
+    if ActiveModel::Type::Boolean.new.cast(params[:all])
+      render_success(data: serialize_categories(categories), meta: { count: categories.size })
+      return
+    end
+
     @pagy, @categories = pagy(categories, page: params[:page], items: params[:limit])
 
     render_success(
-      data: serialize_collection(@categories, CategorySerializer),
+      data: serialize_categories(@categories),
       meta: @pagy.data_hash
     )
   end
@@ -17,7 +23,7 @@ class Api::V1::Admin::CategoriesController < Api::V1::AdminController
   # GET /admin/categories/:id
   def show
     render_success(
-      data: serialize_resource(@category, CategorySerializer)
+      data: serialize_categories([ @category ]).sole
     )
   end
 
@@ -25,14 +31,12 @@ class Api::V1::Admin::CategoriesController < Api::V1::AdminController
   def create
     @category = Category.new(category_params)
     if @category.save
-      # render json: @category, status: :created
       render_success(
         message: I18n.t("api.messages.category_created_successfully", name: @category.name),
-        data: serialize_resource(@category, CategorySerializer),
+        data: serialize_categories([ @category ]).sole,
         status: :created
       )
     else
-      # render json: @category.errors, status: :unprocessable_content
       render_error(
         message: :category_create_error,
         errors: @category.errors.full_messages,
@@ -46,7 +50,7 @@ class Api::V1::Admin::CategoriesController < Api::V1::AdminController
     if @category.update(category_params)
       render_success(
         message: I18n.t("api.messages.category_updated_successfully", name: @category.name),
-        data: serialize_resource(@category, CategorySerializer)
+        data: serialize_categories([ @category ]).sole
       )
     else
       render_error(
@@ -77,6 +81,14 @@ class Api::V1::Admin::CategoriesController < Api::V1::AdminController
 
   def set_category
     @category = Category.find(params[:id])
+  end
+
+  # Ogni categoria include products_count, calcolato con una sola query per tutta la pagina.
+  def serialize_categories(categories)
+    counts = Product.where(category_id: categories.map(&:id)).group(:category_id).count
+    serialize_collection(categories, CategorySerializer).map do |category|
+      category.merge(products_count: counts.fetch(category[:id], 0))
+    end
   end
 
   def category_params

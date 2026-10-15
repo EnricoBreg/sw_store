@@ -29,6 +29,7 @@ Rails.application.routes.draw do
       #   Routes Admin per gestione prodotti, ...
       # ========================================================
       namespace :admin do
+        get "dashboard", to: "dashboard#show"
         resources :products
         resources :categories
         resources :users, except: [ :create ] # La creazione degli utenti avviene tramite registrazione, non da admin

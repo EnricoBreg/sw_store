@@ -166,4 +166,23 @@ class Api::V1::Users::OrdersControllerTest < ActionDispatch::IntegrationTest
     delete api_v1_order_path(@own_order), headers: auth_headers(@customer)
     assert_response :unprocessable_entity
   end
+
+  test "GET /orders filters by one or more statuses" do
+    get api_v1_orders_path, params: { status: "shipped" }, headers: auth_headers(@customer)
+    assert_response :ok
+    assert_equal [ orders(:customer_shipped).id ], json_response["data"].map { |order| order["id"] }
+
+    get api_v1_orders_path, params: { status: "pending,shipped" }, headers: auth_headers(@customer)
+    assert_equal 2, json_response["data"].size
+
+    get api_v1_orders_path, params: { status: "delivered" }, headers: auth_headers(@customer)
+    assert_empty json_response["data"]
+  end
+
+  test "GET /orders with an unknown status returns 400" do
+    get api_v1_orders_path, params: { status: "lost" }, headers: auth_headers(@customer)
+
+    assert_response :bad_request
+    assert_match "pending, paid, shipped", json_response["errors"].sole
+  end
 end

@@ -63,6 +63,7 @@ it:
         product_id: "Prodotto"
 
       product:
+        image: "Immagine"
         order_items: "Ordini"
         <<: *common_timestamps
         name: "Nome"
@@ -88,6 +89,11 @@ it:
 
     errors:
       models:
+        product:
+          attributes:
+            image:
+              invalid_content_type: "deve essere un file %{allowed}."
+              too_large: "non può superare %{max}."
         user:
           attributes:
             date_of_birth:

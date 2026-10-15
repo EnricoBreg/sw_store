@@ -47,6 +47,8 @@ class Api::V1::Admin::ProductsController < Api::V1::AdminController
   # PATCH/PUT /admin/products/1
   def update
     if @product.update(product_params)
+      # product[remove_image]=true rimuove l'immagine (ignorato se nella stessa richiesta ne arriva una nuova)
+      @product.image.purge if remove_image? && product_params[:image].blank? && @product.image.attached?
       render_success(
         message: I18n.t("api.messages.product_updated_successfully", name: @product.name),
         data: serialize_resource(@product, ProductSerializer)
@@ -82,7 +84,16 @@ class Api::V1::Admin::ProductsController < Api::V1::AdminController
     @product = Product.find(params.expect(:id))
   end
 
+  # L'immagine arriva solo come file (multipart/form-data): un valore diverso, es. una stringa in JSON,
+  # verrebbe interpretato da Active Storage come id firmato di un blob, quindi viene scartato.
   def product_params
-    params.expect(product: [ :name, :description, :price, :discount_percentage, :stock_quantity, :active, :category_id, :image ])
+    @product_params ||= params.expect(product: [ :name, :description, :price, :discount_percentage, :stock_quantity, :active, :category_id, :image, :remove_image ]).tap do |permitted|
+      permitted.delete(:image) unless permitted[:image].is_a?(ActionDispatch::Http::UploadedFile)
+      permitted.delete(:remove_image)
+    end
+  end
+
+  def remove_image?
+    ActiveModel::Type::Boolean.new.cast(params.dig(:product, :remove_image))
   end
 end

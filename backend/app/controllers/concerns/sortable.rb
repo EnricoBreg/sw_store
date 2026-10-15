@@ -4,8 +4,6 @@
 module Sortable
   extend ActiveSupport::Concern
 
-  class InvalidParameterError < StandardError; end
-
   DIRECTIONS = %w[asc desc].freeze
 
   private
