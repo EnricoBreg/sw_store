@@ -1,0 +1,6 @@
+# Le fixture non eseguono i callback di User, quindi carrelli e wishlist vanno dichiarati qui.
+admin_cart:
+  user: admin
+
+customer_cart:
+  user: customer

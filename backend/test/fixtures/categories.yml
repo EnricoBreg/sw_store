@@ -1,0 +1,7 @@
+electronics:
+  name: Elettronica
+  description: Dispositivi elettronici
+
+videogames:
+  name: Videogiochi
+  description: Giochi e console

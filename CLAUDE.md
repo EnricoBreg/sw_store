@@ -59,7 +59,7 @@ L'ambiente è attivo e utilizzabile: le applicazioni si possono avviare e il dat
 - Ogni server è gestito solo dal suo owner (vedi tabella). Chi ha bisogno dell'altro server lo chiede all'owner.
 - Per verificare un endpoint: `curl` su `http://localhost:3000/api/v1/...` con il server avviato.
 - Al primo avvio il PM verifica che porte e URL di questa tabella siano corretti e la aggiorna se necessario.
-- Verifica del 2026-10-15: DB di sviluppo raggiungibile; porte 3000 e 4200 libere e coerenti con `puma.rb`, CORS (`localhost:4200`) e URL API del frontend (`localhost:3000/api/v1`). Il database di test `sw_store_test` non esiste e la sezione `test` di `database.yml` non ha credenziali: `bin/rails test` non può girare finché non si sistema (task di setup del backend).
+- Verifica del 2026-10-15: DB di sviluppo raggiungibile; porte 3000 e 4200 libere e coerenti con `puma.rb`, CORS (`localhost:4200`) e URL API del frontend (`localhost:3000/api/v1`). Il database di test `sw_store_test` è stato creato in T1 sullo stesso host.
 
 ### Database: regole
 
@@ -89,7 +89,7 @@ L'ambiente è attivo e utilizzabile: le applicazioni si possono avviare e il dat
 
 ### Baseline al tag `baseline-pre-team`
 
-- `bin/rails test`: 0 test (la cartella `backend/test/` non esiste ancora).
+- `bin/rails test`: ~~0 test~~ dal T1 (2026-10-15) 24 test verdi. Richiede il DB `sw_store_test` (setup una tantum: `RAILS_ENV=test bin/rails db:create && bin/rails db:test:prepare`); credenziali sovrascrivibili con `DB_USERNAME` / `DB_PASSWORD`. Il ruolo DB non è superuser: per questo `test/support/fixture_load_order.rb` ordina il caricamento delle fixture in base alle chiavi esterne.
 - `bin/rubocop`: nessuna offesa.
 - `brakeman`: 1 warning (Weak, Redirect in `auth/omniauth_callbacks_controller.rb`). `bin/brakeman` esce con codice 5 perché forza `--ensure-latest` e la gem non è all'ultima versione: usare il comando della tabella.
 - `npx ng test`: ~~2 test su 3 falliscono in `src/app/app.spec.ts`~~ risolto in T5 (2026-10-15): tutti verdi.

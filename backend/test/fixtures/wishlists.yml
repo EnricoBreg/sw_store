@@ -1,0 +1,5 @@
+admin_wishlist:
+  user: admin
+
+customer_wishlist:
+  user: customer
