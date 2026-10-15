@@ -91,9 +91,9 @@ L'ambiente è attivo e utilizzabile: le applicazioni si possono avviare e il dat
 
 ### Baseline al tag `baseline-pre-team`
 
-- `bin/rails test`: ~~0 test~~ dal T1 (2026-10-15) 24 test verdi. Richiede il DB `sw_store_test` (setup una tantum: `RAILS_ENV=test bin/rails db:create && bin/rails db:test:prepare`); credenziali sovrascrivibili con `DB_USERNAME` / `DB_PASSWORD`. Il ruolo DB non è superuser: per questo `test/support/fixture_load_order.rb` ordina il caricamento delle fixture in base alle chiavi esterne.
+- `bin/rails test`: ~~0 test~~ dal T1 (2026-10-15) tutti verdi (72 dopo T2). Richiede il DB `sw_store_test` (setup una tantum: `RAILS_ENV=test bin/rails db:create && bin/rails db:test:prepare`); credenziali sovrascrivibili con `DB_USERNAME` / `DB_PASSWORD`. Il ruolo DB non è superuser: per questo `test/support/fixture_load_order.rb` ordina il caricamento delle fixture in base alle chiavi esterne.
 - `bin/rubocop`: nessuna offesa.
-- `brakeman`: 1 warning (Weak, Redirect in `auth/omniauth_callbacks_controller.rb`). `bin/brakeman` esce con codice 5 perché forza `--ensure-latest` e la gem non è all'ultima versione: usare il comando della tabella.
+- `brakeman`: ~~1 warning (Weak, Redirect in `auth/omniauth_callbacks_controller.rb`)~~ dal T2 0 warning. `bin/brakeman` esce con codice 5 perché forza `--ensure-latest` e la gem non è all'ultima versione: usare il comando della tabella.
 - `npx ng test`: ~~2 test su 3 falliscono in `src/app/app.spec.ts`~~ risolto in T5 (2026-10-15): tutti verdi.
 - `npx ng build`: ok.
 - `npx playwright test`: configurato; dal T5 tutti verdi (9 dopo T9). Gli E2E usano l'utente `e2e.user@swstore.test` del DB di sviluppo (override con `E2E_USER_EMAIL` / `E2E_USER_PASSWORD`); il seed non distruttivo (T8) dovrà crearlo.

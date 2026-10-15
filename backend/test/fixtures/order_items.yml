@@ -1,0 +1,21 @@
+# unit_price è il prezzo già scontato al momento dell'ordine (come in POST /orders).
+customer_pending_headphones:
+  order: customer_pending
+  product: headphones
+  quantity: 2
+  unit_price: 89.91
+  discount_percentage: 10
+
+customer_shipped_keyboard:
+  order: customer_shipped
+  product: keyboard
+  quantity: 1
+  unit_price: 79.00
+  discount_percentage: 0
+
+other_customer_pending_console:
+  order: other_customer_pending
+  product: console
+  quantity: 1
+  unit_price: 349.00
+  discount_percentage: 0

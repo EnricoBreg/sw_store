@@ -89,7 +89,8 @@ class Api::V1::Users::OrdersController < Api::V1::AuthenticatedController
   def destroy
     # Per il delete, si considera solamente la cancellazione soft dell'ordine, impostando lo status a "cancelled".
     # In questo modo, si mantiene comunque traccia dell'ordine e dei suoi item, evitando di cancellare dati importanti.
-    if @order.update(status: :cancelled)
+    # L'annullamento è consentito solo prima della spedizione e ripristina lo stock dei prodotti.
+    if @order.cancel
       render_success(
         message: I18n.t("api.messages.order_deleted_successfully", id: @order.id),
       )
@@ -104,8 +105,9 @@ class Api::V1::Users::OrdersController < Api::V1::AuthenticatedController
 
   private
 
+  # La ricerca è limitata agli ordini dell'utente corrente: gli ordini altrui risultano inesistenti (404).
   def set_order
-    @order = Order.find(params[:id])
+    @order = current_user.orders.find(params[:id])
   end
 
   def order_params

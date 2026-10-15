@@ -3,3 +3,6 @@ admin_wishlist:
 
 customer_wishlist:
   user: customer
+
+other_customer_wishlist:
+  user: other_customer

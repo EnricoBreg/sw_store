@@ -1,0 +1,21 @@
+customer_home:
+  user: customer
+  nickname: Casa
+  first_name: Carlo
+  last_name: Cliente
+  street: Via Roma 1
+  city: Milano
+  zip_code: "20100"
+  country: Italia
+  is_default: true
+
+other_customer_home:
+  user: other_customer
+  nickname: Casa
+  first_name: Olga
+  last_name: Altra
+  street: Via Po 5
+  city: Torino
+  zip_code: "10100"
+  country: Italia
+  is_default: true

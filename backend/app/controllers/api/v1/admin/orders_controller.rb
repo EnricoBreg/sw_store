@@ -72,7 +72,7 @@ class Api::V1::Admin::OrdersController < Api::V1::AdminController
 
   # DELETE /admin/orders/:id
   def destroy
-    if @order.update(status: "cancelled")
+    if @order.cancel
       render_success(
         message: I18n.t("api.messages.order_deleted_successfully", id: @order.id),
         data: serialize_resource(@order, OrderSerializer),

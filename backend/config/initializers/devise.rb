@@ -269,7 +269,8 @@ Devise.setup do |config|
   config.navigational_formats = []
 
   # The default HTTP method used to sign out a resource. Default is :delete.
-  config.sign_out_via = :delete
+  # POST richiesto dalle specifiche (POST /auth/logout), DELETE mantenuto per compatibilità.
+  config.sign_out_via = [ :delete, :post ]
 
   # ==> OmniAuth
   # Add a new OmniAuth provider. Check the wiki for more information on setting
@@ -331,7 +332,7 @@ Devise.setup do |config|
 
     jwt.revocation_requests = [
       [ "DELETE", %r{^/api/v1/auth/logout$} ],
-      [ "DELETE", %r{^/api/v1/admin/users$} ]
+      [ "POST", %r{^/api/v1/auth/logout$} ]
     ]
 
     jwt.expiration_time = 1.days.to_i
