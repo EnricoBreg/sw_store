@@ -1,4 +1,4 @@
-import { Component, inject } from "@angular/core";
+import { Component, inject, signal } from "@angular/core";
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
 import {
   MAT_DIALOG_DATA,
@@ -8,7 +8,8 @@ import {
 } from "@angular/material/dialog";
 import { MatIcon } from "@angular/material/icon";
 import { MatFormField, MatLabel, MatOption, MatSelect } from "@angular/material/select";
-import { ORDER_STATUS_LABELS, OrderStatus } from "../../core/models/order";
+import { ORDER_STATUS_LABELS, ORDER_STATUS_TRANSITIONS, OrderStatus } from "../../core/models/order";
+import { getApiError } from "../../core/http/api-error";
 import OrderStatusBadge from "../../order-status-badge/order-status-badge";
 import { MatButton, MatIconButton } from "@angular/material/button";
 import Accordion from "../accordion/accordion";
@@ -53,6 +54,7 @@ import { LoadingService } from "../../core/http/services/loading.service";
         </button>
       </div>
 
+      @if (statusOptions.length > 0) {
       <app-accordion>
         <app-expandable-content>
           <ng-container title>
@@ -84,13 +86,33 @@ import { LoadingService } from "../../core/http/services/loading.service";
       <div class="my-3 flex items-center justify-between">
         <app-order-status-badge [status]="data.initialStatus"></app-order-status-badge>
         <mat-icon>arrow_forward</mat-icon>
-        <app-order-status-badge [status]="statusSelect.value"></app-order-status-badge>
+        @if (changeOrderStatusForm.controls.status.value; as nextStatus) {
+          <app-order-status-badge [status]="nextStatus"></app-order-status-badge>
+        } @else {
+          <span class="text-gray-600" aria-hidden="true">—</span>
+        }
       </div>
 
+      }
+
+      @if (error(); as error) {
+        <div role="alert" data-testid="order-status-error" class="mt-3 rounded-lg bg-red-100 p-3 text-red-700">
+          <p class="font-semibold">{{ error.message }}</p>
+          @for (e of error.errors; track $index) {
+            <p>{{ e }}</p>
+          }
+        </div>
+      }
+
+      @if (statusOptions.length === 0) {
+        <p class="mt-6 text-gray-700" role="status" i18n="@@changeOrderStatus.finalState">
+          L'ordine è in uno stato finale: non sono possibili altre modifiche.
+        </p>
+      } @else {
       <form class="mt-6" [formGroup]="changeOrderStatusForm" (ngSubmit)="submitChangeOrderStatus()">
         <mat-form-field>
           <mat-label i18n="@@changeOrderStatus.newStatus">Nuovo stato</mat-label>
-          <mat-select formControlName="status" #statusSelect>
+          <mat-select formControlName="status">
             @for (option of statusOptions; track option.key) {
               <mat-option [value]="option.key">
                 <app-order-status-badge [status]="option.key"></app-order-status-badge>
@@ -103,6 +125,7 @@ import { LoadingService } from "../../core/http/services/loading.service";
           Aggiorna stato
         </button>
       </form>
+      }
     </div>
   `,
   styles: ``,
@@ -121,10 +144,13 @@ export default class ChangeOrderStatusDialog {
   data = inject<{ orderId: number; orderCode: string, initialStatus: OrderStatus }>(MAT_DIALOG_DATA);
 
   protected readonly orderStatusLabels = ORDER_STATUS_LABELS;
-  protected readonly statusOptions = Object.entries(ORDER_STATUS_LABELS).map(([key, label]) => ({
-    key: key as OrderStatus,
-    label,
+  // Solo le transizioni ammesse dallo stato attuale
+  protected readonly statusOptions = (ORDER_STATUS_TRANSITIONS[this.data.initialStatus] ?? []).map((key) => ({
+    key,
+    label: ORDER_STATUS_LABELS[key],
   }));
+
+  readonly error = signal<{ message: string; errors: string[] } | null>(null);
 
   disableButton() {
     const selectedStatus = this.changeOrderStatusForm.value.status;
@@ -141,6 +167,15 @@ export default class ChangeOrderStatusDialog {
       .subscribe({
         next: () => {
           this.dialogRef.close();
+        },
+        // Il 422 del backend (transizione non consentita) resta visibile nel dialog
+        error: (err) => {
+          this.error.set(
+            getApiError(
+              err,
+              $localize`:@@adminOrdersService.updateStatusError:Errore nell'aggiornamento dello stato dell'ordine.`,
+            ),
+          );
         },
       });
   }

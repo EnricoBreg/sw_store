@@ -1,6 +1,7 @@
 import { map, OperatorFunction } from "rxjs";
 import { ApiResponse } from "./api-types";
 import { Cart, CartItem } from "./cart";
+import { AdminDashboard } from "./dashboard";
 import { Order } from "./order";
 import { OrderItem } from "./order-item";
 import Product from "./product";
@@ -67,6 +68,15 @@ export function normalizeOrder(order: Order): Order {
     ...order,
     total_amount: toNumber(order.total_amount),
     items: (order.items ?? []).map(normalizeOrderItem),
+  };
+}
+
+export function normalizeDashboard(dashboard: AdminDashboard): AdminDashboard {
+  return {
+    ...dashboard,
+    revenue: toNumber(dashboard.revenue),
+    low_stock_products: (dashboard.low_stock_products ?? []).map(normalizeProduct),
+    latest_orders: (dashboard.latest_orders ?? []).map(normalizeOrder),
   };
 }
 

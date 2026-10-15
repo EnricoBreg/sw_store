@@ -1,7 +1,7 @@
 # Analisi dei requisiti – SW Store
 
 Stato del progetto rispetto a `docs/Progetto_di_sistemi_web_Specifiche.pdf`.
-Ultimo aggiornamento: 2026-10-15 (Fase 2: chiusi T0, T1, T2, T2-FE, T3, T4, T5, T6, T7, T8, T9, T10a, T10b, T11a, T12-BE, T13).
+Ultimo aggiornamento: 2026-10-15 (Fase 2: chiusi T0, T1, T2, T2-FE, T3, T4, T5, T6, T7, T8, T9, T10a, T10b, T10c, T11a, T12-BE, T13).
 Path backend relativi a `backend/app/` salvo indicazione, path frontend relativi a `frontend/src/app/`. Tutte le rotte hanno prefisso `/api/v1`.
 
 Legenda stato: **fatto** / **parziale** / **mancante**.
@@ -13,9 +13,9 @@ Legenda stato: **fatto** / **parziale** / **mancante**.
 | `bin/rails test` | Dopo T10b: 159 test, 522 asserzioni, tutti verdi |
 | `bin/rubocop` | 88 file, 0 offese |
 | `brakeman` | Dopo T2: 0 warning (il Redirect della baseline è risolto) |
-| `npx ng test --watch=false` | Dopo T7: 97/97 verdi |
+| `npx ng test --watch=false` | Dopo T10c: 112/112 verdi |
 | `npx ng build` | ok (it + en), nessun warning (budget initial portato a 800 kB / 1 MB in T11a; 727 kB raw, ~178 kB gzip) |
-| `npx playwright test` | Dopo T7: 24/24 verdi in 5 run consecutive; `npm run e2e:i18n` 3/3 verdi |
+| `npx playwright test` | Dopo T10c: 27/27 verdi in 5 run consecutive; `npm run e2e:i18n` 3/3 verdi |
 
 ## Decisioni dell'utente (2026-10-15)
 
@@ -41,8 +41,8 @@ Legenda stato: **fatto** / **parziale** / **mancante**.
 |---|---|---|---|---|---|
 | 4.1a | `GET /products` con filtro/ricerca/paginazione | fatto | backend | `controllers/api/v1/products_controller.rb`, `concerns/sortable.rb` | `q`, `category_id`, `page`/`limit`, ordinamento con whitelist; solo prodotti attivi (T8) |
 | 4.1b | `GET /products/:id` | fatto | backend | idem | Prodotto inattivo → 404 (T8) |
-| 4.1c | `GET /categories` | fatto (T8) | backend | `controllers/api/v1/categories_controller.rb` | `?q=` corretto; `?all=true` restituisce tutte le categorie. Il frontend deve ancora usarlo |
-| 4.1d | ProductService su API reali, nessun dato hardcoded | parziale | frontend | `core/http/products-api.service.ts`, `core/services/products.service.ts`, `pages/products-grid`, `components/categories-list` | Nessun dato hardcoded. Ricerca `q` (sincronizzata con l'URL), reset pagina e pannello errore sistemati in T9. Resta: categorie limitate alle prime 10 (serve modifica BE) |
+| 4.1c | `GET /categories` | fatto (T8) | backend | `controllers/api/v1/categories_controller.rb` | `?q=` corretto; `?all=true` restituisce tutte le categorie (usato dal frontend dal T10c) |
+| 4.1d | ProductService su API reali, nessun dato hardcoded | fatto | frontend | `core/http/products-api.service.ts`, `core/services/products.service.ts`, `pages/products-grid`, `components/categories-list` | Nessun dato hardcoded. Ricerca `q` (sincronizzata con l'URL), reset pagina e pannello errore sistemati in T9; tutte le categorie con `?all=true` dal T10c |
 | 4.2a | Modelli Cart / CartItem | fatto (T4) | backend | `models/cart.rb`, `models/cart_item.rb`, `db/migrate/20261015200000_add_unique_indexes_to_carts.rb` | – |
 | 4.2b | `GET /cart`, `POST /cart/items`, `PATCH`/`DELETE /cart/items/:id` | fatto (T4) | backend | `users/cart_items_controller.rb`, `config/routes.rb:43` | `:id` del CartItem come da specifiche; 404 su righe altrui; validazioni di stock e prodotto attivo; `items_count` e `total_amount` nel carrello. Il frontend deve adeguarsi (T6) |
 | 4.2c | CartService: init da `/cart`, sync a ogni modifica, sopravvive al reload | fatto (T6) | frontend | `core/services/cart.service.ts`, `core/models/normalize.ts`, `core/services/auth.service.ts` | Stato dal server (init all'avvio e al login), PATCH per riga con debounce e rollback, totali e badge dal backend, niente localStorage. E2E `e2e/cart.spec.ts` (incluso il reload) |
@@ -74,7 +74,7 @@ Legenda stato: **fatto** / **parziale** / **mancante**.
 
 | # | Funzionalità | Stato | Parte | File coinvolti | Cosa manca |
 |---|---|---|---|---|---|
-| 7.1 | Area admin prodotti (ruolo admin + guard) | parziale | entrambi | `api/v1/admin/*`, `pages/admin/*`, `components/product-form`, `core/guards/admin*` | BE fatto (T8, T10b): PUT 200, whitelist, 409 su elementi referenziati, upload immagine multipart, `GET /admin/dashboard`, categorie con `products_count` e `all=true`. FE: eliminazione prodotto non implementata, dashboard placeholder, label del form non i18n |
+| 7.1 | Area admin prodotti (ruolo admin + guard) | fatto | entrambi | `api/v1/admin/*`, `pages/admin/*`, `components/product-form`, `core/guards/admin*` | BE fatto (T8, T10b): PUT 200, whitelist, 409 su elementi referenziati, upload immagine multipart, `GET /admin/dashboard`, categorie con `products_count` e `all=true`. FE fatto (T10c): eliminazione con conferma, upload e rimozione immagini, CRUD categorie, cambio stato con sole transizioni ammesse, dashboard; E2E `e2e/admin.spec.ts` |
 | 7.2 | Storico ordini avanzato (filtri data/stato, dettaglio) | parziale | entrambi | `users/orders_controller.rb`, `pages/my-orders-page`, `pages/order-detail-page` | Dettaglio completo. Filtri lato utente assenti (BE e FE) |
 | 7.3 | Wishlist | parziale | entrambi | `users/wishlist*_controller.rb`, `core/services/wishlists.service.ts` | BE: niente unique/validazione, POST risponde 200. FE: stato dal server dal T6, pulsante nascosto agli ospiti dal T9 |
 | 7.4 | Coupon | mancante | entrambi | – | Tutto |
@@ -109,10 +109,11 @@ Legenda stato: **fatto** / **parziale** / **mancante**.
 | T6 | Carrello e wishlist frontend sul nuovo contratto | **fatto** |
 | T10b | Area admin, parte backend (immagini, dashboard, coerenza CRUD, filtro status utente) | **fatto** |
 | T7 | Checkout e ordini (frontend) | **fatto** |
+| T10c | Area admin, parte frontend (eliminazione e immagini prodotti, CRUD categorie, transizioni ordini, dashboard) | **fatto** |
+| T12 | Consegna: README di root, ARCHITETTURA.md, docker-compose, job frontend in CI | da fare |
 | T12-BE | Consegna, parte backend (config da ENV, Dockerfile, README backend, CI in root) | **fatto** |
 | T13 | Aggiornamento gem di sicurezza (patch/minor, Rails 8.1.4), bundler-audit pulito | **fatto** |
 | T3 | Errori uniformi (backend) | **fatto** |
 | T8 | Prodotti attivi, categorie (`q`, `all`), whitelist ordinamento, rifiniture admin, seed non distruttivo | **fatto** |
 
 Problemi segnalati, da includere nei task successivi:
-- Admin ordini: il link "Modifica" punta a `orders/:id/edit`, rotta inesistente (task Area admin).

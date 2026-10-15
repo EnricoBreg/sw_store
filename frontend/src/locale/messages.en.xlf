@@ -526,6 +526,22 @@
         <source>Errore nell&apos;aggiornamento dello stato dell&apos;ordine.</source>
         <target state="translated">Error updating the order status.</target>
       </trans-unit>
+      <trans-unit id="adminProducts.delete.message" datatype="html">
+        <source>Il prodotto &quot;<x id="productName" equiv-text="product.name"/>&quot; verrà eliminato definitivamente. Se è già stato ordinato non potrà essere eliminato: in quel caso puoi disattivarlo.</source>
+        <target state="translated">The product &quot;<x id="productName" equiv-text="product.name"/>&quot; will be permanently deleted. If it has already been ordered it cannot be deleted: in that case you can deactivate it.</target>
+      </trans-unit>
+      <trans-unit id="adminProducts.delete.title" datatype="html">
+        <source>Eliminare il prodotto?</source>
+        <target state="translated">Delete the product?</target>
+      </trans-unit>
+      <trans-unit id="adminProducts.deleted" datatype="html">
+        <source>Prodotto eliminato con successo.</source>
+        <target state="translated">Product deleted successfully.</target>
+      </trans-unit>
+      <trans-unit id="adminProducts.deleteError" datatype="html">
+        <source>Impossibile eliminare il prodotto.</source>
+        <target state="translated">Unable to delete the product.</target>
+      </trans-unit>
       <trans-unit id="adminProductsService.createError" datatype="html">
         <source>Errore nella creazione del nuovo prodotto.</source>
         <target state="translated">Error creating the new product.</target>
@@ -557,6 +573,154 @@
       <trans-unit id="backToOrderList" datatype="html">
         <source>Torna alla lista degli ordini</source>
         <target state="new">Back to Order List</target>
+      </trans-unit>
+      <trans-unit id="adminCategories.caption" datatype="html">
+        <source>Elenco delle categorie</source>
+        <target state="translated">List of categories</target>
+      </trans-unit>
+      <trans-unit id="adminCategories.col.actions" datatype="html">
+        <source>Azioni</source>
+        <target state="translated">Actions</target>
+      </trans-unit>
+      <trans-unit id="adminCategories.col.description" datatype="html">
+        <source>Descrizione</source>
+        <target state="translated">Description</target>
+      </trans-unit>
+      <trans-unit id="adminCategories.col.name" datatype="html">
+        <source>Nome</source>
+        <target state="translated">Name</target>
+      </trans-unit>
+      <trans-unit id="adminCategories.col.products" datatype="html">
+        <source>Prodotti</source>
+        <target state="translated">Products</target>
+      </trans-unit>
+      <trans-unit id="adminCategories.delete" datatype="html">
+        <source>Elimina <x id="categoryName" equiv-text="category.name"/></source>
+        <target state="translated">Delete <x id="categoryName" equiv-text="category.name"/></target>
+      </trans-unit>
+      <trans-unit id="adminCategories.delete.message" datatype="html">
+        <source>La categoria &quot;<x id="categoryName" equiv-text="category.name"/>&quot; verrà eliminata definitivamente.</source>
+        <target state="translated">The category &quot;<x id="categoryName" equiv-text="category.name"/>&quot; will be permanently deleted.</target>
+      </trans-unit>
+      <trans-unit id="adminCategories.delete.title" datatype="html">
+        <source>Eliminare la categoria?</source>
+        <target state="translated">Delete the category?</target>
+      </trans-unit>
+      <trans-unit id="adminCategories.deleted" datatype="html">
+        <source>Categoria eliminata con successo.</source>
+        <target state="translated">Category deleted successfully.</target>
+      </trans-unit>
+      <trans-unit id="adminCategories.deleteError" datatype="html">
+        <source>Impossibile eliminare la categoria.</source>
+        <target state="translated">Unable to delete the category.</target>
+      </trans-unit>
+      <trans-unit id="adminCategories.description" datatype="html">
+        <source> Gestisci le categorie del catalogo. Una categoria che contiene prodotti non può essere eliminata. </source>
+        <target state="translated">Manage catalog categories. A category that contains products cannot be deleted.</target>
+      </trans-unit>
+      <trans-unit id="adminCategories.edit" datatype="html">
+        <source>Modifica <x id="categoryName" equiv-text="category.name"/></source>
+        <target state="translated">Edit <x id="categoryName" equiv-text="category.name"/></target>
+      </trans-unit>
+      <trans-unit id="adminCategories.empty" datatype="html">
+        <source> Nessuna categoria. </source>
+        <target state="translated">No categories.</target>
+      </trans-unit>
+      <trans-unit id="adminCategories.new" datatype="html">
+        <source>Nuova categoria</source>
+        <target state="translated">New category</target>
+      </trans-unit>
+      <trans-unit id="adminCategories.notEmpty" datatype="html">
+        <source>La categoria contiene prodotti: spostali o eliminali prima di eliminarla.</source>
+        <target state="translated">The category contains products: move or delete them before deleting it.</target>
+      </trans-unit>
+      <trans-unit id="adminCategories.saved" datatype="html">
+        <source>Categoria salvata con successo.</source>
+        <target state="translated">Category saved successfully.</target>
+      </trans-unit>
+      <trans-unit id="adminCategories.title" datatype="html">
+        <source>Categorie</source>
+        <target state="translated">Categories</target>
+      </trans-unit>
+      <trans-unit id="adminDashboard.byStatus" datatype="html">
+        <source> Ordini per stato </source>
+        <target state="translated">Orders by status</target>
+      </trans-unit>
+      <trans-unit id="adminDashboard.col.code" datatype="html">
+        <source>Codice</source>
+        <target state="translated">Code</target>
+      </trans-unit>
+      <trans-unit id="adminDashboard.col.customer" datatype="html">
+        <source>Cliente</source>
+        <target state="translated">Customer</target>
+      </trans-unit>
+      <trans-unit id="adminDashboard.col.date" datatype="html">
+        <source>Data</source>
+        <target state="translated">Date</target>
+      </trans-unit>
+      <trans-unit id="adminDashboard.col.product" datatype="html">
+        <source>Prodotto</source>
+        <target state="translated">Product</target>
+      </trans-unit>
+      <trans-unit id="adminDashboard.col.status" datatype="html">
+        <source>Stato</source>
+        <target state="translated">Status</target>
+      </trans-unit>
+      <trans-unit id="adminDashboard.col.stock" datatype="html">
+        <source>Stock</source>
+        <target state="translated">Stock</target>
+      </trans-unit>
+      <trans-unit id="adminDashboard.col.total" datatype="html">
+        <source>Totale</source>
+        <target state="translated">Total</target>
+      </trans-unit>
+      <trans-unit id="adminDashboard.latest" datatype="html">
+        <source>Ultimi ordini</source>
+        <target state="translated">Latest orders</target>
+      </trans-unit>
+      <trans-unit id="adminDashboard.latest.none" datatype="html">
+        <source>Nessun ordine.</source>
+        <target state="translated">No orders.</target>
+      </trans-unit>
+      <trans-unit id="adminDashboard.loadError" datatype="html">
+        <source>Errore nel caricamento della dashboard.</source>
+        <target state="translated">Error loading the dashboard.</target>
+      </trans-unit>
+      <trans-unit id="adminDashboard.loading" datatype="html">
+        <source>Caricamento della dashboard...</source>
+        <target state="translated">Loading dashboard...</target>
+      </trans-unit>
+      <trans-unit id="adminDashboard.lowStock" datatype="html">
+        <source> Stock basso (≤ <x id="INTERPOLATION" equiv-text="{{ d.low_stock_threshold }}"/> pezzi) </source>
+        <target state="translated">Low stock (≤ <x id="INTERPOLATION" equiv-text="{{ d.low_stock_threshold }}"/> items)</target>
+      </trans-unit>
+      <trans-unit id="adminDashboard.lowStock.none" datatype="html">
+        <source>Nessun prodotto con stock basso.</source>
+        <target state="translated">No products with low stock.</target>
+      </trans-unit>
+      <trans-unit id="adminDashboard.orders" datatype="html">
+        <source>Ordini</source>
+        <target state="translated">Orders</target>
+      </trans-unit>
+      <trans-unit id="adminDashboard.products" datatype="html">
+        <source>Prodotti attivi / totali</source>
+        <target state="translated">Active / total products</target>
+      </trans-unit>
+      <trans-unit id="adminDashboard.revenue" datatype="html">
+        <source>Fatturato</source>
+        <target state="translated">Revenue</target>
+      </trans-unit>
+      <trans-unit id="adminDashboard.summary" datatype="html">
+        <source>Riepilogo</source>
+        <target state="translated">Summary</target>
+      </trans-unit>
+      <trans-unit id="adminDashboard.title" datatype="html">
+        <source>Dashboard</source>
+        <target state="translated">Dashboard</target>
+      </trans-unit>
+      <trans-unit id="adminDashboard.users" datatype="html">
+        <source>Utenti</source>
+        <target state="translated">Users</target>
       </trans-unit>
       <trans-unit id="adminOrdersPage.orderCount" datatype="html">
         <source> Numero di ordini presenti: <x id="ORDERCOUNT" equiv-text="{{ pagination()?.count //i18n(ph=&quot;orderCount&quot;) }}"/> </source>
@@ -1026,6 +1190,10 @@
         <source>Errore durante l&apos;aggiornamento del carrello.</source>
         <target state="translated">Error updating the cart.</target>
       </trans-unit>
+      <trans-unit id="categorie" datatype="html">
+        <source>Categorie</source>
+        <target state="translated">Categories</target>
+      </trans-unit>
       <trans-unit id="categories" datatype="html">
         <source>Categorie</source>
         <target>Categories</target>
@@ -1038,6 +1206,34 @@
         <source>Errore nel caricamento delle categorie.</source>
         <target state="translated">Error loading categories.</target>
       </trans-unit>
+      <trans-unit id="categoryForm.description" datatype="html">
+        <source>Descrizione</source>
+        <target state="translated">Description</target>
+      </trans-unit>
+      <trans-unit id="categoryForm.editTitle" datatype="html">
+        <source>Modifica categoria</source>
+        <target state="translated">Edit category</target>
+      </trans-unit>
+      <trans-unit id="categoryForm.error" datatype="html">
+        <source>Impossibile salvare la categoria.</source>
+        <target state="translated">Unable to save the category.</target>
+      </trans-unit>
+      <trans-unit id="categoryForm.name" datatype="html">
+        <source>Nome</source>
+        <target state="translated">Name</target>
+      </trans-unit>
+      <trans-unit id="categoryForm.name.required" datatype="html">
+        <source>Il nome è obbligatorio.</source>
+        <target state="translated">Name is required.</target>
+      </trans-unit>
+      <trans-unit id="categoryForm.newTitle" datatype="html">
+        <source>Nuova categoria</source>
+        <target state="translated">New category</target>
+      </trans-unit>
+      <trans-unit id="categoryForm.save" datatype="html">
+        <source>Salva</source>
+        <target state="translated">Save</target>
+      </trans-unit>
       <trans-unit id="categorySelect.clearSelection" datatype="html">
         <source>Cancella selezione</source>
         <target state="new">Clear selection</target>
@@ -1049,6 +1245,10 @@
       <trans-unit id="changeOrderStatus.effect" datatype="html">
         <source>La modifica avrà il seguente effetto:</source>
         <target state="translated">The change will have the following effect:</target>
+      </trans-unit>
+      <trans-unit id="changeOrderStatus.finalState" datatype="html">
+        <source> L&apos;ordine è in uno stato finale: non sono possibili altre modifiche. </source>
+        <target state="translated">The order is in a final state: no further changes are possible.</target>
       </trans-unit>
       <trans-unit id="changeOrderStatus.newStatus" datatype="html">
         <source>Nuovo stato</source>
@@ -1154,6 +1354,10 @@
         <source>Rivedi carrello</source>
         <target state="new">Review Cart</target>
       </trans-unit>
+      <trans-unit id="confirmDialog.cancel" datatype="html">
+        <source>Annulla</source>
+        <target state="translated">Cancel</target>
+      </trans-unit>
       <trans-unit id="delete" datatype="html">
         <source>Elimina</source>
         <target state="new">Delete</target>
@@ -1169,6 +1373,10 @@
       <trans-unit id="edit" datatype="html">
         <source>Modifica</source>
         <target state="new">Edit</target>
+      </trans-unit>
+      <trans-unit id="editProduct.title" datatype="html">
+        <source>Modifica prodotto</source>
+        <target state="translated">Edit product</target>
       </trans-unit>
       <trans-unit id="emptyCart.explore" datatype="html">
         <source>Esplora i prodotti</source>
@@ -1242,13 +1450,25 @@
         <source>Categoria prodotto</source>
         <target state="translated">Product category</target>
       </trans-unit>
+      <trans-unit id="productForm.category.required" datatype="html">
+        <source>Scegli una categoria.</source>
+        <target state="translated">Choose a category.</target>
+      </trans-unit>
       <trans-unit id="productForm.description.label" datatype="html">
         <source>Descrizione</source>
         <target state="translated">Description</target>
       </trans-unit>
+      <trans-unit id="productForm.description.minLength" datatype="html">
+        <source> La descrizione è obbligatoria e deve avere almeno 10 caratteri. </source>
+        <target state="translated">Description is required and must be at least 10 characters long.</target>
+      </trans-unit>
       <trans-unit id="productForm.description.placeholder" datatype="html">
         <source>Inserisci una descrizione</source>
         <target state="translated">Enter a description</target>
+      </trans-unit>
+      <trans-unit id="productForm.discount.invalid" datatype="html">
+        <source>Lo sconto deve essere tra 0 e 100.</source>
+        <target state="translated">Discount must be between 0 and 100.</target>
       </trans-unit>
       <trans-unit id="productForm.discount.label" datatype="html">
         <source>Sconto</source>
@@ -1259,12 +1479,40 @@
         <target state="translated">Enter a discount percentage</target>
       </trans-unit>
       <trans-unit id="productForm.image.choose" datatype="html">
-        <source> Scegli immagine </source>
+        <source>Scegli immagine</source>
         <target state="translated">Choose image</target>
       </trans-unit>
+      <trans-unit id="productForm.image.hint" datatype="html">
+        <source>JPEG, PNG o WebP, al massimo 5 MB.</source>
+        <target state="translated">JPEG, PNG or WebP, up to 5 MB.</target>
+      </trans-unit>
+      <trans-unit id="productForm.image.inputLabel" datatype="html">
+        <source>File dell&apos;immagine del prodotto</source>
+        <target state="translated">Product image file</target>
+      </trans-unit>
+      <trans-unit id="productForm.image.invalidType" datatype="html">
+        <source>Formato non supportato: usa un&apos;immagine JPEG, PNG o WebP.</source>
+        <target state="translated">Unsupported format: use a JPEG, PNG or WebP image.</target>
+      </trans-unit>
       <trans-unit id="productForm.image.label" datatype="html">
-        <source>Immagine dimostrativa del prodotto:</source>
-        <target state="translated">Product image:</target>
+        <source> Immagine dimostrativa del prodotto: </source>
+        <target state="translated"> Product image: </target>
+      </trans-unit>
+      <trans-unit id="productForm.image.none" datatype="html">
+        <source> Nessuna immagine. </source>
+        <target state="translated">No image.</target>
+      </trans-unit>
+      <trans-unit id="productForm.image.remove" datatype="html">
+        <source>Rimuovi immagine</source>
+        <target state="translated">Remove image</target>
+      </trans-unit>
+      <trans-unit id="productForm.image.replace" datatype="html">
+        <source>Sostituisci immagine</source>
+        <target state="translated">Replace image</target>
+      </trans-unit>
+      <trans-unit id="productForm.image.tooLarge" datatype="html">
+        <source>L&apos;immagine supera la dimensione massima di 5 MB.</source>
+        <target state="translated">The image exceeds the maximum size of 5 MB.</target>
       </trans-unit>
       <trans-unit id="productForm.name.label" datatype="html">
         <source>Nome</source>
@@ -1274,6 +1522,14 @@
         <source>Inserisci il nome del prodotto</source>
         <target state="translated">Enter the product name</target>
       </trans-unit>
+      <trans-unit id="productForm.name.required" datatype="html">
+        <source>Il nome è obbligatorio.</source>
+        <target state="translated">Name is required.</target>
+      </trans-unit>
+      <trans-unit id="productForm.price.invalid" datatype="html">
+        <source>Inserisci un prezzo maggiore o uguale a 0.</source>
+        <target state="translated">Enter a price greater than or equal to 0.</target>
+      </trans-unit>
       <trans-unit id="productForm.price.label" datatype="html">
         <source>Prezzo</source>
         <target state="translated">Price</target>
@@ -1281,6 +1537,10 @@
       <trans-unit id="productForm.price.placeholder" datatype="html">
         <source>Inserisci il prezzo</source>
         <target state="translated">Enter the price</target>
+      </trans-unit>
+      <trans-unit id="productForm.stock.invalid" datatype="html">
+        <source>Inserisci una quantità maggiore o uguale a 0.</source>
+        <target state="translated">Enter a quantity greater than or equal to 0.</target>
       </trans-unit>
       <trans-unit id="productForm.stock.label" datatype="html">
         <source>Quantità in stock</source>
