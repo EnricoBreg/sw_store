@@ -61,7 +61,4 @@ jobs:
         run: bundle exec brakeman --no-pager -q
 
       - name: Gem vulnerabilities (bundler-audit)
-        # Al momento segnala advisory su diverse gem (serve un aggiornamento di Gemfile.lock da concordare):
-        # finché non è fatto lo step è informativo e non blocca la pipeline.
-        continue-on-error: true
         run: bin/bundler-audit

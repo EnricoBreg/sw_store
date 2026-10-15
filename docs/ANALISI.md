@@ -90,7 +90,7 @@ Legenda stato: **fatto** / **parziale** / **mancante**.
 | 8c | Documento di architettura | mancante | PM | – | `docs/ARCHITETTURA.md` |
 | 8d | docker-compose (opzionale) | parziale | entrambi | `backend/Dockerfile`, bozza compose | Dockerfile con libpq e config di produzione da ENV (T12-BE); `docker build` non verificato (docker assente nell'ambiente); `docker-compose.yml` in root dopo il servizio frontend |
 | Q1 | UX / a11y minima | fatto (T11a) | frontend | `components/*`, `pages/*`, `styles.scss`, `e2e/a11y.spec.ts` | alt, aria-label, mat-label, contrasto, navigazione da tastiera e focus visibile; axe WCAG A/AA senza violazioni su catalogo, login, signup, dettaglio |
-| Q2 | CI | parziale | – | `.github/workflows/ci.yml` | Spostata in root con job backend (Postgres, test, rubocop, brakeman, bundler-audit informativo). Richiede il secret `RAILS_MASTER_KEY` su GitHub. Manca il job frontend |
+| Q2 | CI | parziale | – | `.github/workflows/ci.yml` | Spostata in root con job backend (Postgres, test, rubocop, brakeman, bundler-audit bloccante). Richiede il secret `RAILS_MASTER_KEY` su GitHub. Manca il job frontend |
 | Q3 | Contratto `backend/API.md` | parziale | backend | `backend/API.md` | Allineato alle rotte. Da aggiornare per i bug noti e per il formato reale di `meta` di Pagy (`previous`, `pages`) |
 
 ## Avanzamento dei task (Fase 2)
@@ -110,10 +110,10 @@ Legenda stato: **fatto** / **parziale** / **mancante**.
 | T10b | Area admin, parte backend (immagini, dashboard, coerenza CRUD, filtro status utente) | **fatto** |
 | T7 | Checkout e ordini (frontend) | in corso |
 | T12-BE | Consegna, parte backend (config da ENV, Dockerfile, README backend, CI in root) | **fatto** |
+| T13 | Aggiornamento gem di sicurezza (patch/minor, Rails 8.1.4), bundler-audit pulito | **fatto** |
 | T3 | Errori uniformi (backend) | **fatto** |
 | T8 | Prodotti attivi, categorie (`q`, `all`), whitelist ordinamento, rifiniture admin, seed non distruttivo | **fatto** |
 
 Problemi segnalati, da includere nei task successivi:
 - Admin ordini: il link "Modifica" punta a `orders/:id/edit`, rotta inesistente (task Area admin).
 - "I miei ordini": paginatore dentro il `@for` (T7).
-- `bundler-audit` segnala advisory (anche High) su diverse gem: aggiornamento conservativo da fare (T13).
