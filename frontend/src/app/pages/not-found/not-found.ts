@@ -12,7 +12,7 @@ import ViewPanel from "../../core/directives/view-panel/view-panel";
       <div appViewPanel class="m-4">
         <img
           src="assets/404_not_found.svg"
-          alt="Not Found"
+          alt=""
           class="mx-auto mb-5 w-64 h-64 object-contain"
         />
         <h1 i18n="@@notFound.title" class="text-2xl font-bold text-gray-800">404 - Risorsa non trovata</h1>

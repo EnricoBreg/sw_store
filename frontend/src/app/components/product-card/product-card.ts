@@ -16,18 +16,22 @@ import { AuthService } from "../../core/services/auth.service";
       <ng-content select=[wishlistToggleButton]></ng-content>
       
       <div>
-        <img
-          [src]="product().image_url || 'assets/no_image_500x500.png'"
-          alt="Product()"
-          class="h-80 w-72 object-cover rounded-t-xl cursor-pointer"
-          (error)="handleImageError($event)"
-          [routerLink]="['/products', product().id]"
-        />
+        <!-- Link duplicato del titolo: escluso da tab e screen reader per non ripeterlo -->
+        <a [routerLink]="['/products', product().id]" tabindex="-1" aria-hidden="true">
+          <img
+            [src]="product().image_url || 'assets/no_image_500x500.png'"
+            alt=""
+            class="h-80 w-72 object-cover rounded-t-xl cursor-pointer"
+            (error)="handleImageError($event)"
+          />
+        </a>
 
         <div class="px-4 py-3 w-72">
           <app-instock-badge [stockQuantity]="product().stock_quantity" />
           <h3 class="text-lg font-bold text-black truncate block capitalize">
-            {{ product().name }}
+            <a [routerLink]="['/products', product().id]" class="hover:underline">
+              {{ product().name }}
+            </a>
           </h3>
           <div class="flex items-center">
             <app-product-price [product]="product()" />
@@ -57,6 +61,6 @@ export default class ProductCard {
   discountPercentageInt = computed(() => Math.round(this.product().discount_percentage));
 
   priceColorClass = computed(() =>
-    this.product().discount_percentage > 0 ? "text-red-500" : "text-black",
+    this.product().discount_percentage > 0 ? "text-red-700" : "text-black",
   );
 }

@@ -50,7 +50,11 @@ export class AuthApiService {
   }
 
   logout(): Observable<ApiResponse<unknown>> {
-    return this.http.delete<ApiResponse<unknown>>(this.logoutUrl);
+    // POST /auth/logout come da specifiche (revoca il token lato backend)
+    // Errori gestiti da AuthService.signOut: niente toast "Sessione scaduta" se il token era già revocato
+    return this.http.post<ApiResponse<unknown>>(this.logoutUrl, {}, {
+      context: new HttpContext().set(BYPASS_GLOBAL_ERROR_HANDLING, true),
+    });
   }
 
   /**

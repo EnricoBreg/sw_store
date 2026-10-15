@@ -25,7 +25,7 @@ import QuantitySelector from "../../components/quantity-selector/quantity-select
   template: `
     <div appViewPanel class="max-w-[1200px] mx-auto mt-12 flex flex-col md:flex-row">
       @if (error()) {
-        <div class="text-red-500 text-lg">
+        <div class="text-red-700 text-lg">
           {{ error() }}
         </div>
       }
@@ -34,7 +34,7 @@ import QuantitySelector from "../../components/quantity-selector/quantity-select
         <section class="flex justify-center md:max-w-[50%] m-2">
           <img
             [src]="product?.image_url || 'assets/no_image_500x500.png'"
-            alt="Product"
+            [alt]="product.name"
             class="md:h-[500px] object-cover"
             (error)="handleImageError($event)"
           />
@@ -48,7 +48,7 @@ import QuantitySelector from "../../components/quantity-selector/quantity-select
             {{ product?.description }}
           </p>
 
-          <p i18n="@@productDetail.disponibilita" class="mt-4 text-sm text-gray-400">
+          <p i18n="@@productDetail.disponibilita" class="mt-4 text-sm text-gray-600">
             Disponibità: {{ product.stock_quantity //i18n(ph="productDetail.stockQuantity") }} pezzo/i.
           </p>
 
@@ -76,7 +76,7 @@ import QuantitySelector from "../../components/quantity-selector/quantity-select
               }
             } @else {
               <p i18n="@@productDetail.deviAccedere" class="text-gray-700">
-                <a class="text-blue-400 underline" routerLink="/login">Accedi</a> per aggiungere
+                <a class="text-blue-700 underline" routerLink="/login">Accedi</a> per aggiungere
                 questo prodotto al tuo carrello!
               </p>
             }

@@ -70,12 +70,12 @@ export class AuthService {
           this.store.setAuth(user, token);
           this.cartService.loadCart();
           this.wishlistService.loadWishlist();
-          this.router.navigate(["/"]);
+          this.router.navigate(["/"], { replaceUrl: true });
         }
       },
-      error: (error) => {
-        this.router.navigate(["/login"]);
-        this.toaster.error($localize`:@@toast.oauthFailed:Autenticazione con Google non riuscita. Riprova.`);
+      error: () => {
+        // Token non valido o scaduto: la pagina di login mostra il messaggio dedicato
+        this.router.navigate(["/login"], { queryParams: { error: "oauth_failed" }, replaceUrl: true });
       },
     });
   }
@@ -138,18 +138,14 @@ export class AuthService {
   }
 
   signOut() {
-    this.api.logout().subscribe({
-      next: (response) => {
-        this.store.clearAuth();
-        this.cartService.clearCart();
-        this.wishlistService.clearWishlist();
-        this.router.navigate(["/login"]);
-      },
-      error: (err) => {
-        this.#error.set(getApiError(err, $localize`:@@authService.logoutError:Logout fallito. Riprova.`));
-        this.router.navigate(["/login"]);
-      },
-    });
+    // La sessione locale viene chiusa in ogni caso: se il backend risponde con errore
+    // (es. token già scaduto o revocato) il token non è comunque più utilizzabile.
+    const endSession = () => {
+      this.clearAuth();
+      this.router.navigate(["/login"]);
+    };
+
+    this.api.logout().subscribe({ next: endSession, error: endSession });
   }
 
   clearAuth() {

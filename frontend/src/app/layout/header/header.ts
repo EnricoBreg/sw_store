@@ -17,11 +17,23 @@ import { LayoutService } from '../../core/services/layout.service';
       <mat-toolbar class="w-full elevated">
         <div class="max-w-[1500px] mx-auto w-full flex items-center justify-between">
           <div class="flex items-center">
-            <button matIconButton (click)="layoutService.toggleSidenav()">
+            <button
+              matIconButton
+              type="button"
+              (click)="layoutService.toggleSidenav()"
+              [attr.aria-expanded]="layoutService.sidenavOpened()"
+              i18n-aria-label="@@header.toggleMenu"
+              aria-label="Apri o chiudi il menu"
+            >
               <mat-icon>menu</mat-icon>
             </button>
             <a class="ml-2" routerLink="/">
-              <img src="assets/ebeefy_logo.png" alt="EBeefy Logo" class="h-12"/>
+              <img
+                src="assets/ebeefy_logo.png"
+                i18n-alt="@@header.logoHome"
+                alt="EBeefy, vai alla home"
+                class="h-12"
+              />
             </a>
           </div>
           <app-header-actions />

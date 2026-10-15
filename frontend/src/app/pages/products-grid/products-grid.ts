@@ -86,7 +86,7 @@ export const SEARCH_DEBOUNCE_MS = 400;
           </div>
 
           @if (errorMessage()) {
-            <div role="alert" class="text-red-500 text-lg">
+            <div role="alert" class="text-red-700 text-lg">
               {{ errorMessage() }}
             </div>
           }

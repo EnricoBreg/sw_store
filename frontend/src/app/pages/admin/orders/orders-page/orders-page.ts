@@ -165,7 +165,12 @@ import ISODateDisplayer from "../../../../data-displayer/data-displayer";
           <div class="mb-2 flex items-center justify-between">
             <!-- Menu selezione colonne visibili -->
             <div class="ml-auto">
-              <button matIconButton [matMenuTriggerFor]="columnsMenu">
+              <button
+              matIconButton
+              [matMenuTriggerFor]="columnsMenu"
+              i18n-aria-label="@@table.columnsMenu"
+              aria-label="Scegli le colonne visibili"
+            >
                 <mat-icon>view_column</mat-icon>
               </button>
               <mat-menu #columnsMenu="matMenu">
@@ -268,10 +273,20 @@ import ISODateDisplayer from "../../../../data-displayer/data-displayer";
                 </th>
                 <td mat-cell *matCellDef="let order">
                   <div class="flex items-center gap-1">
-                    <a matIconButton [routerLink]="[order.id]">
+                    <a
+                      matIconButton
+                      [routerLink]="[order.id]"
+                      i18n-aria-label="@@table.view"
+                      aria-label="Visualizza"
+                    >
                       <mat-icon>visibility</mat-icon>
                     </a>
-                    <a matIconButton [routerLink]="[order.id, 'edit']">
+                    <a
+                      matIconButton
+                      [routerLink]="[order.id, 'edit']"
+                      i18n-aria-label="@@table.edit"
+                      aria-label="Modifica"
+                    >
                       <mat-icon>edit</mat-icon>
                     </a>
                   </div>

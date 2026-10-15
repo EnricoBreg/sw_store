@@ -1,6 +1,6 @@
 import { TestBed } from "@angular/core/testing";
-import { provideRouter } from "@angular/router";
-import { NEVER } from "rxjs";
+import { provideRouter, Router } from "@angular/router";
+import { NEVER, of, throwError } from "rxjs";
 import { AuthService } from "./auth.service";
 import { AuthApiService } from "../http/auth-api.service";
 import { CartService } from "./cart.service";
@@ -57,5 +57,58 @@ describe("AuthService.signUp", () => {
     });
 
     expect(api.signUp).toHaveBeenCalledWith(expect.not.objectContaining({ date_of_birth: expect.anything() }));
+  });
+});
+
+describe("AuthService.signOut", () => {
+  const api = { logout: vi.fn() };
+  const cartService = { loadCart: vi.fn(), clearCart: vi.fn() };
+  const wishlistService = { loadWishlist: vi.fn(), clearWishlist: vi.fn() };
+  let service: AuthService;
+  let router: Router;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    localStorage.setItem(
+      "sw-store",
+      JSON.stringify({ user: { id: 1, first_name: "Mario", admin: false }, jwtToken: "jwt-1" }),
+    );
+    TestBed.configureTestingModule({
+      providers: [
+        provideRouter([]),
+        { provide: AuthApiService, useValue: api },
+        { provide: CartService, useValue: cartService },
+        { provide: WishlistsService, useValue: wishlistService },
+        { provide: Toaster, useValue: { error: vi.fn(), success: vi.fn(), info: vi.fn() } },
+      ],
+    });
+    service = TestBed.inject(AuthService);
+    router = TestBed.inject(Router);
+    vi.spyOn(router, "navigate").mockResolvedValue(true);
+  });
+
+  afterEach(() => localStorage.clear());
+
+  it("chiama il logout del backend e chiude la sessione locale", () => {
+    api.logout.mockReturnValue(of({ success: true }));
+    expect(service.authenticated()).toBe(true);
+
+    service.signOut();
+
+    expect(api.logout).toHaveBeenCalled();
+    expect(service.authenticated()).toBe(false);
+    expect(service.jwtToken()).toBeNull();
+    expect(cartService.clearCart).toHaveBeenCalled();
+    expect(wishlistService.clearWishlist).toHaveBeenCalled();
+    expect(router.navigate).toHaveBeenCalledWith(["/login"]);
+  });
+
+  it("chiude la sessione locale anche se il backend risponde con errore", () => {
+    api.logout.mockReturnValue(throwError(() => ({ success: false, status: 401, message: "x", errors: [] })));
+
+    service.signOut();
+
+    expect(service.authenticated()).toBe(false);
+    expect(router.navigate).toHaveBeenCalledWith(["/login"]);
   });
 });

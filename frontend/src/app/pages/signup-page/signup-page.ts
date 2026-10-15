@@ -52,27 +52,33 @@ import { passwordsMatchValidator } from "../../core/validators/passwords-match.v
       <form [formGroup]="signUpForm" (ngSubmit)="signUp()">
         <section formGroupName="user">
           <mat-form-field>
+            <mat-label i18n="@@signUp.firstName.label">Nome</mat-label>
             <input
               matInput
               type="text"
+              autocomplete="given-name"
               formControlName="firstName"
               placeholder="Inserisci il tuo nome"
               i18n-placeholder="@@signUp.firstName.placeholder"
             />
           </mat-form-field>
           <mat-form-field>
+            <mat-label i18n="@@signUp.lastName.label">Cognome</mat-label>
             <input
               matInput
               type="text"
+              autocomplete="family-name"
               formControlName="lastName"
               placeholder="Inserisci il cognome"
               i18n-placeholder="@@signUp.lastName.placeholder"
             />
           </mat-form-field>
           <mat-form-field>
+            <mat-label i18n="@@signUp.email.label">Email</mat-label>
             <input
               matInput
               type="email"
+              autocomplete="email"
               formControlName="email"
               placeholder="Inserisci la tua email"
               i18n-placeholder="@@signUp.email.placeholder"
@@ -80,8 +86,10 @@ import { passwordsMatchValidator } from "../../core/validators/passwords-match.v
             <mat-icon matPrefix>email</mat-icon>
           </mat-form-field>
           <mat-form-field>
+            <mat-label i18n="@@signUp.password.label">Password</mat-label>
             <input
               matInput
+              autocomplete="new-password"
               [type]="passwordVisible() ? 'text' : 'password'"
               formControlName="password"
               placeholder="Inserisci la tua password"
@@ -93,6 +101,8 @@ import { passwordsMatchValidator } from "../../core/validators/passwords-match.v
               matIconButton
               type="button"
               class="mr-2"
+              [attr.aria-label]="passwordVisible() ? hidePasswordLabel : showPasswordLabel"
+              [attr.aria-pressed]="passwordVisible()"
               (click)="passwordVisible.set(!passwordVisible())"
             >
               <mat-icon
@@ -101,8 +111,10 @@ import { passwordsMatchValidator } from "../../core/validators/passwords-match.v
             </button>
           </mat-form-field>
           <mat-form-field>
+            <mat-label i18n="@@signUp.passwordConfirmation.label">Conferma password</mat-label>
             <input
               matInput
+              autocomplete="new-password"
               [type]="passwordVisible() ? 'text' : 'password'"
               formControlName="passwordConfirmation"
               placeholder="Ripeti la tua password"
@@ -116,6 +128,8 @@ import { passwordsMatchValidator } from "../../core/validators/passwords-match.v
               matIconButton
               type="button"
               class="mr-2"
+              [attr.aria-label]="passwordVisible() ? hidePasswordLabel : showPasswordLabel"
+              [attr.aria-pressed]="passwordVisible()"
               (click)="passwordVisible.set(!passwordVisible())"
             >
               <mat-icon
@@ -156,7 +170,7 @@ import { passwordsMatchValidator } from "../../core/validators/passwords-match.v
       </div>
 
       <p i18n="@@signUp.login" class="text-gray-500 text-sm text-center">
-        Hai già un account? <a class="text-blue-400 underline" routerLink="/login">Accedi ora.</a>
+        Hai già un account? <a class="text-blue-700 underline" routerLink="/login">Accedi ora.</a>
       </p>
     </div>
   </div>`,
@@ -167,6 +181,9 @@ export default class SignupPage {
 
   private authService = inject(AuthService);
   readonly passwordVisible = signal(false);
+
+  readonly showPasswordLabel = $localize`:@@password.show:Mostra password`;
+  readonly hidePasswordLabel = $localize`:@@password.hide:Nascondi password`;
 
   error = this.authService.error;
 

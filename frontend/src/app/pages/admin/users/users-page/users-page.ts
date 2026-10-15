@@ -33,7 +33,7 @@ import { MatSort, MatSortModule, MatSortHeader } from "@angular/material/sort";
     <div class="space-y-6">
       <div>
         <h1 i18n="@@usersPage.title" class="font-bold text-2xl">Utenti registrati</h1>
-        <p i18n="@@usersPage.description" class="text-sm text-gray-400">
+        <p i18n="@@usersPage.description" class="text-sm text-gray-600">
           Attualmente nel sistema sono registrati {{ usersCount() }} utenti.
         </p>
       </div>
@@ -58,7 +58,12 @@ import { MatSort, MatSortModule, MatSortHeader } from "@angular/material/sort";
       <!-- Menu selezione colonne visibili -->
       <div>
         <div class="flex items-center justify-end">
-          <button matIconButton [matMenuTriggerFor]="columnsMenu">
+          <button
+            matIconButton
+            [matMenuTriggerFor]="columnsMenu"
+              i18n-aria-label="@@table.columnsMenu"
+              aria-label="Scegli le colonne visibili"
+          >
             <mat-icon>view_column</mat-icon>
           </button>
           <mat-menu #columnsMenu="matMenu">
@@ -251,7 +256,6 @@ export default class UsersPage {
   }
 
   onSortChange(event: { active: string; direction: string }) {
-    console.log("Event", event);
     this.searchQuery.update((sq) => ({
       ...sq,
       orderBy: event.active,

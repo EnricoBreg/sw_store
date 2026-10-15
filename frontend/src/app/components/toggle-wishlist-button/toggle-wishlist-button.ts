@@ -13,7 +13,7 @@ import { AuthService } from "../../core/services/auth.service";
     @if (authenticated()) {
       <button
         class="w-10 h-10 rounded-full !bg-white border-0 shadow-md flex items-center justify-center cursor-pointer transition-all duration-200 hover:scale-110 hover:shadow-lg"
-        [class]="isInWishlist() ? '!text-red-500' : '!text-gray-400'"
+        [class]="isInWishlist() ? '!text-red-500' : '!text-gray-500'"
         matIconButton
         [attr.aria-label]="isInWishlist() ? removeLabel : addLabel"
         [attr.aria-pressed]="isInWishlist()"

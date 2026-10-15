@@ -8,6 +8,7 @@ import { MatStepperModule } from "@angular/material/stepper";
 import { computeVat, handleImageError } from "../../core/utils";
 import { CurrencyPipe } from "@angular/common";
 import { InnerPanel } from "../../core/directives/inner-panel";
+import { ErrorPanel } from "../../core/directives/error-panel";
 import { BackButton } from "../../components/back-button/back-button";
 
 @Component({
@@ -20,6 +21,7 @@ import { BackButton } from "../../components/back-button/back-button";
     MatStepperModule,
     CurrencyPipe,
     InnerPanel,
+    ErrorPanel,
     BackButton,
   ],
   template: `

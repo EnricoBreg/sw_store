@@ -32,7 +32,9 @@ import { RouterLink } from "@angular/router";
           @if (orders().length > 0) {
             <div class="flex flex-col md:flex-row gap-2 flex-wrap">
               @for (order of orders(); track order.id) {
-                <app-order-card [order]="order" [routerLink]="[order.id]"/>
+                <a [routerLink]="[order.id]" class="block rounded-lg">
+                  <app-order-card [order]="order" />
+                </a>
 
                 <div class="mt-5">
                   <app-api-paginator

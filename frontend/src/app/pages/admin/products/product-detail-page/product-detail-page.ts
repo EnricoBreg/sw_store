@@ -126,7 +126,7 @@ import DiscountBadge from "../../../../components/discount-badge/discount-badge"
             </a>
           </div>
         } @else {
-          <p i18n="@@productDetail.error" class="text-red-500">Non è stato possibile caricare i dettagli del prodotto.</p>
+          <p i18n="@@productDetail.error" class="text-red-700">Non è stato possibile caricare i dettagli del prodotto.</p>
         }
       </div>
     </div>

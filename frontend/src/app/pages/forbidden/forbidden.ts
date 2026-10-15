@@ -12,7 +12,7 @@ import ViewPanel from "../../core/directives/view-panel/view-panel";
       <div appViewPanel class="m-4">
         <img
           src="assets/403_forbidden.svg"
-          alt="Forbidden"
+          alt=""
           class="mx-auto mb-5 w-64 h-64 object-contain"
         />
         <h1 i18n="@@forbidden.title" class="text-2xl font-bold text-gray-800">403 - Non hai i permessi necessari</h1>

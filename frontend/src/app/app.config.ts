@@ -23,7 +23,9 @@ export const appConfig: ApplicationConfig = {
       provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
       useValue: {
         appearance: "outline",
-        subscrictSizing: "dynamic",
+        // Spazio fisso sotto i campi (default di Material): i form sono impaginati su questa base.
+        // La vecchia chiave "subscrictSizing" era un refuso e veniva ignorata.
+        subscriptSizing: "fixed",
       },
     },
   ],
