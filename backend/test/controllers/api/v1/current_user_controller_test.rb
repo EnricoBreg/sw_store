@@ -52,9 +52,9 @@ class Api::V1::CurrentUserControllerTest < ActionDispatch::IntegrationTest
     assert_equal "nuova@test.swstore", @user.reload.email
   end
 
-  test "PUT /auth/me without the user payload returns 422" do
+  test "PUT /auth/me without the user payload returns 400" do
     put api_v1_auth_me_path, params: {}, headers: @headers, as: :json
 
-    assert_response :unprocessable_entity
+    assert_response :bad_request
   end
 end

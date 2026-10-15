@@ -21,7 +21,8 @@ module ApiResponses
     render json: response, status: status
   end
 
-  def render_error(message: "Si è verificato un errore generico.", errors: [], status: :bad_request)
+  # Se errors non è indicato contiene il solo messaggio, così ogni risposta di errore ha almeno un elemento in errors.
+  def render_error(message: :bad_request, errors: nil, status: :bad_request)
     translated_message = if message.is_a?(Symbol)
       I18n.t("api.errors.#{message}", default: I18n.t("api.messages.#{message}", default: message.to_s.humanize))
     else
@@ -31,8 +32,8 @@ module ApiResponses
     response = {
       success: false,
       message: translated_message,
-      errors: errors
-    }.compact
+      errors: errors.presence || [ translated_message ]
+    }
 
     render json: response, status: status
   end

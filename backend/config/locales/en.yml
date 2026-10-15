@@ -96,6 +96,10 @@ en:
 
     errors:
       models:
+        user:
+          attributes:
+            date_of_birth:
+              must_be_adult: "must belong to an adult (at least 18 years old)."
         cart_item:
           product_not_available: "The product %{name} is not available."
           attributes:
@@ -114,6 +118,10 @@ en:
       unauthorized: "You must authenticate to proceed."
       parameters_missing: "Some parameters were not found."
       internal_server_error: "An internal server error occurred."
+      bad_request: "The request is not valid."
+      parameter_missing_detail: "Missing or empty parameter: %{param}."
+      conflict: "Operation not allowed: the resource is linked to other data."
+      unprocessable_entity: "The submitted data is not valid."
 
     messages:
       address_created_successfully: "Address %{nickname} created successfully."

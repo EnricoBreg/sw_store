@@ -27,14 +27,7 @@ Livelli di accesso usati in questo documento:
 | Utente     | Token valido richiesto, altrimenti `401`                         |
 | Admin      | Token valido di un utente con `admin: true`, altrimenti `401`/`403` |
 
-Errori di accesso (formato diverso da quello standard):
-
-```json
-// 401
-{ "error": "Unauthorized", "message": "Autenticazione richiesta: accedi per continuare." }
-// 403
-{ "error": "Forbidden", "message": "Accesso negato: non hai i permessi richiesti da amministratore." }
-```
+Gli errori di accesso (401 token mancante, non valido, scaduto o revocato; 401 credenziali errate al login; 403 utente non admin) usano il formato standard degli errori, descritto sotto, con messaggio tradotto.
 
 ### Formato delle risposte
 
@@ -50,12 +43,23 @@ Errore (`render_error`):
 { "success": false, "message": "…", "errors": [ "…" ] }
 ```
 
-Errori gestiti in modo comune per tutti i controller `api/v1`:
+Tutti gli errori, compresi 401, 403 e 500, hanno questo formato. `message` e il contenuto di `errors` sono sempre tradotti nella lingua di `Accept-Language` (`it` di default, `en`).
 
-| Caso                                  | Status | `message`                 |
-| ------------------------------------- | ------ | ------------------------- |
-| Record non trovato                    | 404    | `not_found` (tradotto)    |
-| Parametro radice mancante / record non valido | 422 | `parameters_missing` (tradotto) |
+Errori gestiti in modo comune da tutti gli endpoint `api/v1` (oltre a quelli specifici di ogni endpoint):
+
+| Caso | Status | `message` (chiave) |
+| ---- | ------ | ------------------ |
+| JSON malformato, oggetto radice mancante (es. manca `{ "order": … }`) | **400** | `parameters_missing` / `bad_request` |
+| Parametro con valore non valido (es. data non interpretabile, `order_by` su una colonna inesistente) | **400** | `bad_request` |
+| Token assente, non valido, scaduto o revocato | **401** | `unauthorized` |
+| Credenziali errate al login | **401** | messaggio di Devise (es. "Email o password non validi.") |
+| Utente autenticato ma non admin su `/admin/*` | **403** | `forbidden` |
+| Record non trovato (o non appartenente all'utente) | **404** | `not_found` |
+| Eliminazione di un record ancora referenziato da altri dati (es. prodotto presente in ordini) o violazione di unicità concorrente | **409** | `conflict` |
+| Validazione del modello fallita | **422** | messaggio specifico dell'endpoint, dettagli in `errors` |
+| Errore imprevisto del server | **500** | `internal_server_error` (nessun dettaglio tecnico nella risposta; lo stack trace va nel log) |
+
+Si usa **409 Conflict** per i vincoli di integrità perché la richiesta è corretta, ma confligge con lo stato attuale dei dati: si risolve rimuovendo prima i riferimenti, non correggendo il payload.
 
 ### Paginazione
 
@@ -219,7 +223,8 @@ Flusso (il frontend non chiama questi endpoint con HttpClient, ma con una naviga
 - **Payload:** `{ "user": { "first_name", "last_name", "number", "date_of_birth", "email", "password", "password_confirmation", "current_password" } }`. Tutti i campi sono opzionali; gli altri campi (es. `admin`) vengono ignorati.
 - Per cambiare `password` o `email` serve anche `current_password` (password attuale), altrimenti **422**.
 - **200:** `message: info_updated_successfully`, `data: User`.
-- **422:** `message: info_update_error`, `errors: [...]` (validazioni, es. utente minorenne, email già usata, `current_password` mancante o errata); anche se manca l'oggetto `user` (`parameters_missing`).
+- **422:** `message: info_update_error`, `errors: [...]` (validazioni, es. utente minorenne, email già usata, `current_password` mancante o errata).
+- **400:** `parameters_missing` se manca l'oggetto `user`.
 
 ### DELETE `/auth/me`
 
@@ -307,7 +312,7 @@ Regole di disponibilità (POST e PATCH): il prodotto deve essere attivo (`active
   - **201:** `message: checkout_successful`, `data: Order`.
   - **422:** `message: checkout_empty_cart`, `errors: [...]` se il carrello è vuoto.
   - **422:** `message: checkout_error`, `errors: [...]` se mancano dati del form (errori di validazione) oppure se uno o più prodotti non sono disponibili (`product_not_available`, `insufficient_stock`, un messaggio per prodotto).
-  - **422:** `parameters_missing` se manca l'oggetto `order`.
+  - **400:** `parameters_missing` se manca l'oggetto `order`.
 - Gli endpoint `/orders/:id` agiscono solo sugli ordini dell'utente corrente: un ordine di un altro utente dà **404** (`not_found`).
 - `GET /orders/:id` → **200:** `data: Order`.
 - `PUT /orders/:id`: payload come `POST` (lo stato non è modificabile dall'utente). **200:** `order_updated_successfully`, `data: Order`. **422:** `order_update_error` (es. ordine già spedito, vedi *Transizioni di stato*).

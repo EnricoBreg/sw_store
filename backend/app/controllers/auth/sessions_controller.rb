@@ -1,6 +1,5 @@
 class Auth::SessionsController < Devise::SessionsController
   include RackSessionsFix
-  include ApiResponses
   respond_to :json
 
   private

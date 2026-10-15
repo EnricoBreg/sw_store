@@ -1,6 +1,5 @@
 class Auth::RegistrationsController < Devise::RegistrationsController
   include RackSessionsFix
-  include ApiResponses
   respond_to :json
 
   private

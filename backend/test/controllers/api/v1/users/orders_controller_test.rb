@@ -83,10 +83,10 @@ class Api::V1::Users::OrdersControllerTest < ActionDispatch::IntegrationTest
     assert_not @customer.cart.reload.empty?
   end
 
-  test "POST /orders without the order payload returns 422" do
+  test "POST /orders without the order payload returns 400" do
     post api_v1_orders_path, params: {}, headers: auth_headers(@customer), as: :json
 
-    assert_response :unprocessable_entity
+    assert_response :bad_request
   end
 
   test "GET /orders lists only the orders of the current user" do
