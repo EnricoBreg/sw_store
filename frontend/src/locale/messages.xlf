@@ -332,6 +332,9 @@
       <trans-unit id="searchPlaceholder" datatype="html">
         <source>Es. Mario Rossi o ID ordine</source>
       </trans-unit>
+      <trans-unit id="signUp.dateOfBirth.label" datatype="html">
+        <source>Data di nascita (facoltativa)</source>
+      </trans-unit>
       <trans-unit id="signUp.description" datatype="html">
         <source>Registrati per iniziare ora lo shopping.</source>
       </trans-unit>
@@ -359,6 +362,9 @@
       <trans-unit id="signUp.passwordConfirmation.placeholder" datatype="html">
         <source>Ripeti la tua password</source>
       </trans-unit>
+      <trans-unit id="signUp.passwordsMismatch" datatype="html">
+        <source> Le password non coincidono. </source>
+      </trans-unit>
       <trans-unit id="signUp.submit" datatype="html">
         <source>Registrati</source>
       </trans-unit>
@@ -373,6 +379,12 @@
       </trans-unit>
       <trans-unit id="stockBadge.outOfStock" datatype="html">
         <source>Esaurito</source>
+      </trans-unit>
+      <trans-unit id="toggleWishlist.add" datatype="html">
+        <source>Aggiungi alla wishlist</source>
+      </trans-unit>
+      <trans-unit id="toggleWishlist.remove" datatype="html">
+        <source>Rimuovi dalla wishlist</source>
       </trans-unit>
       <trans-unit id="tornaAiMieiOrdini" datatype="html">
         <source> Torna ai miei ordini </source>
@@ -625,6 +637,18 @@
       </trans-unit>
       <trans-unit id="products" datatype="html">
         <source>I nostri prodotti</source>
+      </trans-unit>
+      <trans-unit id="productsGrid.addToCart" datatype="html">
+        <source>Aggiungi al carrello</source>
+      </trans-unit>
+      <trans-unit id="productsGrid.search.clear" datatype="html">
+        <source>Cancella la ricerca</source>
+      </trans-unit>
+      <trans-unit id="productsGrid.search.label" datatype="html">
+        <source>Cerca prodotti</source>
+      </trans-unit>
+      <trans-unit id="productsGrid.search.placeholder" datatype="html">
+        <source>Nome del prodotto</source>
       </trans-unit>
       <trans-unit id="productsPage.addProduct" datatype="html">
         <source>Aggiungi prodotto</source>

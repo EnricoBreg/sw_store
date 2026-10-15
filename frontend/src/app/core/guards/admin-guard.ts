@@ -6,9 +6,15 @@ export const adminGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  if (authService.user()?.admin) {
-    return true;
+  // Ospite: deve prima autenticarsi
+  if (!authService.authenticated()) {
+    return router.parseUrl("/login");
   }
 
-  return router.navigate(["/login"]);
+  // Utente autenticato ma senza ruolo admin: accesso negato
+  if (!authService.user()?.admin) {
+    return router.parseUrl("/forbidden");
+  }
+
+  return true;
 };

@@ -1,6 +1,8 @@
 import { Component, inject, signal } from "@angular/core";
+import { toSignal } from "@angular/core/rxjs-interop";
+import { map, merge } from "rxjs";
 import { MatDivider } from "@angular/material/divider";
-import { MatFormField, MatPrefix, MatSuffix } from "@angular/material/select";
+import { MatFormField, MatLabel, MatPrefix, MatSuffix } from "@angular/material/select";
 import { MatIcon } from "@angular/material/icon";
 import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
 import { AuthService, SignUpData } from "../../core/services/auth.service";
@@ -8,6 +10,7 @@ import { MatInput } from "@angular/material/input";
 import { MatButton, MatIconButton } from "@angular/material/button";
 import { RouterLink } from "@angular/router";
 import { ErrorPanel } from "../../core/directives/error-panel";
+import { passwordsMatchValidator } from "../../core/validators/passwords-match.validator";
 
 @Component({
   selector: "app-signup-page",
@@ -15,6 +18,7 @@ import { ErrorPanel } from "../../core/directives/error-panel";
     MatButton,
     MatDivider,
     MatFormField,
+    MatLabel,
     MatIcon,
     MatInput,
     MatIconButton,
@@ -22,7 +26,7 @@ import { ErrorPanel } from "../../core/directives/error-panel";
     MatSuffix,
     ReactiveFormsModule,
     RouterLink,
-    ErrorPanel
+    ErrorPanel,
   ],
   template: ` <div class="w-full h-screen overflow-auto flex items-center">
     <div class="max-w-[500px] mx-auto bg-white p-8 elevated rounded-xl space-y-4">
@@ -103,6 +107,8 @@ import { ErrorPanel } from "../../core/directives/error-panel";
               formControlName="passwordConfirmation"
               placeholder="Ripeti la tua password"
               i18n-placeholder="@@signUp.passwordConfirmation.placeholder"
+              [attr.aria-invalid]="passwordsMismatch()"
+              [attr.aria-describedby]="passwordsMismatch() ? 'password-mismatch-error' : null"
             />
             <mat-icon matPrefix>lock</mat-icon>
             <button
@@ -116,6 +122,21 @@ import { ErrorPanel } from "../../core/directives/error-panel";
                 [fontIcon]="passwordVisible() ? 'visibility_off' : 'visibility_on'"
               ></mat-icon>
             </button>
+          </mat-form-field>
+          @if (passwordsMismatch()) {
+            <p
+              id="password-mismatch-error"
+              role="alert"
+              class="-mt-3 mb-4 text-sm text-red-600"
+              i18n="@@signUp.passwordsMismatch"
+            >
+              Le password non coincidono.
+            </p>
+          }
+          <mat-form-field>
+            <mat-label i18n="@@signUp.dateOfBirth.label">Data di nascita (facoltativa)</mat-label>
+            <input matInput type="date" formControlName="dateOfBirth" />
+            <mat-icon matPrefix>cake</mat-icon>
           </mat-form-field>
         </section>
 
@@ -150,14 +171,34 @@ export default class SignupPage {
   error = this.authService.error;
 
   readonly signUpForm = this.fb.nonNullable.group({
-    user: this.fb.nonNullable.group({
-      firstName: ["", [Validators.required, Validators.minLength(2)]],
-      lastName: ["", [Validators.required, Validators.minLength(2)]],
-      email: ["", [Validators.required, Validators.email]],
-      password: ["", [Validators.required, Validators.minLength(8)]],
-      passwordConfirmation: ["", [Validators.required, Validators.minLength(8)]],
-    }),
+    user: this.fb.nonNullable.group(
+      {
+        firstName: ["", [Validators.required, Validators.minLength(2)]],
+        lastName: ["", [Validators.required, Validators.minLength(2)]],
+        email: ["", [Validators.required, Validators.email]],
+        password: ["", [Validators.required, Validators.minLength(8)]],
+        passwordConfirmation: ["", [Validators.required, Validators.minLength(8)]],
+        dateOfBirth: [""],
+      },
+      { validators: passwordsMatchValidator() },
+    ),
   });
+
+  // Errore mostrato solo dopo che l'utente ha toccato il campo di conferma.
+  // Si ascoltano anche gli eventi del campo di conferma: il gruppo non riemette "touched"
+  // se era già stato toccato tramite un altro campo.
+  readonly passwordsMismatch = toSignal(
+    merge(
+      this.signUpForm.controls.user.events,
+      this.signUpForm.controls.user.controls.passwordConfirmation.events,
+    ).pipe(
+      map(() => {
+        const user = this.signUpForm.controls.user;
+        return user.hasError("passwordsMismatch") && user.controls.passwordConfirmation.touched;
+      }),
+    ),
+    { initialValue: false },
+  );
 
   signUp() {
     if (this.signUpForm.invalid) {

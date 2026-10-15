@@ -1,7 +1,7 @@
 # Analisi dei requisiti – SW Store
 
 Stato del progetto rispetto a `docs/Progetto_di_sistemi_web_Specifiche.pdf`.
-Ultimo aggiornamento: 2026-10-15 (Fase 2: chiusi T0, T1, T5).
+Ultimo aggiornamento: 2026-10-15 (Fase 2: chiusi T0, T1, T5, T9).
 Path backend relativi a `backend/app/` salvo indicazione, path frontend relativi a `frontend/src/app/`. Tutte le rotte hanno prefisso `/api/v1`.
 
 Legenda stato: **fatto** / **parziale** / **mancante**.
@@ -13,9 +13,9 @@ Legenda stato: **fatto** / **parziale** / **mancante**.
 | `bin/rails test` | Dopo T1: 24 test, 67 asserzioni, tutti verdi |
 | `bin/rubocop` | 88 file, 0 offese |
 | `brakeman` | 1 warning (Redirect, `auth/omniauth_callbacks_controller.rb:8`), come la baseline |
-| `npx ng test --watch=false` | Dopo T5: 25/25 verdi |
+| `npx ng test --watch=false` | Dopo T9: 43/43 verdi |
 | `npx ng build` | ok (it + en); warning sul budget (initial 719 kB > 500 kB) |
-| `npx playwright test` | Dopo T5: 4/4 verdi (`smoke`, `http-basics`) |
+| `npx playwright test` | Dopo T9: 9/9 verdi (`smoke`, `http-basics`, `catalog-and-auth`) |
 
 ## Decisioni dell'utente (2026-10-15)
 
@@ -42,7 +42,7 @@ Legenda stato: **fatto** / **parziale** / **mancante**.
 | 4.1a | `GET /products` con filtro/ricerca/paginazione | fatto | backend | `controllers/api/v1/products_controller.rb` | Supporta `q`, `category_id`, `page`/`limit`. Restituisce anche i prodotti inattivi (28 su 56 in dev) |
 | 4.1b | `GET /products/:id` | fatto | backend | idem | Restituisce anche i prodotti inattivi |
 | 4.1c | `GET /categories` | parziale | backend | `controllers/api/v1/categories_controller.rb:4` | `?q=` dà 500 (`search_by_name` non definito) |
-| 4.1d | ProductService su API reali, nessun dato hardcoded | parziale | frontend | `core/http/products-api.service.ts`, `core/services/products.service.ts`, `pages/products-grid`, `components/categories-list` | Nessun dato hardcoded. Mancano: UI di ricerca `q`, reset della pagina al cambio categoria (`products-grid.ts:119`). Problemi: categorie limitate alle prime 10, pannello errore con condizione invertita (`products-grid.ts:47`) |
+| 4.1d | ProductService su API reali, nessun dato hardcoded | parziale | frontend | `core/http/products-api.service.ts`, `core/services/products.service.ts`, `pages/products-grid`, `components/categories-list` | Nessun dato hardcoded. Ricerca `q` (sincronizzata con l'URL), reset pagina e pannello errore sistemati in T9. Resta: categorie limitate alle prime 10 (serve modifica BE) |
 | 4.2a | Modelli Cart / CartItem | parziale | backend | `models/cart.rb`, `models/cart_item.rb`, `db/schema.rb` | CartItem senza validazioni (quantità ≤ 0 accettate); nessun unique index su (cart_id, product_id) né su carts.user_id; codice morto in `users/carts_controller.rb` |
 | 4.2b | `GET /cart`, `POST /cart/items`, `PATCH`/`DELETE /cart/items/:id` | parziale | backend | `users/cart_items_controller.rb`, `config/routes.rb:43` | Il path usa l'id del **prodotto**, non del CartItem (le specifiche dicono `:id` dell'articolo). DELETE senza `return` dopo il 404, quindi 500. Nessun controllo su stock e stato active. Chiave i18n `product_removed_from_cart` mancante |
 | 4.2c | CartService: init da `/cart`, sync a ogni modifica, sopravvive al reload | parziale | frontend | `core/services/cart.service.ts`, `core/state/cart.store.ts` | Stato iniziale letto da localStorage, non da `GET /cart`. HTTP dentro `signal.update()`: con stato `null` la remove non parte. `unit_price` ottimistico scontato due volte. Il badge conta le righe, non i pezzi |
@@ -54,8 +54,8 @@ Legenda stato: **fatto** / **parziale** / **mancante**.
 | 4.3e | Pagina lista ordini | parziale | frontend | `pages/my-orders-page`, `pages/order-detail-page`, `core/http/orders-api.service.ts` | Paginatore dentro il `@for`; `paginationMeta` mai impostato; viene inviato `per_page` invece di `limit` |
 | 4.4a | `POST /auth/login`, `POST /auth/logout`, `GET /auth/me` | parziale | backend | `auth/sessions_controller.rb`, `config/initializers/devise.rb`, `api/v1/current_user_controller.rb` | Login e me ok. Logout solo `DELETE` (le specifiche chiedono `POST`). `PUT /auth/me` dà 500 (`exept`, parametri errati) |
 | 4.4b | Login Google OAuth2 | parziale | backend | `models/user.rb`, `auth/omniauth_callbacks_controller.rb` | S2, S4. Un utente già registrato con la stessa email non riesce ad accedere con Google. URL frontend hardcoded |
-| 4.4c | Login, token, HttpInterceptor | parziale | frontend | `pages/login-page.ts/`, `core/services/auth.service.ts`, `core/http/interceptors/*` | Interceptor sistemato in T5. Resta: signup invia `passwordConfirmation` (camelCase) e non `date_of_birth` |
-| 4.4d | Route guard | parziale | frontend | `core/guards/*`, `app.routes.ts` | Guard presente su /cart, /wishlist, /checkout, /my-orders. Manca su `/my-orders/:orderId`. `adminGuard` reindirizza a /login invece di /forbidden |
+| 4.4c | Login, token, HttpInterceptor | parziale | frontend | `pages/login-page.ts/`, `core/services/auth.service.ts`, `core/http/interceptors/*` | fatto (T5, T9): interceptor, signup con `password_confirmation`, `date_of_birth` e validator di uguaglianza |
+| 4.4d | Route guard | parziale | frontend | `core/guards/*`, `app.routes.ts` | `adminGuard` corretto in T9 (ospite → /login, non admin → /forbidden). Manca il guard su `/my-orders/:orderId` (T7) |
 
 ## Requisiti tecnici (§5, §6)
 
@@ -76,7 +76,7 @@ Legenda stato: **fatto** / **parziale** / **mancante**.
 |---|---|---|---|---|---|
 | 7.1 | Area admin prodotti (ruolo admin + guard) | parziale | entrambi | `api/v1/admin/*`, `pages/admin/*`, `components/product-form`, `core/guards/admin*` | BE: PUT risponde 201; `order_by` senza whitelist (500); delete di elementi referenziati dà 500; delete categoria a cascata sui prodotti; l'admin può eliminare sé stesso. FE: eliminazione prodotto non implementata, dashboard placeholder, label del form non i18n |
 | 7.2 | Storico ordini avanzato (filtri data/stato, dettaglio) | parziale | entrambi | `users/orders_controller.rb`, `pages/my-orders-page`, `pages/order-detail-page` | Dettaglio completo. Filtri lato utente assenti (BE e FE) |
-| 7.3 | Wishlist | parziale | entrambi | `users/wishlist*_controller.rb`, `core/services/wishlists.service.ts` | BE: niente unique/validazione, POST risponde 200. FE: localStorage e side effect come il carrello; il pulsante è visibile anche agli ospiti, che ricevono un 401 |
+| 7.3 | Wishlist | parziale | entrambi | `users/wishlist*_controller.rb`, `core/services/wishlists.service.ts` | BE: niente unique/validazione, POST risponde 200. FE: localStorage e side effect come il carrello (pulsante nascosto agli ospiti dal T9) |
 | 7.4 | Coupon | mancante | entrambi | – | Tutto |
 | 7.5 | i18n it/en con scelta lingua | parziale | entrambi | `config/locales/*`, `src/locale/*` | FE: manca il selettore di lingua; `Accept-Language` fisso; circa 14 toast e testi non marcati; paginatore e pipe non localizzati. BE: 401/403 e messaggi dei modelli |
 | 7.6 | Test (3-4 BE, 2 service + 2 component FE, 1-2 E2E) | mancante | entrambi | – | Tutti |
@@ -100,3 +100,5 @@ Legenda stato: **fatto** / **parziale** / **mancante**.
 | T0 | Rotazione credentials (master key, `secret_key_base`, JWT, secret Google) | **fatto** (resta all'utente: revocare il vecchio secret sulla Google Console) |
 | T1 | Infrastruttura test backend | **fatto** |
 | T5 | Basi HTTP del frontend | **fatto** |
+| T9 | Catalogo e auth (parte frontend): ricerca, paginazione, signup, adminGuard, wishlist ospiti | **fatto** (lista completa categorie in attesa del BE) |
+| T2 | Sicurezza e auth backend | in corso |

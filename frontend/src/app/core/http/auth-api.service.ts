@@ -34,7 +34,8 @@ export class AuthApiService {
     last_name: string;
     email: string;
     password: string;
-    passwordConfirmation: string;
+    password_confirmation: string;
+    date_of_birth?: string;
   }): Observable<HttpResponse<ApiResponse<User>>> {
     return this.http.post<ApiResponse<User>>(
       this.signUpUrl, 
