@@ -1,0 +1,18 @@
+# Password di tutti gli utenti di test: "password123"
+admin:
+  email: admin@test.swstore
+  encrypted_password: <%= Devise::Encryptor.digest(User, "password123") %>
+  first_name: Anna
+  last_name: Admin
+  date_of_birth: 1985-03-10
+  admin: true
+  jti: <%= SecureRandom.uuid %>
+
+customer:
+  email: customer@test.swstore
+  encrypted_password: <%= Devise::Encryptor.digest(User, "password123") %>
+  first_name: Carlo
+  last_name: Cliente
+  date_of_birth: 1990-07-21
+  admin: false
+  jti: <%= SecureRandom.uuid %>

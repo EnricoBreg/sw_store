@@ -1,0 +1,26 @@
+headphones:
+  name: Cuffie wireless
+  description: Cuffie bluetooth con cancellazione del rumore.
+  price: 99.90
+  discount_percentage: 10
+  stock_quantity: 25
+  active: true
+  category: electronics
+
+keyboard:
+  name: Tastiera meccanica
+  description: Tastiera meccanica retroilluminata con switch blu.
+  price: 79.00
+  discount_percentage: 0
+  stock_quantity: 10
+  active: true
+  category: electronics
+
+console:
+  name: Console portatile
+  description: Console portatile con schermo OLED da sette pollici.
+  price: 349.00
+  discount_percentage: 0
+  stock_quantity: 5
+  active: true
+  category: videogames
