@@ -16,7 +16,7 @@ import { MatIconButton } from "@angular/material/button";
   imports: [MatFormField, MatLabel, MatSelect, MatOption, MatSuffix, MatIconButton, MatIcon],
   template: `
     <mat-form-field>
-      <mat-label>Categoria prodotto</mat-label>
+      <mat-label i18n="@@categorySelect.label">Categoria prodotto</mat-label>
       <mat-select (selectionChange)="onCategorySelection($event)">
         @for (cat of categories(); track cat.id) {
           <mat-option [value]="cat.id">
@@ -30,6 +30,7 @@ import { MatIconButton } from "@angular/material/button";
           matSuffix
           (click)="clearSelection($event)"
           aria-label="Cancella selezione"
+          i18n-aria-label="@@categorySelect.clearSelection"
           class="mr-2"
         >
           <mat-icon>close</mat-icon>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
-  <file source-language="it-IT" datatype="plaintext" original="ng2.template">
+  <file source-language="it" datatype="plaintext" original="ng2.template">
     <body>
       <trans-unit id="login.description" datatype="html">
         <source>Accedi al tuo account per continuare lo shopping</source>
@@ -40,6 +40,63 @@
       </trans-unit>
       <trans-unit id="6570363013146073520" datatype="html">
         <source>Dashboard</source>
+      </trans-unit>
+      <trans-unit id="user.addressesCount" datatype="html">
+        <source>Indirizzi salvati</source>
+      </trans-unit>
+      <trans-unit id="user.admin" datatype="html">
+        <source>Amministratore</source>
+      </trans-unit>
+      <trans-unit id="user.createdAt" datatype="html">
+        <source>Data di registrazione</source>
+      </trans-unit>
+      <trans-unit id="user.dateOfBirth" datatype="html">
+        <source>Data di nascita</source>
+      </trans-unit>
+      <trans-unit id="user.email" datatype="html">
+        <source>Email</source>
+      </trans-unit>
+      <trans-unit id="user.firstName" datatype="html">
+        <source>Nome</source>
+      </trans-unit>
+      <trans-unit id="user.id" datatype="html">
+        <source>ID</source>
+      </trans-unit>
+      <trans-unit id="user.lastName" datatype="html">
+        <source>Cognome</source>
+      </trans-unit>
+      <trans-unit id="user.lastOrderDate" datatype="html">
+        <source>Data ultimo ordine</source>
+      </trans-unit>
+      <trans-unit id="user.number" datatype="html">
+        <source>Telefono/Cellulare</source>
+      </trans-unit>
+      <trans-unit id="user.ordersCount" datatype="html">
+        <source>Ordini effettuati</source>
+      </trans-unit>
+      <trans-unit id="usersPage.description" datatype="html">
+        <source> Attualmente nel sistema sono registrati <x id="INTERPOLATION" equiv-text="{{ usersCount() }}"/> utenti. </source>
+      </trans-unit>
+      <trans-unit id="usersPage.searchHint" datatype="html">
+        <source>Ricerca per nome o cognome dell&apos;utente, email o telefono</source>
+      </trans-unit>
+      <trans-unit id="usersPage.searchLabel" datatype="html">
+        <source>Ricerca un utente</source>
+      </trans-unit>
+      <trans-unit id="usersPage.searchPlaceholder" datatype="html">
+        <source>Es. Mario</source>
+      </trans-unit>
+      <trans-unit id="usersPage.table.email.sort" datatype="html">
+        <source>Ordina per email</source>
+      </trans-unit>
+      <trans-unit id="usersPage.table.firstName.sort" datatype="html">
+        <source>Ordina per nome</source>
+      </trans-unit>
+      <trans-unit id="usersPage.table.lastName.sort" datatype="html">
+        <source>Ordina per cognome</source>
+      </trans-unit>
+      <trans-unit id="usersPage.title" datatype="html">
+        <source>Utenti registrati</source>
       </trans-unit>
       <trans-unit id="utenti" datatype="html">
         <source>Utenti</source>
@@ -218,6 +275,9 @@
       <trans-unit id="aggiungiAlCarrello" datatype="html">
         <source>Aggiungi al carrello</source>
       </trans-unit>
+      <trans-unit id="authCallback.authenticating" datatype="html">
+        <source>Autenticazione in corso, attendere...</source>
+      </trans-unit>
       <trans-unit id="adminOrdersPage.orderCount" datatype="html">
         <source> Numero di ordini presenti: <x id="ORDERCOUNT" equiv-text="{{ pagination()?.count //i18n(ph=&quot;orderCount&quot;) }}"/> </source>
       </trans-unit>
@@ -263,6 +323,15 @@
       <trans-unit id="signUp.title" datatype="html">
         <source>Registrati</source>
       </trans-unit>
+      <trans-unit id="stockBadge.inStock" datatype="html">
+        <source><x id="QUANTITY" equiv-text="{{ sq //i18n(ph=&quot;quantity&quot;) }}"/> pezzi</source>
+      </trans-unit>
+      <trans-unit id="stockBadge.notAvailable" datatype="html">
+        <source>N/A</source>
+      </trans-unit>
+      <trans-unit id="stockBadge.outOfStock" datatype="html">
+        <source>Esaurito</source>
+      </trans-unit>
       <trans-unit id="tornaAiMieiOrdini" datatype="html">
         <source> Torna ai miei ordini </source>
       </trans-unit>
@@ -272,7 +341,7 @@
       <trans-unit id="tornaHome" datatype="html">
         <source>Torna alla home</source>
       </trans-unit>
-      <trans-unit id="userSearchHint" datatype="html">
+      <trans-unit id="ordersSearchHint" datatype="html">
         <source>Ricerca per utente o ID ordine</source>
       </trans-unit>
       <trans-unit id="orderStatus" datatype="html">
@@ -320,14 +389,41 @@
       <trans-unit id="order.status" datatype="html">
         <source>Stato</source>
       </trans-unit>
+      <trans-unit id="order.status.cancelled" datatype="html">
+        <source>Annullato</source>
+      </trans-unit>
+      <trans-unit id="order.status.delivered" datatype="html">
+        <source>Consegnato</source>
+      </trans-unit>
+      <trans-unit id="order.status.paid" datatype="html">
+        <source>Pagato</source>
+      </trans-unit>
+      <trans-unit id="order.status.pending" datatype="html">
+        <source>In attesa di pagamento</source>
+      </trans-unit>
+      <trans-unit id="order.status.refunded" datatype="html">
+        <source>Rimborsato</source>
+      </trans-unit>
+      <trans-unit id="order.status.shipped" datatype="html">
+        <source>Spedito</source>
+      </trans-unit>
+      <trans-unit id="order.status.unknown" datatype="html">
+        <source>Sconosciuto</source>
+      </trans-unit>
       <trans-unit id="order.total_amount" datatype="html">
         <source>Totale</source>
+      </trans-unit>
+      <trans-unit id="order.total_amount.sort" datatype="html">
+        <source>Ordina per importo totale</source>
       </trans-unit>
       <trans-unit id="order.number_of_items" datatype="html">
         <source>Numero di articoli</source>
       </trans-unit>
       <trans-unit id="order.created_at" datatype="html">
         <source>Data creazione</source>
+      </trans-unit>
+      <trans-unit id="order.created_at.sort" datatype="html">
+        <source>Ordina per data di creazione</source>
       </trans-unit>
       <trans-unit id="order.user" datatype="html">
         <source>Utente</source>
@@ -341,6 +437,9 @@
       <trans-unit id="order.number_of_items.short" datatype="html">
         <source>N° Articoli</source>
       </trans-unit>
+      <trans-unit id="order.number_of_items.sort" datatype="html">
+        <source>Ordina per numero di articoli</source>
+      </trans-unit>
       <trans-unit id="cartPage.checkout" datatype="html">
         <source>Procedi al checkout</source>
       </trans-unit>
@@ -349,6 +448,12 @@
       </trans-unit>
       <trans-unit id="categories" datatype="html">
         <source>Categorie</source>
+      </trans-unit>
+      <trans-unit id="categorySelect.clearSelection" datatype="html">
+        <source>Cancella selezione</source>
+      </trans-unit>
+      <trans-unit id="categorySelect.label" datatype="html">
+        <source>Categoria prodotto</source>
       </trans-unit>
       <trans-unit id="checkoutPage.completaOrdine" datatype="html">
         <source> Completa il tuo ordine </source>
@@ -400,6 +505,9 @@
       </trans-unit>
       <trans-unit id="delete" datatype="html">
         <source>Elimina</source>
+      </trans-unit>
+      <trans-unit id="discountBadge.noDiscount" datatype="html">
+        <source>Nessuno sconto applicato</source>
       </trans-unit>
       <trans-unit id="edit" datatype="html">
         <source>Modifica</source>
@@ -455,11 +563,17 @@
       <trans-unit id="productsPage.addProduct" datatype="html">
         <source>Aggiungi prodotto</source>
       </trans-unit>
-      <trans-unit id="productsPage.fastAction.modifica" datatype="html">
+      <trans-unit id="shared.edit" datatype="html">
         <source>Modifica</source>
       </trans-unit>
-      <trans-unit id="productsPage.fastAction.vedi" datatype="html">
+      <trans-unit id="shared.no" datatype="html">
+        <source>No</source>
+      </trans-unit>
+      <trans-unit id="shared.show" datatype="html">
         <source>Vedi</source>
+      </trans-unit>
+      <trans-unit id="shared.yes" datatype="html">
+        <source>Sì</source>
       </trans-unit>
       <trans-unit id="productsPage.fastActions.title" datatype="html">
         <source>Azioni rapide</source>
@@ -471,43 +585,46 @@
         <source>Es. Tavolo da lavoro</source>
       </trans-unit>
       <trans-unit id="productsPage.table.actions" datatype="html">
-        <source> Azioni </source>
+        <source>Azioni</source>
       </trans-unit>
-      <trans-unit id="productsPage.table.category_name" datatype="html">
-        <source> Categoria </source>
+      <trans-unit id="product.category_name" datatype="html">
+        <source>Categoria</source>
       </trans-unit>
-      <trans-unit id="productsPage.table.description" datatype="html">
-        <source> Descrizione </source>
+      <trans-unit id="product.description" datatype="html">
+        <source>Descrizione</source>
       </trans-unit>
       <trans-unit id="productsPage.table.description.sort" datatype="html">
         <source>Ordina per descrizione</source>
       </trans-unit>
-      <trans-unit id="productsPage.table.discount" datatype="html">
-        <source> Sconto </source>
+      <trans-unit id="product.discount_percentage" datatype="html">
+        <source>Sconto</source>
       </trans-unit>
       <trans-unit id="productsPage.table.discount_percentage.sort" datatype="html">
         <source>Ordina per sconto</source>
       </trans-unit>
-      <trans-unit id="productsPage.table.discount_price" datatype="html">
-        <source> Prezzo effettivo </source>
+      <trans-unit id="product.discount_price" datatype="html">
+        <source>Prezzo effettivo</source>
       </trans-unit>
-      <trans-unit id="productsPage.table.id" datatype="html">
+      <trans-unit id="product.id" datatype="html">
         <source>ID</source>
+      </trans-unit>
+      <trans-unit id="product.image" datatype="html">
+        <source>Anteprima</source>
       </trans-unit>
       <trans-unit id="productsPage.table.image" datatype="html">
         <source>Anteprima</source>
       </trans-unit>
-      <trans-unit id="productsPage.table.name" datatype="html">
-        <source> Nome </source>
+      <trans-unit id="product.name" datatype="html">
+        <source>Nome</source>
       </trans-unit>
-      <trans-unit id="productsPage.table.price" datatype="html">
-        <source> Prezzo </source>
+      <trans-unit id="product.price" datatype="html">
+        <source>Prezzo</source>
       </trans-unit>
       <trans-unit id="productsPage.table.price.sort" datatype="html">
         <source>Ordina per prezzo</source>
       </trans-unit>
-      <trans-unit id="productsPage.table.stock_quantity" datatype="html">
-        <source> Stock </source>
+      <trans-unit id="product.stock_quantity" datatype="html">
+        <source>Stock</source>
       </trans-unit>
       <trans-unit id="productsPage.title" datatype="html">
         <source>I prodotti dello store</source>

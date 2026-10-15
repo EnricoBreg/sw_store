@@ -32,8 +32,8 @@ import { MatSort, MatSortModule, MatSortHeader } from "@angular/material/sort";
   template: `
     <div class="space-y-6">
       <div>
-        <h1 class="font-bold text-2xl">Utenti registrati</h1>
-        <p class="text-sm text-grat-40">
+        <h1 i18n="@@usersPage.title" class="font-bold text-2xl">Utenti registrati</h1>
+        <p i18n="@@usersPage.description" class="text-sm text-gray-400">
           Attualmente nel sistema sono registrati {{ usersCount() }} utenti.
         </p>
       </div>
@@ -41,9 +41,17 @@ import { MatSort, MatSortModule, MatSortHeader } from "@angular/material/sort";
       <!-- Serach bar -->
       <section class="md:w-4/5 space-y-4 mb-6">
         <mat-form-field>
-          <mat-label>Ricerca un utente</mat-label>
-          <input matInput type="text" placeholder="Es. Mario" [formControl]="searchControl" />
-          <mat-hint>Ricerca per nome o cognome dell'utente, email o telefono</mat-hint>
+          <mat-label i18n="@@usersPage.searchLabel">Ricerca un utente</mat-label>
+          <input
+            matInput
+            type="text"
+            placeholder="Es. Mario"
+            i18n-placeholder="@@usersPage.searchPlaceholder"
+            [formControl]="searchControl"
+          />
+          <mat-hint i18n="@@usersPage.searchHint"
+            >Ricerca per nome o cognome dell'utente, email o telefono</mat-hint
+          >
         </mat-form-field>
       </section>
 
@@ -69,7 +77,9 @@ import { MatSort, MatSortModule, MatSortHeader } from "@angular/material/sort";
         <div class="w-full overflow-x-auto border border-gray-200 rounded-t-lg shadow-sm">
           <table mat-table [dataSource]="users()" matSort (matSortChange)="onSortChange($event)">
             <ng-container matColumnDef="id">
-              <th mat-header-cell *matHeaderCellDef>ID</th>
+              <th mat-header-cell *matHeaderCellDef>
+                <ng-container i18n="@@user.id">ID</ng-container>
+              </th>
               <td mat-cell *matCellDef="let user">{{ user.id }}</td>
             </ng-container>
 
@@ -79,8 +89,9 @@ import { MatSort, MatSortModule, MatSortHeader } from "@angular/material/sort";
                 *matHeaderCellDef
                 mat-sort-header
                 sortActionDescription="Ordina per nome"
+                i18n-sortActionDescription="@@usersPage.table.firstName.sort"
               >
-                Nome
+                <ng-container i18n="@@user.firstName">Nome</ng-container>
               </th>
               <td mat-cell *matCellDef="let user">{{ user.first_name }}</td>
             </ng-container>
@@ -91,19 +102,24 @@ import { MatSort, MatSortModule, MatSortHeader } from "@angular/material/sort";
                 *matHeaderCellDef
                 mat-sort-header
                 sortActionDescription="Ordina per cognome"
+                i18n-sortActionDescription="@@usersPage.table.lastName.sort"
               >
-                Cognome
+                <ng-container i18n="@@user.lastName">Cognome</ng-container>
               </th>
               <td mat-cell *matCellDef="let user">{{ user.last_name }}</td>
             </ng-container>
 
             <ng-container matColumnDef="date_of_birth">
-              <th mat-header-cell *matHeaderCellDef>Data di nascita</th>
+              <th mat-header-cell *matHeaderCellDef>
+                <ng-container i18n="@@user.dateOfBirth">Data di nascita</ng-container>
+              </th>
               <td mat-cell *matCellDef="let user">{{ user.date_of_birth }}</td>
             </ng-container>
 
             <ng-container matColumnDef="created_at">
-              <th mat-header-cell *matHeaderCellDef>Data di registrazione</th>
+              <th mat-header-cell *matHeaderCellDef>
+                <ng-container i18n="@@user.createdAt">Data di registrazione</ng-container>
+              </th>
               <td mat-cell *matCellDef="let user">{{ user.created_at }}</td>
             </ng-container>
 
@@ -113,35 +129,46 @@ import { MatSort, MatSortModule, MatSortHeader } from "@angular/material/sort";
                 *matHeaderCellDef
                 mat-sort-header
                 sortActionDescription="Ordina per email"
+                i18n-sortActionDescription="@@usersPage.table.email.sort"
               >
-                Email
+                <ng-container i18n="@@user.email">Email</ng-container>
               </th>
               <td mat-cell *matCellDef="let user">{{ user.email }}</td>
             </ng-container>
 
             <ng-container matColumnDef="number">
-              <th mat-header-cell *matHeaderCellDef>Telefono/Cellulare</th>
+              <th mat-header-cell *matHeaderCellDef>
+                <ng-container i18n="@@user.number">Telefono/Cellulare</ng-container>
+              </th>
               <td mat-cell *matCellDef="let user">{{ user.number }}</td>
             </ng-container>
 
             <ng-container matColumnDef="orders_count">
-              <th mat-header-cell *matHeaderCellDef>Ordini effettuati</th>
+              <th mat-header-cell *matHeaderCellDef>
+                <ng-container i18n="@@user.ordersCount">Ordini effettuati</ng-container>
+              </th>
               <td mat-cell *matCellDef="let user">{{ user.orders_count }}</td>
             </ng-container>
 
             <ng-container matColumnDef="last_order_date">
-              <th mat-header-cell *matHeaderCellDef>Data ultimo ordine</th>
+              <th mat-header-cell *matHeaderCellDef>
+                <ng-container i18n="@@user.lastOrderDate">Data ultimo ordine</ng-container>
+              </th>
               <td mat-cell *matCellDef="let user">{{ user.last_order_date }}</td>
             </ng-container>
 
             <ng-container matColumnDef="addresses_count">
-              <th mat-header-cell *matHeaderCellDef>Indirizzi salvati</th>
+              <th mat-header-cell *matHeaderCellDef>
+                <ng-container i18n="@@user.addressesCount">Indirizzi salvati</ng-container>
+              </th>
               <td mat-cell *matCellDef="let user">{{ user.addresses_count }}</td>
             </ng-container>
 
             <ng-container matColumnDef="admin">
-              <th mat-header-cell *matHeaderCellDef>Amministratore</th>
-              <td mat-cell *matCellDef="let user">{{ user.admin ? "Sì" : "No" }}</td>
+              <th mat-header-cell *matHeaderCellDef>
+                <ng-container i18n="@@user.admin">Amministratore</ng-container>
+              </th>
+              <td mat-cell *matCellDef="let user">{{ getIsAdminLabel(user.admin) }}</td>
             </ng-container>
 
             <tr mat-header-row *matHeaderRowDef="displayedColumns()"></tr>
@@ -160,17 +187,17 @@ export default class UsersPage {
   service = inject(UsersService);
 
   allColumns = [
-    { key: "id", label: "ID" },
-    { key: "first_name", label: "Nome" },
-    { key: "last_name", label: "Cognome" },
-    { key: "email", label: "Email" },
-    { key: "number", label: "Telefono/Cellulare" },
-    { key: "orders_count", label: "Num. Ordini effettuati" },
-    { key: "addresses_count", label: "Num. Indirizzi salvati" },
-    { key: "created_at", label: "Data di registrazione" },
-    { key: "date_of_birth", label: "Data di nascita" },
-    { key: "last_order_date", label: "Data ultimo ordine" },
-    { key: "admin", label: "Amministratore" },
+    { key: "id", label: $localize`:@@user.id:ID` },
+    { key: "first_name", label: $localize`:@@user.firstName:Nome` },
+    { key: "last_name", label: $localize`:@@user.lastName:Cognome` },
+    { key: "email", label: $localize`:@@user.email:Email` },
+    { key: "number", label: $localize`:@@user.number:Telefono/Cellulare` },
+    { key: "orders_count", label: $localize`:@@user.ordersCount:Ordini effettuati` },
+    { key: "addresses_count", label: $localize`:@@user.addressesCount:Indirizzi salvati` },
+    { key: "created_at", label: $localize`:@@user.createdAt:Data di registrazione` },
+    { key: "date_of_birth", label: $localize`:@@user.dateOfBirth:Data di nascita` },
+    { key: "last_order_date", label: $localize`:@@user.lastOrderDate:Data ultimo ordine` },
+    { key: "admin", label: $localize`:@@user.admin:Amministratore` },
   ];
   visibleColumns = signal<string[]>([
     "id",
@@ -231,5 +258,9 @@ export default class UsersPage {
       orderDirection: event.direction,
     }));
     this.service.getUsers(this.pagination()?.page, this.pagination()?.limit, this.searchQuery());
+  }
+
+  getIsAdminLabel(isAdmin: boolean): string {
+    return isAdmin ? $localize`:@@shared.yes:Sì` : $localize`:@@shared.no:No`;
   }
 }

@@ -42,7 +42,7 @@
       "sourceRoot": "src",
       "prefix": "app",
       "i18n": {
-        "sourceLocale": "it-IT",
+        "sourceLocale": "it",
         "locales": {
           "en": "src/locale/messages.en.xlf"
         }
@@ -111,6 +111,15 @@
             }
           },
           "defaultConfiguration": "development"
+        },
+        "extract-i18n": {
+          "builder": "ng-extract-i18n-merge:ng-extract-i18n-merge",
+          "options": {
+            "buildTarget": "frontend:build",
+            "format": "xlf",
+            "outputPath": "src/locale",
+            "targetFiles": ["messages.en.xlf"]
+          }
         },
         "test": {
           "builder": "@angular/build:unit-test"

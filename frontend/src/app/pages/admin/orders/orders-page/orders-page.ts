@@ -20,6 +20,7 @@ import { provideNativeDateAdapter, MatOption } from '@angular/material/core';
 import { MatSelect } from "@angular/material/select";
 import { ORDER_STATUS_LABELS, OrderStatus } from "../../../../core/models/order";
 import OrderStatusBadge from "../../../../order-status-badge/order-status-badge";
+import ISODateDisplayer from "../../../../data-displayer/data-displayer";
 
 @Component({
   selector: "app-orders-page",
@@ -49,6 +50,7 @@ import OrderStatusBadge from "../../../../order-status-badge/order-status-badge"
     MatSelect,
     MatOption,
     OrderStatusBadge,
+    ISODateDisplayer
   ],
   providers: [provideNativeDateAdapter()],
   template: `
@@ -77,7 +79,7 @@ import OrderStatusBadge from "../../../../order-status-badge/order-status-badge"
                 i18n-placeholder="@@searchPlaceholder"
                 placeholder="Es. Mario Rossi o ID ordine"
               />
-              <mat-hint i18n="@@userSearchHint">Ricerca per utente o ID ordine</mat-hint>
+              <mat-hint i18n="@@ordersSearchHint">Ricerca per utente o ID ordine</mat-hint>
             </mat-form-field>
 
             <mat-form-field>
@@ -208,6 +210,7 @@ import OrderStatusBadge from "../../../../order-status-badge/order-status-badge"
                   *matHeaderCellDef
                   mat-sort-header
                   sortActionDescription="Ordina per importo totale"
+                  i18n-sortActionDescription="@@order.total_amount.sort"
                 >
                   <ng-container i18n="@@order.total_amount">Totale</ng-container>
                 </th>
@@ -216,7 +219,13 @@ import OrderStatusBadge from "../../../../order-status-badge/order-status-badge"
                 </td>
               </ng-container>
               <ng-container matColumnDef="number_of_items">
-                <th mat-header-cell *matHeaderCellDef>
+                <th
+                  mat-header-cell
+                  *matHeaderCellDef
+                  mat-sort-header
+                  sortActionDescription="Ordina per numero di articoli"
+                  i18n-sortActionDescription="@@order.number_of_items.sort"
+                >
                   <ng-container i18n="@@order.number_of_items">Numero di articoli</ng-container>
                 </th>
                 <td mat-cell *matCellDef="let order">
@@ -229,10 +238,13 @@ import OrderStatusBadge from "../../../../order-status-badge/order-status-badge"
                   *matHeaderCellDef
                   mat-sort-header
                   sortActionDescription="Ordina per data di creazione"
+                  i18n-sortActionDescription="@@order.created_at.sort"
                 >
                   <ng-container i18n="@@order.created_at">Data creazione</ng-container>
                 </th>
-                <td mat-cell *matCellDef="let order">{{ order.created_at }}</td>
+                <td mat-cell *matCellDef="let order">
+                  <app-isodate-displayer [date]="order.created_at" />
+                </td>
               </ng-container>
               <ng-container matColumnDef="user">
                 <th mat-header-cell *matHeaderCellDef>

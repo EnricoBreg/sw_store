@@ -116,18 +116,19 @@ import CategorySelect from "../../../../components/category-select/category-sele
               </td>
             </ng-container>
             <ng-container matColumnDef="id">
-              <th i18n="@@productsPage.table.id" mat-header-cell *matHeaderCellDef>ID</th>
+              <th mat-header-cell *matHeaderCellDef>
+                <ng-container i18n="@@product.id">ID</ng-container>
+              </th>
               <td mat-cell *matCellDef="let product">{{ product.id }}</td>
             </ng-container>
             <ng-container matColumnDef="name">
               <th
-                i18n="@@productsPage.table.name"
                 mat-header-cell
                 *matHeaderCellDef
                 mat-sort-header
                 sortActionDescription="Ordina per nome"
               >
-                Nome
+                <ng-container i18n="@@product.name">Nome</ng-container>
               </th>
               <td mat-cell *matCellDef="let product">
                 <span
@@ -144,59 +145,56 @@ import CategorySelect from "../../../../components/category-select/category-sele
                   <mat-divider></mat-divider>
                   <a class="!min-h-[32px]" mat-menu-item [routerLink]="[product.id]">
                     <mat-icon>visibility</mat-icon>
-                    <ng-container i18n="@@productsPage.fastAction.vedi">Vedi</ng-container>
+                    <ng-container i18n="@@shared.show">Vedi</ng-container>
                   </a>
                   <a class="!min-h-[32px]" mat-menu-item [routerLink]="[product.id, 'edit']">
                     <mat-icon>edit</mat-icon>
-                    <ng-container i18n="@@productsPage.fastAction.modifica">Modifica</ng-container>
+                    <ng-container i18n="@@shared.edit">Modifica</ng-container>
                   </a>
                 </mat-menu>
               </td>
             </ng-container>
             <ng-container matColumnDef="description">
               <th
-                i18n="@@productsPage.table.description"
                 mat-header-cell
                 *matHeaderCellDef
                 mat-sort-header
                 sortActionDescription="Ordina per descrizione"
                 i18n-sortActionDescription="@@productsPage.table.description.sort"
               >
-                Descrizione
+                <ng-container i18n="@@product.description">Descrizione</ng-container>
               </th>
               <td mat-cell *matCellDef="let product">{{ product.description }}</td>
             </ng-container>
             <ng-container matColumnDef="price">
               <th
-                i18n="@@productsPage.table.price"
                 mat-header-cell
                 *matHeaderCellDef
                 mat-sort-header
                 sortActionDescription="Ordina per prezzo"
                 i18n-sortActionDescription="@@productsPage.table.price.sort"
               >
-                Prezzo
+                <ng-container i18n="@@product.price">Prezzo</ng-container>
               </th>
               <td mat-cell *matCellDef="let product">{{ product.price | currency: "EUR" }}</td>
             </ng-container>
             <ng-container matColumnDef="discount_percentage">
               <th
-                i18n="@@productsPage.table.discount"
                 mat-header-cell
                 *matHeaderCellDef
                 mat-sort-header
                 sortActionDescription="Ordina per sconto"
                 i18n-sortActionDescription="@@productsPage.table.discount_percentage.sort"
               >
-                Sconto
+                <ng-container i18n="@@product.discount_percentage">Sconto</ng-container>
               </th>
               <td mat-cell *matCellDef="let product">
                 <app-discount-badge [discountPercentage]="product.discount_percentage" />
               </td>
             </ng-container>
             <ng-container matColumnDef="discount_price">
-              <th i18n="@@productsPage.table.discount_price" mat-header-cell *matHeaderCellDef>
-                Prezzo effettivo
+              <th mat-header-cell *matHeaderCellDef>
+                <ng-container i18n="@@product.discount_price">Prezzo effettivo</ng-container>
               </th>
               <td mat-cell *matCellDef="let product">
                 {{
@@ -206,27 +204,26 @@ import CategorySelect from "../../../../components/category-select/category-sele
             </ng-container>
             <ng-container matColumnDef="stock_quantity">
               <th
-                i18n="@@productsPage.table.stock_quantity"
                 mat-header-cell
                 *matHeaderCellDef
                 mat-sort-header
                 sortActionDescription="Ordina per quantità"
               >
-                Stock
+                <ng-container i18n="@@product.stock_quantity">Stock</ng-container>
               </th>
               <td mat-cell *matCellDef="let product">
                 <app-stock-badge [stock_quantity]="product.stock_quantity" />
               </td>
             </ng-container>
             <ng-container matColumnDef="category_name">
-              <th i18n="@@productsPage.table.category_name" mat-header-cell *matHeaderCellDef>
-                Categoria
+              <th mat-header-cell *matHeaderCellDef>
+                <ng-container i18n="@@product.category_name">Categoria</ng-container>
               </th>
               <td mat-cell *matCellDef="let product">{{ product.category.name }}</td>
             </ng-container>
             <ng-container matColumnDef="actions">
-              <th i18n="@@productsPage.table.actions" mat-header-cell *matHeaderCellDef>
-                Azioni
+              <th mat-header-cell *matHeaderCellDef>
+                <ng-container i18n="@@productsPage.table.actions">Azioni</ng-container>
               </th>
               <td mat-cell *matCellDef="let product">
                 <div class="flex items-center gap-1">
@@ -255,16 +252,16 @@ export default class ProductsPage {
   service = inject(AdminProductsService);
 
   allColumns = [
-    { key: "product_image", label: ":@@product.image:Anteprima" },
-    { key: "id", label: ":@@product.id:ID" },
-    { key: "name", label: ":@@product.name:Nome" },
-    { key: "description", label: ":@@product.description:Descrizione" },
-    { key: "price", label: ":@@product.price:Prezzo" },
-    { key: "discount_percentage", label: ":@@product.discount_percentage:Sconto" },
-    { key: "discount_price", label: ":@@product.discount_price:Prezzo effettivo" },
-    { key: "stock_quantity", label: ":@@product.stock_quantity:Stock" },
-    { key: "category_name", label: ":@@product.category_name:Categoria" },
-    { key: "actions", label: ":@@product.actions:Azioni" },
+    { key: "product_image", label: $localize`:@@product.image:Anteprima` },
+    { key: "id", label: $localize`:@@product.id:ID` },
+    { key: "name", label: $localize`:@@product.name:Nome` },
+    { key: "description", label: $localize`:@@product.description:Descrizione` },
+    { key: "price", label: $localize`:@@product.price:Prezzo` },
+    { key: "discount_percentage", label: $localize`:@@product.discount_percentage:Sconto` },
+    { key: "discount_price", label: $localize`:@@product.discount_price:Prezzo effettivo` },
+    { key: "stock_quantity", label: $localize`:@@product.stock_quantity:Stock` },
+    { key: "category_name", label: $localize`:@@product.category_name:Categoria` },
+    { key: "actions", label: $localize`:@@productsPage.table.actions:Azioni` },
   ];
   visibleColumns = signal<string[]>([
     "product_image",

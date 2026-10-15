@@ -19,11 +19,11 @@ import { Badge } from "../../core/directives/badge";
       }"
     >
       @if (sq > 0) {
-        {{ sq }} pezzi
+        <ng-container i18n="@@stockBadge.inStock">{{ sq //i18n(ph="quantity") }} pezzi</ng-container>
       } @else if (sq === 0) {
-        Esaurito
+        <ng-container i18n="@@stockBadge.outOfStock">Esaurito</ng-container>
       } @else {
-        N/A
+        <ng-container i18n="@@stockBadge.notAvailable">N/A</ng-container>
       }
     </span>
   `,

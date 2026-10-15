@@ -6,7 +6,7 @@ import { Toaster } from '../../core/services/toaster';
 @Component({
   selector: 'app-auth-callback',
   imports: [],
-  template: ` <p>Autenticazione in corso, attender...</p> `,
+  template: ` <p i18n="@@authCallback.authenticating">Autenticazione in corso, attendere...</p> `,
   styles: ``,
 })
 export default class AuthCallback {
