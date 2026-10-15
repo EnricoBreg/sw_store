@@ -96,6 +96,11 @@ en:
 
     errors:
       models:
+        cart_item:
+          product_not_available: "The product %{name} is not available."
+          attributes:
+            quantity:
+              insufficient_stock: "exceeds the availability of %{name} (available: %{available})."
         order:
           not_editable: "The details of an order that has already been shipped or closed cannot be changed (locked fields: %{fields})."
           attributes:

@@ -32,6 +32,45 @@ class Order < ApplicationRecord
   validate :must_be_editable, on: :update
   validate :status_transition_must_be_allowed, on: :update
 
+  # Crea l'ordine a partire dal carrello: verifica disponibilità e stock con i prodotti bloccati (lock),
+  # fissa i prezzi attuali nelle righe, decrementa lo stock e svuota il carrello, tutto in una transazione.
+  # Restituisce l'ordine: se non è stato salvato, il motivo è in order.errors e nulla è stato modificato.
+  def self.create_from_cart(cart, attributes)
+    order = cart.user.orders.build(attributes)
+
+    transaction do
+      items = cart.cart_items.to_a
+      # Lock in ordine di id per evitare deadlock tra checkout concorrenti sugli stessi prodotti.
+      products = Product.where(id: items.map(&:product_id)).order(:id).lock.index_by(&:id)
+      items.each { |item| item.product = products.fetch(item.product_id) }
+
+      unavailable = items.reject(&:valid?)
+      if unavailable.any?
+        unavailable.each { |item| item.errors.full_messages.each { |message| order.errors.add(:base, message) } }
+        raise ActiveRecord::Rollback
+      end
+
+      items.each do |item|
+        order.order_items.build(
+          product: item.product,
+          quantity: item.quantity,
+          unit_price: item.discounted_unit_price,
+          discount_percentage: item.discount_percentage
+        )
+      end
+      order.total_amount = items.sum(&:total_price)
+      raise ActiveRecord::Rollback unless order.save
+
+      # La disponibilità è già stata verificata sotto lock: lo stock non può diventare negativo.
+      items.each do |item|
+        item.product.update_columns(stock_quantity: item.product.stock_quantity - item.quantity, updated_at: Time.current)
+      end
+      cart.cart_items.destroy_all
+    end
+
+    order
+  end
+
   # Un ordine si può annullare solo prima della spedizione.
   def cancellable?
     STATUS_TRANSITIONS.fetch(status_in_database, []).include?("cancelled")

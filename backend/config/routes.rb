@@ -40,7 +40,7 @@ Rails.application.routes.draw do
       # ========================================================
       resources :addresses, module: :users
       resource :cart, module: :users, only: [ :show ] do
-        resources :items, controller: "cart_items", only: [ :create, :update, :destroy ], param: :product_id
+        resources :items, controller: "cart_items", only: [ :create, :update, :destroy ]
       end
       resource :wishlist, module: :users, only: [ :show ] do
         resources :items, controller: "wishlist_items", only: [ :create, :destroy ], param: :product_id

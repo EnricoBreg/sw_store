@@ -1,7 +1,7 @@
 # Analisi dei requisiti – SW Store
 
 Stato del progetto rispetto a `docs/Progetto_di_sistemi_web_Specifiche.pdf`.
-Ultimo aggiornamento: 2026-10-15 (Fase 2: chiusi T0, T1, T2, T5, T9, T10a).
+Ultimo aggiornamento: 2026-10-15 (Fase 2: chiusi T0, T1, T2, T4, T5, T9, T10a).
 Path backend relativi a `backend/app/` salvo indicazione, path frontend relativi a `frontend/src/app/`. Tutte le rotte hanno prefisso `/api/v1`.
 
 Legenda stato: **fatto** / **parziale** / **mancante**.
@@ -10,7 +10,7 @@ Legenda stato: **fatto** / **parziale** / **mancante**.
 
 | Comando | Esito |
 |---|---|
-| `bin/rails test` | Dopo T2: 72 test, 202 asserzioni, tutti verdi |
+| `bin/rails test` | Dopo T4: 106 test, 326 asserzioni, tutti verdi |
 | `bin/rubocop` | 88 file, 0 offese |
 | `brakeman` | Dopo T2: 0 warning (il Redirect della baseline è risolto) |
 | `npx ng test --watch=false` | Dopo T10a: 61/61 verdi |
@@ -43,12 +43,12 @@ Legenda stato: **fatto** / **parziale** / **mancante**.
 | 4.1b | `GET /products/:id` | fatto | backend | idem | Restituisce anche i prodotti inattivi |
 | 4.1c | `GET /categories` | parziale | backend | `controllers/api/v1/categories_controller.rb:4` | `?q=` dà 500 (`search_by_name` non definito) |
 | 4.1d | ProductService su API reali, nessun dato hardcoded | parziale | frontend | `core/http/products-api.service.ts`, `core/services/products.service.ts`, `pages/products-grid`, `components/categories-list` | Nessun dato hardcoded. Ricerca `q` (sincronizzata con l'URL), reset pagina e pannello errore sistemati in T9. Resta: categorie limitate alle prime 10 (serve modifica BE) |
-| 4.2a | Modelli Cart / CartItem | parziale | backend | `models/cart.rb`, `models/cart_item.rb`, `db/schema.rb` | CartItem senza validazioni (quantità ≤ 0 accettate); nessun unique index su (cart_id, product_id) né su carts.user_id; codice morto in `users/carts_controller.rb` |
-| 4.2b | `GET /cart`, `POST /cart/items`, `PATCH`/`DELETE /cart/items/:id` | parziale | backend | `users/cart_items_controller.rb`, `config/routes.rb:43` | Il path usa l'id del **prodotto**, non del CartItem (le specifiche dicono `:id` dell'articolo). DELETE senza `return` dopo il 404, quindi 500. Nessun controllo su stock e stato active. Chiave i18n `product_removed_from_cart` mancante |
+| 4.2a | Modelli Cart / CartItem | fatto (T4) | backend | `models/cart.rb`, `models/cart_item.rb`, `db/migrate/20261015200000_add_unique_indexes_to_carts.rb` | – |
+| 4.2b | `GET /cart`, `POST /cart/items`, `PATCH`/`DELETE /cart/items/:id` | fatto (T4) | backend | `users/cart_items_controller.rb`, `config/routes.rb:43` | `:id` del CartItem come da specifiche; 404 su righe altrui; validazioni di stock e prodotto attivo; `items_count` e `total_amount` nel carrello. Il frontend deve adeguarsi (T6) |
 | 4.2c | CartService: init da `/cart`, sync a ogni modifica, sopravvive al reload | parziale | frontend | `core/services/cart.service.ts`, `core/state/cart.store.ts` | Stato iniziale letto da localStorage, non da `GET /cart`. HTTP dentro `signal.update()`: con stato `null` la remove non parte. `unit_price` ottimistico scontato due volte. Il badge conta le righe, non i pezzi |
 | 4.2d | Carrello guest (plus) | mancante | entrambi | – | Non supportato |
 | 4.3a | Modelli Order / OrderItem | fatto | backend | `models/order.rb`, `models/order_item.rb` | Transizioni di stato non vincolate (es. cancelled→pending); messaggio di errore non tradotto |
-| 4.3b | `POST /orders` dal carrello, svuota carrello | parziale | backend | `users/orders_controller.rb:24-70`, `serializers/order_item_serializer.rb` | 500 invece di 422 con dati mancanti; `decrement!` porta lo stock sotto zero; nessun controllo su active; `total_price` dell'item scontato due volte; carrello vuoto: 400 senza `errors` |
+| 4.3b | `POST /orders` dal carrello, svuota carrello | fatto (T4) | backend | `users/orders_controller.rb:24-70`, `serializers/order_item_serializer.rb` | Transazione con lock dei prodotti, controllo di stock e prodotto attivo, 422 con `errors` (anche carrello vuoto), doppio sconto corretto |
 | 4.3c | `GET /orders`, `GET /orders/:id` solo dell'utente | parziale | backend | `users/orders_controller.rb`, `models/order.rb` | Fatto in T2: scoping sull'utente (404 sugli ordini altrui), transizioni di stato vincolate, annullamento con ripristino dello stock. Resta: filtro `status` ignorato (7.2) |
 | 4.3d | Checkout: Reactive Forms + OrderService, loading, conferma, errore con retry | parziale | frontend | `pages/checkout-page`, `core/services/orders.service.ts` | Loading solo globale. Dopo il successo solo un toast e redirect a /products, nessuna conferma. Nessun "Riprova". L'errore resta visibile quando si torna sulla pagina. Il carrello non viene ricaricato dal server |
 | 4.3e | Pagina lista ordini | parziale | frontend | `pages/my-orders-page`, `pages/order-detail-page`, `core/http/orders-api.service.ts` | Paginatore dentro il `@for`; `paginationMeta` mai impostato; viene inviato `per_page` invece di `limit` |
@@ -103,4 +103,6 @@ Legenda stato: **fatto** / **parziale** / **mancante**.
 | T9 | Catalogo e auth (parte frontend): ricerca, paginazione, signup, adminGuard, wishlist ospiti | **fatto** (lista completa categorie in attesa del BE) |
 | T10a | i18n frontend (selettore lingua, testi, paginatore, pipe) | **fatto** |
 | T2 | Sicurezza e auth backend | **fatto** |
-| T2-FE | Adeguamento frontend a T2 (token OAuth nel fragment, POST logout) | da fare |
+| T2-FE | Adeguamento frontend a T2 (token OAuth nel fragment, POST logout) | in corso |
+| T4 | Carrello e checkout robusti (backend) | **fatto** |
+| T6 | Carrello frontend su nuovo contratto | da fare (carrello FE non funzionante fino ad allora) |

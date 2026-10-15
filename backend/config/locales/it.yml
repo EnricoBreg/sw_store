@@ -86,6 +86,11 @@ it:
 
     errors:
       models:
+        cart_item:
+          product_not_available: "Il prodotto %{name} non è disponibile."
+          attributes:
+            quantity:
+              insufficient_stock: "supera la disponibilità di %{name} (disponibili: %{available})."
         order:
           not_editable: "Non è possibile modificare i dettagli di un ordine già spedito o chiuso (campi bloccati: %{fields})."
           attributes:

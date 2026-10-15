@@ -7,6 +7,88 @@ class Api::V1::Users::OrdersControllerTest < ActionDispatch::IntegrationTest
     @other_order = orders(:other_customer_pending)
   end
 
+  def checkout(**overrides)
+    order = {
+      first_name: "Carlo", last_name: "Cliente", street: "Via Roma 1", city: "Milano",
+      zip_code: "20100", country: "Italia", stripe_payment_token: "tok_test"
+    }.merge(overrides)
+    post api_v1_orders_path, params: { order: order }, headers: auth_headers(@customer), as: :json
+  end
+
+  test "POST /orders creates the order from the cart, decrements the stock and empties the cart" do
+    headphones = products(:headphones)
+
+    assert_difference -> { @customer.orders.count }, 1 do
+      assert_difference -> { headphones.reload.stock_quantity }, -2 do
+        checkout
+      end
+    end
+
+    assert_response :created
+    order = json_response["data"]
+    assert_equal "pending", order["status"]
+    assert_equal "179.82", order["total_amount"]
+    item = order["items"].sole
+    assert_equal 2, item["quantity"]
+    assert_equal "89.91", item["unit_price"]
+    assert_equal "179.82", item["total_price"], "the discount must be applied only once"
+    assert @customer.cart.reload.empty?
+  end
+
+  test "POST /orders with an empty cart returns 422 with errors" do
+    @customer.cart.cart_items.destroy_all
+
+    assert_no_difference -> { Order.count } do
+      checkout
+    end
+
+    assert_response :unprocessable_entity
+    assert json_response["errors"].any?
+  end
+
+  test "POST /orders with insufficient stock returns 422 and changes nothing" do
+    products(:headphones).update_columns(stock_quantity: 1)
+
+    assert_no_difference -> { Order.count } do
+      checkout
+    end
+
+    assert_response :unprocessable_entity
+    assert_includes json_response["errors"].sole, products(:headphones).name
+    assert_equal 1, products(:headphones).reload.stock_quantity
+    assert_equal 2, cart_items(:customer_headphones).reload.quantity
+  end
+
+  test "POST /orders with an inactive product returns 422 and changes nothing" do
+    products(:headphones).update_columns(active: false)
+
+    assert_no_difference -> { Order.count } do
+      checkout
+    end
+
+    assert_response :unprocessable_entity
+    assert_includes json_response["errors"].sole, products(:headphones).name
+    assert_equal 25, products(:headphones).reload.stock_quantity
+    assert CartItem.exists?(cart_items(:customer_headphones).id)
+  end
+
+  test "POST /orders with missing form data returns 422 with the validation errors" do
+    assert_no_difference -> { Order.count } do
+      checkout(city: "", stripe_payment_token: nil)
+    end
+
+    assert_response :unprocessable_entity
+    assert_equal 2, json_response["errors"].size
+    assert_equal 25, products(:headphones).reload.stock_quantity
+    assert_not @customer.cart.reload.empty?
+  end
+
+  test "POST /orders without the order payload returns 422" do
+    post api_v1_orders_path, params: {}, headers: auth_headers(@customer), as: :json
+
+    assert_response :unprocessable_entity
+  end
+
   test "GET /orders lists only the orders of the current user" do
     get api_v1_orders_path, headers: auth_headers(@customer)
 
