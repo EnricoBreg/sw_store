@@ -1,61 +1,94 @@
 # Analisi dei requisiti – SW Store
 
 Stato del progetto rispetto a `docs/Progetto_di_sistemi_web_Specifiche.pdf`.
-Ultimo aggiornamento: 2026-10-15 (Fase 1, analisi iniziale). Tutti i path backend hanno prefisso `/api/v1`.
+Ultimo aggiornamento: 2026-10-15 (Fase 1, analisi verificata da `backend` e `frontend` sul codice attuale).
+Path backend relativi a `backend/app/` salvo indicazione, path frontend relativi a `frontend/src/app/`. Tutte le rotte hanno prefisso `/api/v1`.
 
 Legenda stato: **fatto** / **parziale** / **mancante**.
+
+## Stato delle verifiche (baseline)
+
+| Comando | Esito |
+|---|---|
+| `bin/rails test` | Non eseguibile: `backend/test/` non esiste, il DB `sw_store_test` non esiste e la sezione `test` di `database.yml` non ha credenziali |
+| `bin/rubocop` | 88 file, 0 offese |
+| `brakeman` | 1 warning (Redirect, `auth/omniauth_callbacks_controller.rb:8`), come la baseline |
+| `npx ng test --watch=false` | 3 test, 2 falliscono (`app.spec.ts`, NG0201), come la baseline |
+| `npx ng build` | ok (it + en); warning sul budget (initial 719 kB > 500 kB) |
+| `npx playwright test` | Configurato (`playwright.config.ts`, solo `e2e/smoke.spec.ts`), non ancora eseguito |
+
+## Decisioni dell'utente (2026-10-15)
+
+- **S1:** la chiave viene tolta dal README (fatto); master key e segreto JWT vengono rigenerati; il nuovo client secret Google è fornito dall'utente in `docs/.new_google_secret.txt` (ignorato da git). Nessuna riscrittura della history.
+- **Carrello:** `PATCH`/`DELETE /cart/items/:id` usano l'id del CartItem, come da specifiche (modifica incompatibile: prima backend + `API.md`, poi frontend).
+- **Funzionalità avanzate:** si completano Area admin (7.1) e i18n (7.5). Coupon esclusi per ora.
+- **DB di test:** ok a creare `sw_store_test` e caricarvi lo schema.
+
+## Sicurezza (bloccanti)
+
+| # | Problema | Gravità | Parte | File | Note |
+|---|---|---|---|---|---|
+| S1 | (parziale: rimossa dal README, rotazione in corso) Master key Rails in chiaro nel `README.md` di root (commit `f0413a3`, già su `origin/main` e `origin/development`): decifra `credentials.yml.enc`, quindi espone il segreto JWT e il client secret Google | critica | repo | `README.md`, `backend/config/credentials.yml.enc` | Serve la decisione dell'utente: rotazione dei segreti e rimozione dal README. Riscrivere la history è un'operazione distruttiva. |
+| S2 | Account takeover OAuth: `uid: auth.id` è sempre nil, quindi ogni login Google entra nell'account Google già esistente con uid nil | critica | backend | `models/user.rb:24`, `auth/omniauth_callbacks_controller.rb` | In dev esiste già un utente con uid nil |
+| S3 | IDOR sugli ordini: `set_order` usa `Order.find`, quindi chiunque legge, modifica e annulla ordini di altri utenti | alta | backend | `controllers/api/v1/users/orders_controller.rb` | |
+| S4 | CSRF della request phase OmniAuth disattivato; JWT passato in query string nel redirect | alta | backend | `config/initializers/oauth.rb`, `omniauth_callbacks_controller.rb` | |
+| S5 | `ApplicationController#debug_params` logga `params.inspect`, password comprese | bassa | backend | `controllers/application_controller.rb` | |
+| S6 | `db/seeds.rb` esegue `destroy_all` su utenti, categorie e prodotti: `db:seed` cancella i dati di dev | media | backend | `db/seeds.rb` | Da **non** eseguire finché il seed non viene riscritto |
 
 ## Requisiti funzionali obbligatori (§4)
 
 | # | Requisito | Stato | Parte | File coinvolti | Cosa manca |
-|---|-----------|-------|-------|----------------|------------|
-| 4.1a | `GET /products` con filtro/ricerca/paginazione | fatto | backend | `api/v1/products_controller.rb` | Supporta `q`, `category_id`, `page`/`limit`. Difetti: espone prodotti `active=false`; `GET /categories?q=` va in 500 (`search_by_name` privato di ProductsController) |
-| 4.1b | `GET /products/:id` | fatto | backend | `api/v1/products_controller.rb` | Espone anche prodotti inattivi |
-| 4.1c | ProductService su endpoint reali, nessun dato hardcoded | parziale | frontend | `core/http/products-api.service.ts`, `core/services/products.service.ts`, `pages/products-grid`, `pages/product-detail`, `components/categories-list` | Nessuna UI di ricerca; reset pagina al cambio filtro; categorie troncate alla prima pagina; pannello errore con condizione invertita; handler di errore che leggono `err.error.error` (TypeError) |
-| 4.2a | Modelli Cart / CartItem | parziale | backend | `models/cart.rb`, `models/cart_item.rb` | CartItem senza validazioni (quantità ≤ 0 accettate, nessun controllo stock/active); nessun indice unique; codice morto in `carts_controller.rb` |
-| 4.2b | Endpoint `/cart`, `/cart/items` | parziale | backend | `users/cart_items_controller.rb`, `carts_controller.rb` | `destroy` senza `return` dopo l'errore (500). Il path usa `:product_id` invece dell'id del CartItem (differenza dalle specifiche da decidere/documentare) |
-| 4.2c | CartService inizializzato da `/cart`, sync a ogni modifica, sopravvive al reload | parziale | frontend | `core/services/cart.service.ts`, `core/state/cart.store.ts`, `core/http/cart-api.service.ts` | Stato letto da localStorage al reload, `/cart` chiamato solo al login/guard; side effect dentro `signal.update()`; `cartItemCount` conta le righe |
-| 4.2d | Carrello guest (plus) | mancante | entrambi | – | Non supportato dal backend |
-| 4.3a | Modelli Order / OrderItem | fatto | backend | `models/order.rb`, `models/order_item.rb` | – |
-| 4.3b | `POST /orders` dal carrello, svuota carrello | parziale | backend | `users/orders_controller.rb` | 500 invece di 422 su validazione fallita; nessun controllo stock (può andare negativo); doppio sconto in `OrderItemSerializer#total_price` |
-| 4.3c | `GET /orders`, `GET /orders/:id` solo dell'utente | parziale | backend | `users/orders_controller.rb` | **IDOR**: `Order.find` permette di leggere/modificare/annullare ordini altrui; filtro `status` scartato; annullamento consentito anche su ordini spediti, senza ripristino stock |
-| 4.3d | Checkout con Reactive Forms + OrderService | parziale | frontend | `pages/checkout-page`, `core/services/orders.service.ts`, `core/http/orders-api.service.ts` | Manca conferma ordine (redirect a /products), loading locale, pulsante "Riprova"; carrello non ricaricato dal server dopo l'ordine; token di pagamento fittizio |
-| 4.3e | Pagina lista ordini | parziale | frontend | `pages/my-orders-page`, `pages/order-detail-page` | Paginatore dentro il `@for` e mai visibile; `per_page` invece di `limit`; `/my-orders/:orderId` senza guard |
-| 4.4a | `POST /auth/login`, logout, `GET /auth/me` | parziale | backend | `auth/sessions_controller.rb`, `auth/current_user_controller.rb`, `config/initializers/devise.rb` | Logout è `DELETE` (specifiche: `POST`); `PUT /auth/me` va in 500 (`exept`, parametri errati) |
-| 4.4b | Login Google OAuth2 | parziale | backend | `auth/omniauth_callbacks_controller.rb`, `models/user.rb` | **Sicurezza**: `auth.id` è nil, quindi tutti gli utenti Google condividono `uid=nil` (account mixup); CSRF sulla request phase; JWT in query string |
-| 4.4c | Pagina login, token, HttpInterceptor, route guard | parziale | frontend | `pages/login-page.ts/`, `pages/signup-page`, `core/services/auth.service.ts`, `core/guards/*`, `core/http/interceptors/*` | `apiHeadersInterceptor` sostituisce tutti gli header (`Bearer null`, `Accept-Language` sempre `it`); signup invia `passwordConfirmation` e non `date_of_birth`; adminGuard reindirizza a /login invece di /forbidden; `auth-interceptor.ts` inutilizzato; URL backend hardcoded |
+|---|---|---|---|---|---|
+| 4.1a | `GET /products` con filtro/ricerca/paginazione | fatto | backend | `controllers/api/v1/products_controller.rb` | Supporta `q`, `category_id`, `page`/`limit`. Restituisce anche i prodotti inattivi (28 su 56 in dev) |
+| 4.1b | `GET /products/:id` | fatto | backend | idem | Restituisce anche i prodotti inattivi |
+| 4.1c | `GET /categories` | parziale | backend | `controllers/api/v1/categories_controller.rb:4` | `?q=` dà 500 (`search_by_name` non definito) |
+| 4.1d | ProductService su API reali, nessun dato hardcoded | parziale | frontend | `core/http/products-api.service.ts`, `core/services/products.service.ts`, `pages/products-grid`, `components/categories-list` | Nessun dato hardcoded. Mancano: UI di ricerca `q`, reset della pagina al cambio categoria (`products-grid.ts:119`). Problemi: categorie limitate alle prime 10, pannello errore con condizione invertita (`products-grid.ts:47`) |
+| 4.2a | Modelli Cart / CartItem | parziale | backend | `models/cart.rb`, `models/cart_item.rb`, `db/schema.rb` | CartItem senza validazioni (quantità ≤ 0 accettate); nessun unique index su (cart_id, product_id) né su carts.user_id; codice morto in `users/carts_controller.rb` |
+| 4.2b | `GET /cart`, `POST /cart/items`, `PATCH`/`DELETE /cart/items/:id` | parziale | backend | `users/cart_items_controller.rb`, `config/routes.rb:43` | Il path usa l'id del **prodotto**, non del CartItem (le specifiche dicono `:id` dell'articolo). DELETE senza `return` dopo il 404, quindi 500. Nessun controllo su stock e stato active. Chiave i18n `product_removed_from_cart` mancante |
+| 4.2c | CartService: init da `/cart`, sync a ogni modifica, sopravvive al reload | parziale | frontend | `core/services/cart.service.ts`, `core/state/cart.store.ts` | Stato iniziale letto da localStorage, non da `GET /cart`. HTTP dentro `signal.update()`: con stato `null` la remove non parte. `unit_price` ottimistico scontato due volte. Il badge conta le righe, non i pezzi |
+| 4.2d | Carrello guest (plus) | mancante | entrambi | – | Non supportato |
+| 4.3a | Modelli Order / OrderItem | fatto | backend | `models/order.rb`, `models/order_item.rb` | Transizioni di stato non vincolate (es. cancelled→pending); messaggio di errore non tradotto |
+| 4.3b | `POST /orders` dal carrello, svuota carrello | parziale | backend | `users/orders_controller.rb:24-70`, `serializers/order_item_serializer.rb` | 500 invece di 422 con dati mancanti; `decrement!` porta lo stock sotto zero; nessun controllo su active; `total_price` dell'item scontato due volte; carrello vuoto: 400 senza `errors` |
+| 4.3c | `GET /orders`, `GET /orders/:id` solo dell'utente | parziale | backend | `users/orders_controller.rb` | IDOR (S3). Filtro `status` ignorato. Annullamento senza controllo di stato e senza ripristino dello stock |
+| 4.3d | Checkout: Reactive Forms + OrderService, loading, conferma, errore con retry | parziale | frontend | `pages/checkout-page`, `core/services/orders.service.ts` | Loading solo globale. Dopo il successo solo un toast e redirect a /products, nessuna conferma. Nessun "Riprova". L'errore resta visibile quando si torna sulla pagina. Il carrello non viene ricaricato dal server |
+| 4.3e | Pagina lista ordini | parziale | frontend | `pages/my-orders-page`, `pages/order-detail-page`, `core/http/orders-api.service.ts` | Paginatore dentro il `@for`; `paginationMeta` mai impostato; viene inviato `per_page` invece di `limit` |
+| 4.4a | `POST /auth/login`, `POST /auth/logout`, `GET /auth/me` | parziale | backend | `auth/sessions_controller.rb`, `config/initializers/devise.rb`, `api/v1/current_user_controller.rb` | Login e me ok. Logout solo `DELETE` (le specifiche chiedono `POST`). `PUT /auth/me` dà 500 (`exept`, parametri errati) |
+| 4.4b | Login Google OAuth2 | parziale | backend | `models/user.rb`, `auth/omniauth_callbacks_controller.rb` | S2, S4. Un utente già registrato con la stessa email non riesce ad accedere con Google. URL frontend hardcoded |
+| 4.4c | Login, token, HttpInterceptor | parziale | frontend | `pages/login-page.ts/`, `core/services/auth.service.ts`, `core/http/interceptors/*` | `apiHeadersInterceptor` sostituisce tutti gli header (`Bearer null`, `Accept-Language` sempre `it`); `auth-interceptor.ts` non usato; signup invia `passwordConfirmation` (camelCase) e non `date_of_birth` |
+| 4.4d | Route guard | parziale | frontend | `core/guards/*`, `app.routes.ts` | Guard presente su /cart, /wishlist, /checkout, /my-orders. Manca su `/my-orders/:orderId`. `adminGuard` reindirizza a /login invece di /forbidden |
 
 ## Requisiti tecnici (§5, §6)
 
 | # | Requisito | Stato | Parte | File coinvolti | Cosa manca |
-|---|-----------|-------|-------|----------------|------------|
+|---|---|---|---|---|---|
 | 5a | Rails API mode, DB relazionale | fatto | backend | `config/application.rb`, `config/database.yml` | – |
-| 5b | Validazioni di base sui modelli | parziale | backend | `models/*` | CartItem e WishlistItem senza validazioni; messaggi di alcuni modelli non localizzati |
-| 5c | Gestione errori: status coerenti + JSON con messaggio | parziale | backend | `api/v1/base_controller.rb`, `concerns/authorization.rb`, `concerns/api_responses.rb` | Mancano rescue per 500 generici, `InvalidForeignKey`, `ArgumentError`; 401/403 di `authorization.rb` in formato diverso e non localizzati; `AddressSerializer` mancante (tutti gli `/addresses` vanno in 500) |
-| 5d | Test: ≥1 test di modello e ≥1 request test | mancante | backend | `backend/test/` (assente) | Infrastruttura di test, fixture, helper JWT, test |
-| 6a | Nessun dato hardcoded per prodotti/carrello/ordini | parziale | frontend | `core/state/*` | Carrello e wishlist persistiti in localStorage |
-| 6b | Servizi dedicati (Product/Cart/Order/Auth) | fatto | frontend | `core/http/*`, `core/services/*` | – |
+| 5b | Validazioni di base sui modelli | parziale | backend | `models/*` | CartItem, WishlistItem; `Product.active` senza default; messaggi custom non tradotti |
+| 5c | Gestione errori: status coerenti + JSON con messaggio | parziale | backend | `api/v1/base_controller.rb`, `concerns/authorization.rb`, `concerns/api_responses.rb` | Mancano 500 generico, `InvalidForeignKey`, `ArgumentError`, `UnknownAttributeReference`. `ParameterMissing` dovrebbe dare 400. 401/403 in formato diverso e solo in italiano. `AddressSerializer` mancante: tutti gli `/addresses` danno 500 |
+| 5d | Test: ≥1 test di modello e ≥1 request test | mancante | backend | `backend/test/` (assente) | Infrastruttura (DB di test, test_helper, fixture, helper JWT) e test |
+| 6a | Nessun dato hardcoded per prodotti/carrello/ordini | parziale | frontend | `core/state/*` | Carrello e wishlist usano localStorage come fonte di verità |
+| 6b | Servizi dedicati | fatto | frontend | `core/http/*`, `core/services/*` | – |
 | 6c | Reactive Forms nel checkout | fatto | frontend | `pages/checkout-page` | – |
-| 6d | HttpClient + HttpInterceptor (token, errori centralizzati) | parziale | frontend | `core/http/interceptors/*` | Bug degli header (vedi 4.4c); messaggi dell'errorInterceptor non i18n; redirect su 404 anche per DELETE carrello |
+| 6d | HttpClient + Interceptor, errori centralizzati | parziale | frontend | `core/http/interceptors/*`, tutti i service | Gestione errori rotta nei service (`err.error.error` lancia un TypeError); errorInterceptor manda a /not-found su ogni 404 e ha messaggi non i18n; URL del backend hardcoded in 4 punti, nessun environment |
 
 ## Funzionalità avanzate (§7)
 
 | # | Funzionalità | Stato | Parte | File coinvolti | Cosa manca |
-|---|--------------|-------|-------|----------------|------------|
-| 7.1 | Area admin prodotti (ruolo admin + guard) | parziale | entrambi | `api/v1/admin/*`, `pages/admin/*`, `core/guards/admin*` | FE: eliminazione prodotto, label i18n del form, dashboard placeholder, CRUD categorie. BE: whitelist `order_by`, `PUT products` risponde 201, admin può eliminare se stesso |
-| 7.2 | Storico ordini avanzato (filtri data/stato, dettaglio) | parziale | entrambi | `users/orders_controller.rb`, `pages/my-orders-page`, `pages/order-detail-page` | Dettaglio ordine fatto. Filtri data/stato assenti lato utente (BE e FE) |
-| 7.3 | Wishlist | parziale | entrambi | `users/wishlist*`, `core/services/wishlists.service.ts` | BE: unique sugli item. FE: localStorage e side effect come il carrello |
+|---|---|---|---|---|---|
+| 7.1 | Area admin prodotti (ruolo admin + guard) | parziale | entrambi | `api/v1/admin/*`, `pages/admin/*`, `components/product-form`, `core/guards/admin*` | BE: PUT risponde 201; `order_by` senza whitelist (500); delete di elementi referenziati dà 500; delete categoria a cascata sui prodotti; l'admin può eliminare sé stesso. FE: eliminazione prodotto non implementata, dashboard placeholder, label del form non i18n |
+| 7.2 | Storico ordini avanzato (filtri data/stato, dettaglio) | parziale | entrambi | `users/orders_controller.rb`, `pages/my-orders-page`, `pages/order-detail-page` | Dettaglio completo. Filtri lato utente assenti (BE e FE) |
+| 7.3 | Wishlist | parziale | entrambi | `users/wishlist*_controller.rb`, `core/services/wishlists.service.ts` | BE: niente unique/validazione, POST risponde 200. FE: localStorage e side effect come il carrello; il pulsante è visibile anche agli ospiti, che ricevono un 401 |
 | 7.4 | Coupon | mancante | entrambi | – | Tutto |
-| 7.5 | i18n it/en con scelta lingua | parziale | entrambi | `config/locales/*`, `src/locale/*` | FE: selettore lingua, `Accept-Language` dal LOCALE_ID, testi residui non marcati. BE: messaggi 401/403 e di alcuni modelli |
-| 7.6 | Test (3-4 BE, 2 service + 2 component FE, 1-2 E2E) | mancante | entrambi | – | Tutti i test; `app.spec.ts` rotto; nessun framework E2E |
+| 7.5 | i18n it/en con scelta lingua | parziale | entrambi | `config/locales/*`, `src/locale/*` | FE: manca il selettore di lingua; `Accept-Language` fisso; circa 14 toast e testi non marcati; paginatore e pipe non localizzati. BE: 401/403 e messaggi dei modelli |
+| 7.6 | Test (3-4 BE, 2 service + 2 component FE, 1-2 E2E) | mancante | entrambi | – | Tutti |
 
 ## Consegna e qualità (§8, criteri)
 
 | # | Requisito | Stato | Parte | File coinvolti | Cosa manca |
-|---|-----------|-------|-------|----------------|------------|
-| 8a | Seed iniziale prodotti | parziale | backend | `db/seeds.rb` | Non idempotente, metà prodotti inattivi, nessuna immagine |
-| 8b | README principale (prerequisiti, setup DB, avvio) | mancante | entrambi | `README.md` (root assente), `backend/README.md` placeholder | Tutto |
-| 8c | Documento di architettura (modelli, flusso, funzionalità avanzate) | mancante | PM | – | `ARCHITETTURA.md` |
-| 8d | docker-compose (opzionale) | mancante | entrambi | `backend/Dockerfile` | Dockerfile installa sqlite e non libpq; compose assente |
-| Q1 | UX / a11y minima | parziale | frontend | `components/*`, `pages/*` | Alt errati o mancanti, bottoni icona senza `aria-label`, login senza `mat-label`, solo loading globale |
-| Q2 | CI | parziale | – | `backend/.github/workflows/ci.yml` | Il workflow sta in `backend/`, quindi GitHub non lo esegue; nessun job di test |
+|---|---|---|---|---|---|
+| 8a | Seed iniziale prodotti | parziale | backend | `db/seeds.rb` | Distruttivo (S6), non idempotente, metà dei prodotti inattivi, nessuna immagine |
+| 8b | README principale | mancante | PM + entrambi | `README.md` (contiene la master key), `backend/README.md` (template) | Prerequisiti, setup DB, avvio |
+| 8c | Documento di architettura | mancante | PM | – | `docs/ARCHITETTURA.md` |
+| 8d | docker-compose (opzionale) | mancante | entrambi | `backend/Dockerfile` | Il Dockerfile installa sqlite e non libpq; compose assente |
+| Q1 | UX / a11y minima | parziale | frontend | `components/*`, `pages/*` | alt errati o mancanti; bottoni icona senza aria-label; login senza mat-label; elementi cliccabili non raggiungibili da tastiera |
+| Q2 | CI | parziale | – | `backend/.github/workflows/ci.yml` | Il file sta in `backend/`, quindi GitHub non lo esegue; nessun job di test |
+| Q3 | Contratto `backend/API.md` | parziale | backend | `backend/API.md` | Allineato alle rotte. Da aggiornare per i bug noti e per il formato reale di `meta` di Pagy (`previous`, `pages`) |

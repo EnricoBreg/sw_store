@@ -16,3 +16,7 @@ Thumbs.db
 .docker-data/
 
 .codegraph
+
+# Segreti locali (mai committare)
+docs/.new_google_secret.txt
+*.secret.txt

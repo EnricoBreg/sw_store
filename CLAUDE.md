@@ -50,7 +50,7 @@ L'ambiente è attivo e utilizzabile: le applicazioni si possono avviare e il dat
 
 | Servizio | Avvio (dalla cartella dell'area) | URL | Gestito da |
 | --- | --- | --- | --- |
-| PostgreSQL | già in esecuzione, non va avviato | config in `backend/config/database.yml` | — |
+| PostgreSQL | già in esecuzione su host remoto, non va avviato | `100.82.90.49:5432` (db `sw_store_dev`, utente `swstoredev`; config in `backend/config/database.yml`) | — |
 | API Rails | `bin/rails s -p 3000` | http://localhost:3000 | `backend` |
 | SPA Angular | `npx ng serve --port 4200` | http://localhost:4200 | `frontend` |
 
@@ -59,10 +59,12 @@ L'ambiente è attivo e utilizzabile: le applicazioni si possono avviare e il dat
 - Ogni server è gestito solo dal suo owner (vedi tabella). Chi ha bisogno dell'altro server lo chiede all'owner.
 - Per verificare un endpoint: `curl` su `http://localhost:3000/api/v1/...` con il server avviato.
 - Al primo avvio il PM verifica che porte e URL di questa tabella siano corretti e la aggiorna se necessario.
+- Verifica del 2026-10-15: DB di sviluppo raggiungibile; porte 3000 e 4200 libere e coerenti con `puma.rb`, CORS (`localhost:4200`) e URL API del frontend (`localhost:3000/api/v1`). Il database di test `sw_store_test` non esiste e la sezione `test` di `database.yml` non ha credenziali: `bin/rails test` non può girare finché non si sistema (task di setup del backend).
 
 ### Database: regole
 
-- **Ammessi:** `bin/rails db:migrate`, `bin/rails db:seed`, query di sola lettura (`bin/rails runner`, `bin/rails dbconsole`).
+- **Ammessi:** `bin/rails db:migrate`, query di sola lettura (`bin/rails runner`, `bin/rails dbconsole`). `bin/rails db:seed` è ammesso **solo** dopo che `db/seeds.rb` sarà reso non distruttivo (oggi esegue `destroy_all`).
+- **Database di test:** creazione di `sw_store_test` e caricamento dello schema (`db:create`, `db:test:prepare`, `db:schema:load` con `RAILS_ENV=test`) autorizzati dall'utente il 2026-10-15.
 - **Vietati senza l'ok esplicito dell'utente:** `db:drop`, `db:reset`, `db:schema:load`, `db:rollback` su migrazioni già committate, `TRUNCATE`/`DELETE` di massa sul database di sviluppo.
 - I test usano **solo** il database di test (`RAILS_ENV=test`), mai quello di sviluppo.
 - Ogni migrazione nuova deve essere reversibile e committata insieme allo `schema.rb` aggiornato.
