@@ -1,7 +1,7 @@
 # Analisi dei requisiti – SW Store
 
 Stato del progetto rispetto a `docs/Progetto_di_sistemi_web_Specifiche.pdf`.
-Ultimo aggiornamento: 2026-10-15 (Fase 2: chiusi T0, T1, T2, T4, T5, T9, T10a).
+Ultimo aggiornamento: 2026-10-15 (Fase 2: chiusi T0, T1, T2, T2-FE, T4, T5, T9, T10a, T11a).
 Path backend relativi a `backend/app/` salvo indicazione, path frontend relativi a `frontend/src/app/`. Tutte le rotte hanno prefisso `/api/v1`.
 
 Legenda stato: **fatto** / **parziale** / **mancante**.
@@ -13,9 +13,9 @@ Legenda stato: **fatto** / **parziale** / **mancante**.
 | `bin/rails test` | Dopo T4: 106 test, 326 asserzioni, tutti verdi |
 | `bin/rubocop` | 88 file, 0 offese |
 | `brakeman` | Dopo T2: 0 warning (il Redirect della baseline è risolto) |
-| `npx ng test --watch=false` | Dopo T10a: 61/61 verdi |
-| `npx ng build` | ok (it + en); warning sul budget (initial 719 kB > 500 kB) |
-| `npx playwright test` | Dopo T10a: 9/9 verdi; `npm run e2e:i18n` 3/3 verdi |
+| `npx ng test --watch=false` | Dopo T11a/T2-FE: 72/72 verdi |
+| `npx ng build` | ok (it + en), nessun warning (budget initial portato a 800 kB / 1 MB in T11a; 727 kB raw, ~178 kB gzip) |
+| `npx playwright test` | Dopo T11a/T2-FE: 19/19 verdi; `npm run e2e:i18n` 3/3 verdi |
 
 ## Decisioni dell'utente (2026-10-15)
 
@@ -53,7 +53,7 @@ Legenda stato: **fatto** / **parziale** / **mancante**.
 | 4.3d | Checkout: Reactive Forms + OrderService, loading, conferma, errore con retry | parziale | frontend | `pages/checkout-page`, `core/services/orders.service.ts` | Loading solo globale. Dopo il successo solo un toast e redirect a /products, nessuna conferma. Nessun "Riprova". L'errore resta visibile quando si torna sulla pagina. Il carrello non viene ricaricato dal server |
 | 4.3e | Pagina lista ordini | parziale | frontend | `pages/my-orders-page`, `pages/order-detail-page`, `core/http/orders-api.service.ts` | Paginatore dentro il `@for`; `paginationMeta` mai impostato; viene inviato `per_page` invece di `limit` |
 | 4.4a | `POST /auth/login`, `POST /auth/logout`, `GET /auth/me` | fatto (T2) | backend | `auth/sessions_controller.rb`, `config/initializers/devise.rb`, `api/v1/current_user_controller.rb` | `POST /auth/logout` aggiunto (DELETE resta); `PUT /auth/me` corretto (cambio email/password richiede `current_password`) |
-| 4.4b | Login Google OAuth2 | parziale | entrambi | `models/user.rb`, `auth/omniauth_callbacks_controller.rb`, `pages/auth-callback` | BE fatto in T2 (uid corretto, collegamento per email verificata, token nel fragment, `FRONTEND_URL`). FE: leggere il token dal fragment (T2-FE) |
+| 4.4b | Login Google OAuth2 | fatto | entrambi | `models/user.rb`, `auth/omniauth_callbacks_controller.rb`, `pages/auth-callback` | BE fatto in T2 (uid corretto, collegamento per email verificata, token nel fragment, `FRONTEND_URL`). FE fatto in T2-FE: token letto dal fragment e rimosso dall'URL, messaggi `oauth_failed`/`oauth_canceled`, logout con `POST` |
 | 4.4c | Login, token, HttpInterceptor | parziale | frontend | `pages/login-page.ts/`, `core/services/auth.service.ts`, `core/http/interceptors/*` | fatto (T5, T9): interceptor, signup con `password_confirmation`, `date_of_birth` e validator di uguaglianza |
 | 4.4d | Route guard | parziale | frontend | `core/guards/*`, `app.routes.ts` | `adminGuard` corretto in T9 (ospite → /login, non admin → /forbidden). Manca il guard su `/my-orders/:orderId` (T7) |
 
@@ -89,7 +89,7 @@ Legenda stato: **fatto** / **parziale** / **mancante**.
 | 8b | README principale | mancante | PM + entrambi | `README.md` (contiene la master key), `backend/README.md` (template) | Prerequisiti, setup DB, avvio |
 | 8c | Documento di architettura | mancante | PM | – | `docs/ARCHITETTURA.md` |
 | 8d | docker-compose (opzionale) | mancante | entrambi | `backend/Dockerfile` | Il Dockerfile installa sqlite e non libpq; compose assente |
-| Q1 | UX / a11y minima | parziale | frontend | `components/*`, `pages/*` | alt errati o mancanti; bottoni icona senza aria-label; login senza mat-label; elementi cliccabili non raggiungibili da tastiera |
+| Q1 | UX / a11y minima | fatto (T11a) | frontend | `components/*`, `pages/*`, `styles.scss`, `e2e/a11y.spec.ts` | alt, aria-label, mat-label, contrasto, navigazione da tastiera e focus visibile; axe WCAG A/AA senza violazioni su catalogo, login, signup, dettaglio |
 | Q2 | CI | parziale | – | `backend/.github/workflows/ci.yml` | Il file sta in `backend/`, quindi GitHub non lo esegue; nessun job di test |
 | Q3 | Contratto `backend/API.md` | parziale | backend | `backend/API.md` | Allineato alle rotte. Da aggiornare per i bug noti e per il formato reale di `meta` di Pagy (`previous`, `pages`) |
 
@@ -103,6 +103,12 @@ Legenda stato: **fatto** / **parziale** / **mancante**.
 | T9 | Catalogo e auth (parte frontend): ricerca, paginazione, signup, adminGuard, wishlist ospiti | **fatto** (lista completa categorie in attesa del BE) |
 | T10a | i18n frontend (selettore lingua, testi, paginatore, pipe) | **fatto** |
 | T2 | Sicurezza e auth backend | **fatto** |
-| T2-FE | Adeguamento frontend a T2 (token OAuth nel fragment, POST logout) | in corso |
+| T2-FE | Adeguamento frontend a T2 (token OAuth nel fragment, POST logout) | **fatto** |
+| T11a | Accessibilità, pulizia, budget del bundle | **fatto** |
 | T4 | Carrello e checkout robusti (backend) | **fatto** |
-| T6 | Carrello frontend su nuovo contratto | da fare (carrello FE non funzionante fino ad allora) |
+| T6 | Carrello frontend su nuovo contratto | in corso (carrello FE non funzionante fino ad allora) |
+| T3 | Errori uniformi (backend) | in corso |
+
+Problemi segnalati, da includere nei task successivi:
+- Admin ordini: il link "Modifica" punta a `orders/:id/edit`, rotta inesistente (task Area admin).
+- "I miei ordini": paginatore dentro il `@for` (T7).

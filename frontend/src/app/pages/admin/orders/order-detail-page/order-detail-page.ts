@@ -137,7 +137,7 @@ import DiscountBadge from "../../../../components/discount-badge/discount-badge"
           </div>
         } @else {
           <div>
-            <p i18n="@@orderDetailPage.error.loading" class="text-red-500">Non è stato possibile caricare i dettagli dell'ordine.</p>
+            <p i18n="@@orderDetailPage.error.loading" class="text-red-700">Non è stato possibile caricare i dettagli dell'ordine.</p>
             <p appErrorPanel>{{ error()?.join(", ") }}</p>
           </div>
         }

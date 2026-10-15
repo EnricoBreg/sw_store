@@ -10,7 +10,7 @@ import { Component } from "@angular/core";
         <div>
           <!-- <h4 class="lg:text-2xl font-bold">SW Store</h4> -->
           <img src="assets/ebeefy_logo.png" alt="EBeefy" class="h-20 mb-2" />
-          <span class="text-sm text-gray-400">Copyright 2026</span>
+          <span class="text-sm text-gray-600">Copyright 2026</span>
           <div class="mt-2 flex flex-col gap-4">
             <p class="text-lg font-semibold" i18n="@@footer.contacts">Contatti</p>
             <ul class="space-y-1">

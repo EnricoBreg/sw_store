@@ -34,6 +34,7 @@
     "@angular/cli": "^21.2.9",
     "@angular/compiler-cli": "^21.2.0",
     "@angular/localize": "^21.2.16",
+    "@axe-core/playwright": "^4.14.0",
     "@playwright/test": "^1.64.1",
     "@tailwindcss/postcss": "^4.1.12",
     "@types/node": "^26.6.5",

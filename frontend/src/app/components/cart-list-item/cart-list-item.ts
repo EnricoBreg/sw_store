@@ -18,8 +18,10 @@ import QuantitySelector from "../quantity-selector/quantity-selector";
 
     <div class="grid grid-cols-1 md:grid-cols-4">
       <div class="md:col-span-2 flex items-center gap-4">
+        <!-- Immagine decorativa: il nome del prodotto è nel link accanto -->
         <img
           [src]="product.image_url"
+          alt=""
           (error)="handleImageError($event)"
           class="w-24 h-24 rounded-lg object-cover"
         />
@@ -49,7 +51,13 @@ import QuantitySelector from "../quantity-selector/quantity-selector";
       </div>
 
       <div class="flex -me-3 justify-end">
-        <button matIconButton class="danger" (click)="cartService.removeFromCart(product)">
+        <button
+          matIconButton
+          type="button"
+          class="danger"
+          [attr.aria-label]="removeLabel()"
+          (click)="cartService.removeFromCart(product)"
+        >
           <mat-icon>delete</mat-icon>
         </button>
       </div>
@@ -62,6 +70,10 @@ export default class CartListItem {
   cartService = inject(CartService);
 
   protected readonly handleImageError = handleImageError;
+
+  removeLabel = computed(
+    () => $localize`:@@cartListItem.remove:Rimuovi ${this.cartItem().product.name}:productName: dal carrello`,
+  );
 
   total = computed(() =>
     (

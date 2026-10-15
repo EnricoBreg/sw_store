@@ -12,16 +12,26 @@ import { LoadingService } from "../../core/http/services/loading.service";
   template: `
     <button
       matIconButton
+      type="button"
+      i18n-aria-label="@@quantitySelector.decrease"
+      aria-label="Diminuisci la quantità"
       [disabled]="selectedQuantity() === 1 || loadingService.isLoading()"
       (click)="updateQuantity(-1)"
     >
       <mat-icon>remove</mat-icon>
     </button>
-    <span class="text-lg border-1 rounded-lg py-2 px-4 border-color-gray-500">{{
-      selectedQuantity()
-    }}</span>
+    <span
+      class="text-lg border-1 rounded-lg py-2 px-4 border-color-gray-500"
+      role="status"
+      aria-live="polite"
+      [attr.aria-label]="quantityLabel()"
+      >{{ selectedQuantity() }}</span
+    >
     <button
       matIconButton
+      type="button"
+      i18n-aria-label="@@quantitySelector.increase"
+      aria-label="Aumenta la quantità"
       [disabled]="selectedQuantity() === maxQuantity() || loadingService.isLoading()"
       (click)="updateQuantity(1)"
     >
@@ -39,6 +49,10 @@ export default class QuantitySelector {
   quantityChange = output<number>();
 
   selectedQuantity = signal<number>(1);
+
+  quantityLabel = computed(
+    () => $localize`:@@quantitySelector.label:Quantità: ${this.selectedQuantity()}:quantity:`,
+  );
 
   constructor() {
     effect(() => {

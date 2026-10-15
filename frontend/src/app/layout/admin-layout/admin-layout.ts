@@ -1,7 +1,7 @@
 import { Component, inject, input } from "@angular/core";
 import { MatListItem, MatListItemTitle, MatNavList } from "@angular/material/list";
 import { MatSidenav, MatSidenavContainer, MatSidenavContent } from "@angular/material/sidenav";
-import { RouterOutlet, RouterLinkWithHref } from "@angular/router";
+import { RouterOutlet, RouterLink, RouterLinkActive } from "@angular/router";
 import ViewPanel from "../../core/directives/view-panel/view-panel";
 import { MatIcon } from "@angular/material/icon";
 import { LayoutService } from "../../core/services/layout.service";
@@ -18,8 +18,9 @@ import { LayoutService } from "../../core/services/layout.service";
     ViewPanel,
     MatIcon,
     MatListItemTitle,
-    RouterLinkWithHref
-],
+    RouterLink,
+    RouterLinkActive,
+  ],
   template: `
     <mat-sidenav-container class="mt-2 full-height-layout" hasBackdrop="true">
       <mat-sidenav #sidenav mode="over" [opened]="sidenavOpened()">
@@ -27,33 +28,33 @@ import { LayoutService } from "../../core/services/layout.service";
           <h3 i18n="@@menuOperazioni" class="text-lg font-semibold text-gray-900">Menu operazioni</h3>
 
           <mat-nav-list>
-            <mat-list-item class="my-2" routerLink="dashboard">
+            <a mat-list-item class="my-2" routerLink="dashboard" routerLinkActive #dashboardLink="routerLinkActive" [activated]="dashboardLink.isActive">
               <span matListItemTitle class="font-medium flex items-center gap-2">
                 <mat-icon>dashboard</mat-icon>
                 <ng-container i18n>Dashboard</ng-container>
               </span>
-            </mat-list-item>
+            </a>
 
-            <mat-list-item class="my-2" routerLink="users">
+            <a mat-list-item class="my-2" routerLink="users" routerLinkActive #usersLink="routerLinkActive" [activated]="usersLink.isActive">
               <span matListItemTitle class="font-medium flex items-center gap-2">
                 <mat-icon>groups</mat-icon>
                 <ng-container i18n="@@utenti">Utenti</ng-container>
               </span>
-            </mat-list-item>
+            </a>
 
-            <mat-list-item class="my-2" routerLink="products">
+            <a mat-list-item class="my-2" routerLink="products" routerLinkActive #productsLink="routerLinkActive" [activated]="productsLink.isActive">
               <span matListItemTitle class="font-medium flex items-center gap-2">
                 <mat-icon>list_alt</mat-icon>
                 <ng-container i18n="@@prodotti">Prodotti</ng-container>
               </span>
-            </mat-list-item>
+            </a>
 
-            <mat-list-item class="my-2" routerLink="orders">
+            <a mat-list-item class="my-2" routerLink="orders" routerLinkActive #ordersLink="routerLinkActive" [activated]="ordersLink.isActive">
               <span matListItemTitle class="font-medium flex items-center gap-2">
                 <mat-icon>local_shipping</mat-icon>
                 <ng-container i18n="@@ordini">Ordini</ng-container>
               </span>
-            </mat-list-item>
+            </a>
           </mat-nav-list>
         </div>
       </mat-sidenav>

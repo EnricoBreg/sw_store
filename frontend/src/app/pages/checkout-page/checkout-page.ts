@@ -122,8 +122,8 @@ import { OrderData, OrdersService } from "../../core/services/orders.service";
                       <span i18n="@@checkoutPage.pagamento.card" class="font-medium">Carta di debito/credito</span>
                       <img src="assets/mastercard.svg" alt="Mastercard" class="h-6" />
                       <img src="assets/visa.svg" alt="Visa" class="h-6" />
-                      <img src="assets/amex.svg" alt="America Express" class="h-6" />
-                      <img src="assets/poste_pay.svg" alt="Post Pay" class="h-6" />
+                      <img src="assets/amex.svg" alt="American Express" class="h-6" />
+                      <img src="assets/poste_pay.svg" alt="PostePay" class="h-6" />
                     </div>
                   </mat-radio-button>
 
@@ -132,7 +132,7 @@ import { OrderData, OrdersService } from "../../core/services/orders.service";
                   </mat-radio-button>
 
                   <mat-radio-button value="pay_pal">
-                    <img src="assets/pay_pal.svg" alt="Pay Pal" class="h-8" />
+                    <img src="assets/pay_pal.svg" alt="PayPal" class="h-8" />
                   </mat-radio-button>
 
                   <mat-radio-button value="stripe">
@@ -172,7 +172,7 @@ import { OrderData, OrdersService } from "../../core/services/orders.service";
                   <div class="flex gap-2 items-center space-between">
                     <img
                       [src]="item.product.image_url"
-                      [alt]="'Immagine di ' + item.product.name"
+                      alt=""
                       class="w-16 h-16 object-cover rounded"
                       (error)="handleImageError($event)"
                     />

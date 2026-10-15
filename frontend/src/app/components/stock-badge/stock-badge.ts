@@ -15,7 +15,7 @@ import { Badge } from "../../core/directives/badge";
         'text-green-700 bg-green-50 ring-green-600/20':
           sq !== undefined && sq > 5,
         'text-yellow-700 bg-yellow-100 ring-yellow-600/20': sq !== undefined && sq >= 1 && sq <= 5,
-        'text-gray-400': sq === undefined,
+        'text-gray-600': sq === undefined,
       }"
     >
       @if (sq > 0) {

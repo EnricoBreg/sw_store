@@ -10,29 +10,35 @@ import { CategoriesService } from '../../core/services/categories.service';
     <div>
 
       @if (errorMessage()) {
-        <div class="text-red-500 text-lg">
+        <div class="text-red-700 text-lg">
           {{ errorMessage() }}
         </div>
       }
 
       <mat-nav-list>
-        <mat-list-item
+        <button
+          mat-list-item
+          type="button"
           class="my-2"
           [activated]="!selectedCategory()"
+          [attr.aria-current]="!selectedCategory() ? 'true' : null"
           (click)="onCategorySelectEvent({ id: undefined, name: undefined })"
         >
           <span matListItemTitle class="font-medium" i18n="@@categoriesList.all">Tutte</span>
-        </mat-list-item>
+        </button>
         @for (category of categories(); track category) {
-          <mat-list-item
+          <button
+            mat-list-item
+            type="button"
             class="my-2"
             [activated]="category.id === selectedCategory()?.id"
+            [attr.aria-current]="category.id === selectedCategory()?.id ? 'true' : null"
             (click)="onCategorySelectEvent({ id: category.id, name: category.name })"
           >
             <span matListItemTitle class="font-medium">
               {{ category.name | titlecase }}
             </span>
-          </mat-list-item>
+          </button>
         }
       </mat-nav-list>
     </div>

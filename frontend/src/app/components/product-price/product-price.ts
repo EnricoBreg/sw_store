@@ -15,7 +15,7 @@ import Product from "../../core/models/product";
         <p class="text-xs text-gray-600 line-through">
           {{ product().price | currency: "EUR" }}
         </p>
-        <span class="text-xs bg-red-100 text-red-500 font-medium px-2 py-1 rounded ml-2">
+        <span class="text-xs bg-red-100 text-red-700 font-medium px-2 py-1 rounded ml-2">
           -{{ discountPercentageInt() }}%
         </span>
       }
@@ -34,7 +34,7 @@ export default class ProductPrice {
   discountPercentageInt = computed(() => Math.round(this.product().discount_percentage));
 
   mainPriceClasses = computed(() => {
-    const color = this.product().discount_percentage > 0 ? "text-red-500" : "text-black";
+    const color = this.product().discount_percentage > 0 ? "text-red-700" : "text-black";
     const base = "self-start font-semibold cursor-auto my-3";
 
     return `${base} ${color} ${this.className()}`;

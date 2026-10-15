@@ -84,7 +84,12 @@ import CategorySelect from "../../../../components/category-select/category-sele
 
           <!-- Menu selezione colonne visibili -->
           <div>
-            <button matIconButton [matMenuTriggerFor]="columnsMenu">
+            <button
+              matIconButton
+              [matMenuTriggerFor]="columnsMenu"
+              i18n-aria-label="@@table.columnsMenu"
+              aria-label="Scegli le colonne visibili"
+            >
               <mat-icon>view_column</mat-icon>
             </button>
             <mat-menu #columnsMenu="matMenu">
@@ -227,10 +232,20 @@ import CategorySelect from "../../../../components/category-select/category-sele
               </th>
               <td mat-cell *matCellDef="let product">
                 <div class="flex items-center gap-1">
-                  <a matIconButton [routerLink]="[product.id]">
+                  <a
+                    matIconButton
+                    [routerLink]="[product.id]"
+                    i18n-aria-label="@@table.view"
+                    aria-label="Visualizza"
+                  >
                     <mat-icon>visibility</mat-icon>
                   </a>
-                  <a matIconButton [routerLink]="[product.id, 'edit']">
+                  <a
+                    matIconButton
+                    [routerLink]="[product.id, 'edit']"
+                    i18n-aria-label="@@table.edit"
+                    aria-label="Modifica"
+                  >
                     <mat-icon>edit</mat-icon>
                   </a>
                 </div>
