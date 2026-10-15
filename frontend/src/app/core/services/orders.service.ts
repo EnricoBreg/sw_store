@@ -6,6 +6,7 @@ import { CartService } from "./cart.service";
 import { OrdersQuery } from "./admin-orders.service";
 import { Order } from "../models/order";
 import { ApiResponse, PaginationMeta } from "../models/api-types";
+import { getApiError, getApiErrorStatus } from "../http/api-error";
 
 export interface OrderData {
   order: {
@@ -47,10 +48,13 @@ export class OrdersService {
       next: (response) => {
         this.#orders.set(response.data);
       },
-      error: (err: ApiResponse<null>) => {
-        const message = err.message || "Errore durante il caricamento dei tuoi ordini. Riprova.";
-        this.#error.set({ message: message, errors: err.errors || [] });
-        this.toaster.error(message);
+      error: (err) => {
+        const error = getApiError(
+          err,
+          $localize`:@@ordersService.loadMyOrdersError:Errore durante il caricamento dei tuoi ordini. Riprova.`,
+        );
+        this.#error.set(error);
+        this.toaster.error(error.message);
       },
     });
   }
@@ -58,10 +62,18 @@ export class OrdersService {
   loadOrderById(orderId: number | string) {
     return this.api.getOrderById(orderId).subscribe({
       next: (response) => this.#order.set(response.data),
-      error: (err: ApiResponse<null>) => {
-        const message = err.message || "Errore durante il caricamento dell'ordine. Riprova.";
-        this.#error.set({ message, errors: err.errors || [] });
-        this.toaster.error(message);
+      error: (err) => {
+        // L'ordine non esiste (o non appartiene all'utente): si mostra la pagina "non trovato"
+        if (getApiErrorStatus(err) === 404) {
+          this.router.navigate(["/not-found"]);
+          return;
+        }
+        const error = getApiError(
+          err,
+          $localize`:@@ordersService.loadMyOrderError:Errore durante il caricamento dell'ordine. Riprova.`,
+        );
+        this.#error.set(error);
+        this.toaster.error(error.message);
       },
     })
   }
@@ -86,9 +98,10 @@ export class OrdersService {
         this.cartService.clearCart();
         this.router.navigate(["/products"]);
       },
-      error: (err: ApiResponse<null>) => {
-        const message = err.message || "Errore durante il checkout. Riprova.";
-        this.#error.set({ message, errors: err.errors || [] });
+      error: (err) => {
+        this.#error.set(
+          getApiError(err, $localize`:@@ordersService.checkoutError:Errore durante il checkout. Riprova.`),
+        );
         this.toaster.error("Errore durante il checkout.");
       },
     });

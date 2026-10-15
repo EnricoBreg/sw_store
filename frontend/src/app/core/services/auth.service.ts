@@ -8,6 +8,7 @@ import { ApiResponse } from '../models/api-types';
 import { tap } from 'rxjs';
 import { User } from '../models/user';
 import { WishlistsService } from './wishlists.service';
+import { getApiError } from "../http/api-error";
 
 export interface SignUpData {
   firstName: string;
@@ -52,9 +53,8 @@ export class AuthService {
           this.router.navigate(["/"]);
         }
       },
-      error: (err: ApiResponse<null>) => {
-        console.error("Login failed: ", err);
-        this.#error.set({ message: err.message || "Login fallito. Riprova.", errors: err.errors || []});
+      error: (err) => {
+        this.#error.set(getApiError(err, $localize`:@@authService.loginError:Login fallito. Riprova.`));
       },
     });
   }
@@ -77,6 +77,19 @@ export class AuthService {
         this.toaster.error("Authenticazione OAuth fallita. Riprova.");
       },
     });
+  }
+
+  /**
+   * Avvia il login con Google: la rotta OAuth del backend accetta solo POST,
+   * quindi viene inviato un form verso l'URL configurato.
+   */
+  startGoogleOAuth() {
+    const form = document.createElement("form");
+    form.method = "POST";
+    form.action = this.api.googleOAuthUrl();
+
+    document.body.appendChild(form);
+    form.submit();
   }
 
   signUp(user: SignUpData) {
@@ -103,9 +116,9 @@ export class AuthService {
           this.router.navigate(["/"]);
         }
       },
-      error: (error: ApiResponse<null>) => {
+      error: (error) => {
         this.toaster.error("Registrazione non riuscita. Riprova.");
-        this.#error.set({ message: error.message || "Registrazione fallita. Riprova.", errors: error.errors || [] });
+        this.#error.set(getApiError(error, $localize`:@@authService.signUpError:Registrazione fallita. Riprova.`));
       },
     });
   }
@@ -129,8 +142,8 @@ export class AuthService {
         this.wishlistService.clearWishlist();
         this.router.navigate(["/login"]);
       },
-      error: (err: ApiResponse<null>) => {
-        this.#error.set({ message: err.message || "Logout fallito. Riprova.", errors: err.errors || [] });
+      error: (err) => {
+        this.#error.set(getApiError(err, $localize`:@@authService.logoutError:Logout fallito. Riprova.`));
         this.router.navigate(["/login"]);
       },
     });

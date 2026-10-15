@@ -10,6 +10,7 @@ import { WishlistStore } from "../state/wishlist.store";
 import { Wishlist, WishlistItem } from "../models/wishlist";
 import { ApiResponse } from "../models/api-types";
 import { CartService } from "./cart.service";
+import { getApiErrorMessage } from "../http/api-error";
 
 @Injectable({
   providedIn: "root",
@@ -43,9 +44,10 @@ export class WishlistsService {
       next: (response) => {
         this.#wishlist.set(response.data);
       },
-      error: (err: ApiResponse<null>) => {
-        const msg = `${err?.message}` || "Errore nel caricamento della wishlist.";
-        this.#error.set(msg);
+      error: (err) => {
+        this.#error.set(
+          getApiErrorMessage(err, $localize`:@@wishlistService.loadError:Errore nel caricamento della wishlist.`),
+        );
       },
     });
   }
@@ -74,11 +76,10 @@ export class WishlistsService {
         this.#wishlist.set(response.data);
         this.toaster.success(response.message || "Prodotto aggiunto alla tua wishlist");
       },
-      error: (err: ApiResponse<null>) => {
+      error: (err) => {
         // Rollback allo stato precedente in caso di errore nella chiamata
         this.#wishlist.set(previousWishlist);
-        const msg =
-          `${err?.message}` || "Errore durante aggiornamento del carrello";
+        const msg = getApiErrorMessage(err, $localize`:@@wishlistService.updateError:Errore durante l'aggiornamento della wishlist.`);
 
         this.toaster.error(msg);
         this.#error.set(msg);
@@ -104,10 +105,9 @@ export class WishlistsService {
           this.#wishlist.set(response.data);
           this.toaster.success(response.message || "Prodotto rimosso dal tuo carrello");
         },
-        error: (err: ApiResponse<null>) => {
+        error: (err) => {
           this.#wishlist.set(previousWishlist);
-          const msg =
-            `${err?.message}` || "Errore durante aggiornamento del carrello";
+          const msg = getApiErrorMessage(err, $localize`:@@wishlistService.updateError:Errore durante l'aggiornamento della wishlist.`);
 
           this.toaster.error(msg);
           this.#error.set(msg);
@@ -140,10 +140,12 @@ export class WishlistsService {
           this.cartService.loadCart();
           this.toaster.success(response.message || "Prodotto spostato nel carrello");
         },
-        error: (err: ApiResponse<null>) => {
+        error: (err) => {
           this.#wishlist.set(previousWishlist);
-          const msg =
-            `${err?.message}` || "Errore durante spostamento del prodotto nel carrello";
+          const msg = getApiErrorMessage(
+            err,
+            $localize`:@@wishlistService.moveToCartError:Errore durante lo spostamento del prodotto nel carrello.`,
+          );
           this.toaster.error(msg);
           this.#error.set(msg);
         },

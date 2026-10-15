@@ -4,12 +4,14 @@ import { ApiResponse } from "../models/api-types";
 import { User } from "../models/user";
 import { Observable } from "rxjs";
 import { BYPASS_GLOBAL_ERROR_HANDLING } from "./interceptors/tokens";
+import { API_URL } from "./api-config";
 
 @Injectable({
   providedIn: "root",
 })
 export class AuthApiService {
   private readonly http = inject(HttpClient);
+  private readonly apiUrl = inject(API_URL);
   private readonly loginUrl = "auth/login";
   private readonly signUpUrl = "auth/signup";
   private readonly logoutUrl = "auth/logout";
@@ -41,6 +43,11 @@ export class AuthApiService {
     );
   }
 
+  /** URL del backend che avvia il login con Google (OAuth2). */
+  googleOAuthUrl(): string {
+    return `${this.apiUrl}/auth/google_oauth2`;
+  }
+
   logout(): Observable<ApiResponse<unknown>> {
     return this.http.delete<ApiResponse<unknown>>(this.logoutUrl);
   }
@@ -53,7 +60,7 @@ export class AuthApiService {
   getCurrentUserInfo(token?: string): Observable<ApiResponse<User>> {
     // Caso di autenticazione tramite OAuth: bypass interceptors
     if (token) {
-      return this.rawHttp.get<ApiResponse<User>>(`http://localhost:3000/api/v1/${this.meUrl}`, {
+      return this.rawHttp.get<ApiResponse<User>>(`${this.apiUrl}/${this.meUrl}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

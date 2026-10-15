@@ -8,7 +8,6 @@ import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from "@angular/material/form-field";
 import { apiHeadersInterceptor } from "./core/http/interceptors/api-headers-interceptor";
 import { provideHotToastConfig } from "@ngxpert/hot-toast";
 import { loadingInterceptor } from "./core/http/interceptors/loading-interceptor";
-import { authInterceptor } from "./core/http/interceptors/auth-interceptor";
 import { errorInterceptor } from "./core/http/interceptors/error-interceptor";
 
 export const appConfig: ApplicationConfig = {

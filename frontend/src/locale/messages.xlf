@@ -98,11 +98,23 @@
       <trans-unit id="usersPage.title" datatype="html">
         <source>Utenti registrati</source>
       </trans-unit>
+      <trans-unit id="usersService.loadError" datatype="html">
+        <source>Errore nel caricamento degli utenti.</source>
+      </trans-unit>
       <trans-unit id="utenti" datatype="html">
         <source>Utenti</source>
       </trans-unit>
       <trans-unit id="wishlist.title" datatype="html">
         <source>La tua lista dei desideri</source>
+      </trans-unit>
+      <trans-unit id="wishlistService.loadError" datatype="html">
+        <source>Errore nel caricamento della wishlist.</source>
+      </trans-unit>
+      <trans-unit id="wishlistService.moveToCartError" datatype="html">
+        <source>Errore durante lo spostamento del prodotto nel carrello.</source>
+      </trans-unit>
+      <trans-unit id="wishlistService.updateError" datatype="html">
+        <source>Errore durante l&apos;aggiornamento della wishlist.</source>
       </trans-unit>
       <trans-unit id="prodotti" datatype="html">
         <source>Prodotti</source>
@@ -124,6 +136,18 @@
       </trans-unit>
       <trans-unit id="headerAction.signUp" datatype="html">
         <source>Registrati</source>
+      </trans-unit>
+      <trans-unit id="httpError.network" datatype="html">
+        <source>Impossibile connettersi al server. Controlla la tua connessione.</source>
+      </trans-unit>
+      <trans-unit id="httpError.server" datatype="html">
+        <source>Si è verificato un errore interno al server. Riprova più tardi.</source>
+      </trans-unit>
+      <trans-unit id="httpError.unauthorized" datatype="html">
+        <source>Sessione scaduta. Effettua nuovamente il login.</source>
+      </trans-unit>
+      <trans-unit id="httpError.unexpected" datatype="html">
+        <source>Si è verificato un errore inaspettato. Riprova.</source>
       </trans-unit>
       <trans-unit id="headerAction.greetUnauthenticatedUser" datatype="html">
         <source>Ciao, utente:username:</source>
@@ -272,11 +296,29 @@
       <trans-unit id="adminOrdersPage.title" datatype="html">
         <source>Gestione degli ordini</source>
       </trans-unit>
+      <trans-unit id="adminOrdersService.updateStatusError" datatype="html">
+        <source>Errore nell&apos;aggiornamento dello stato dell&apos;ordine.</source>
+      </trans-unit>
+      <trans-unit id="adminProductsService.createError" datatype="html">
+        <source>Errore nella creazione del nuovo prodotto.</source>
+      </trans-unit>
+      <trans-unit id="adminProductsService.updateError" datatype="html">
+        <source>Errore nell&apos;aggiornamento del prodotto.</source>
+      </trans-unit>
       <trans-unit id="aggiungiAlCarrello" datatype="html">
         <source>Aggiungi al carrello</source>
       </trans-unit>
       <trans-unit id="authCallback.authenticating" datatype="html">
         <source>Autenticazione in corso, attendere...</source>
+      </trans-unit>
+      <trans-unit id="authService.loginError" datatype="html">
+        <source>Login fallito. Riprova.</source>
+      </trans-unit>
+      <trans-unit id="authService.logoutError" datatype="html">
+        <source>Logout fallito. Riprova.</source>
+      </trans-unit>
+      <trans-unit id="authService.signUpError" datatype="html">
+        <source>Registrazione fallita. Riprova.</source>
       </trans-unit>
       <trans-unit id="adminOrdersPage.orderCount" datatype="html">
         <source> Numero di ordini presenti: <x id="ORDERCOUNT" equiv-text="{{ pagination()?.count //i18n(ph=&quot;orderCount&quot;) }}"/> </source>
@@ -343,6 +385,21 @@
       </trans-unit>
       <trans-unit id="ordersSearchHint" datatype="html">
         <source>Ricerca per utente o ID ordine</source>
+      </trans-unit>
+      <trans-unit id="ordersService.checkoutError" datatype="html">
+        <source>Errore durante il checkout. Riprova.</source>
+      </trans-unit>
+      <trans-unit id="ordersService.loadError" datatype="html">
+        <source>Errore nel caricamento degli ordini.</source>
+      </trans-unit>
+      <trans-unit id="ordersService.loadMyOrderError" datatype="html">
+        <source>Errore durante il caricamento dell&apos;ordine. Riprova.</source>
+      </trans-unit>
+      <trans-unit id="ordersService.loadMyOrdersError" datatype="html">
+        <source>Errore durante il caricamento dei tuoi ordini. Riprova.</source>
+      </trans-unit>
+      <trans-unit id="ordersService.loadOrderError" datatype="html">
+        <source>Errore nel caricamento dell&apos;ordine.</source>
       </trans-unit>
       <trans-unit id="orderStatus" datatype="html">
         <source>Stato ordine</source>
@@ -446,8 +503,17 @@
       <trans-unit id="cartPage.title" datatype="html">
         <source>Il tuo carrello</source>
       </trans-unit>
+      <trans-unit id="cartService.loadError" datatype="html">
+        <source>Errore nel caricamento del carrello.</source>
+      </trans-unit>
+      <trans-unit id="cartService.updateError" datatype="html">
+        <source>Errore durante l&apos;aggiornamento del carrello.</source>
+      </trans-unit>
       <trans-unit id="categories" datatype="html">
         <source>Categorie</source>
+      </trans-unit>
+      <trans-unit id="categoriesService.loadError" datatype="html">
+        <source>Errore nel caricamento delle categorie.</source>
       </trans-unit>
       <trans-unit id="categorySelect.clearSelection" datatype="html">
         <source>Cancella selezione</source>
@@ -628,6 +694,12 @@
       </trans-unit>
       <trans-unit id="productsPage.title" datatype="html">
         <source>I prodotti dello store</source>
+      </trans-unit>
+      <trans-unit id="productsService.loadError" datatype="html">
+        <source>Errore nel caricamento dei prodotti.</source>
+      </trans-unit>
+      <trans-unit id="productsService.loadProductError" datatype="html">
+        <source>Errore nel caricamento del prodotto.</source>
       </trans-unit>
       <trans-unit id="newProduct.title" datatype="html">
         <source>Nuovo prodotto</source>

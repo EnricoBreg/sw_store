@@ -170,13 +170,7 @@ export default class SignupPage {
   }
 
   signUpWithGoogle() {
-    const url = "http://localhost:3000/api/v1/auth/google_oauth2";
-    const form = document.createElement("form");
-    form.method = "POST";
-    form.action = url;
-
-    document.body.appendChild(form);
-    form.submit();
+    this.authService.startGoogleOAuth();
   }
 
   focusFirstInvalid() {

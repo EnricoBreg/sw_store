@@ -2,6 +2,7 @@ import { inject, Injectable, signal } from "@angular/core";
 import { User } from "../models/user";
 import { AdminUsersApiService } from "../http/admin-users-api.service";
 import { PaginationMeta } from "../models/api-types";
+import { getApiErrorMessage } from "../http/api-error";
 
 export interface UsersQuery {
   searchTerm?: string;
@@ -30,9 +31,9 @@ export class UsersService {
         this.#paginationMeta.set(response.meta);
       },
       error: (err) => {
-        const msg =
-          `${err?.error.error} - ${err?.error.exception}` || "Errore nel caricamento dei prodotti.";
-        this.#error.set(msg);
+        this.#error.set(
+          getApiErrorMessage(err, $localize`:@@usersService.loadError:Errore nel caricamento degli utenti.`),
+        );
       }
     });
   }

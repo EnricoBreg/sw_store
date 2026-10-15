@@ -6,6 +6,7 @@ import { ApiResponse, PaginationMeta } from "../models/api-types";
 import { AdminOrdersApiService } from "../http/admin-orders-api.service";
 import { Router } from "@angular/router";
 import { Toaster } from "./toaster";
+import { getApiError, getApiErrorMessage } from "../http/api-error";
 
 export interface OrdersQuery {
   fromDate?: Date;
@@ -47,9 +48,9 @@ export class AdminOrdersService {
       },
       error: (err) => {
         // Gestione del messaggio di errore qualora si verifichi
-        const msg =
-          `${err?.error.error} - ${err?.error.exception}` || "Errore nel caricamento degli ordini.";
-        this.#error.set([msg]);
+        this.#error.set([
+          getApiErrorMessage(err, $localize`:@@ordersService.loadError:Errore nel caricamento degli ordini.`),
+        ]);
       },
     });
   }
@@ -59,9 +60,12 @@ export class AdminOrdersService {
       next: (response) => {
         this.#order.set(response.data);
       },
-      error: (err: ApiResponse<null>) => {
-        const msg = `${err.message}` || "Errore nel caricamento dell'ordine.";
-        this.#error.set(err.errors);
+      error: (err) => {
+        const { message: msg, errors } = getApiError(
+          err,
+          $localize`:@@ordersService.loadOrderError:Errore nel caricamento dell'ordine.`,
+        );
+        this.#error.set(errors);
 
         this.toaster.error(msg);
         this.router.navigate(["/admin/orders"]);
@@ -77,9 +81,13 @@ export class AdminOrdersService {
           this.#order.set(response.data);
           this.toaster.success("Stato dell'ordine aggiornato con successo.");
         },
-        error: (error: ApiResponse<null>) => {
-          const msg = `${error.message}` || "Errore nell'aggiornamento dello stato dell'ordine.";
-          this.toaster.error(msg);
+        error: (error) => {
+          this.toaster.error(
+            getApiErrorMessage(
+              error,
+              $localize`:@@adminOrdersService.updateStatusError:Errore nell'aggiornamento dello stato dell'ordine.`,
+            ),
+          );
         },
       }),
     );
