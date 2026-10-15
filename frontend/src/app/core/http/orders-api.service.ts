@@ -5,6 +5,7 @@ import { Observable } from "rxjs";
 import { ApiResponse } from "../models/api-types";
 import { Order } from "../models/order";
 import { OrdersQuery } from "../services/admin-orders.service";
+import { mapData, mapListData, normalizeOrder } from "../models/normalize";
 
 @Injectable({
   providedIn: "root",
@@ -29,14 +30,14 @@ export class OrdersApiService {
       }
     }
 
-    return this.http.get<ApiResponse<Order[]>>(this.url, { params });
+    return this.http.get<ApiResponse<Order[]>>(this.url, { params }).pipe(mapListData(normalizeOrder));
   }
 
   getOrderById(orderId: number | string): Observable<ApiResponse<Order>> {
-    return this.http.get<ApiResponse<Order>>(`${this.url}/${orderId}`);
+    return this.http.get<ApiResponse<Order>>(`${this.url}/${orderId}`).pipe(mapData(normalizeOrder));
   }
 
   checkout(orderData: any): Observable<ApiResponse<Order>> {
-    return this.http.post<ApiResponse<Order>>(this.url, orderData);
+    return this.http.post<ApiResponse<Order>>(this.url, orderData).pipe(mapData(normalizeOrder));
   }
 }

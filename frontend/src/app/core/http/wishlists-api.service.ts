@@ -4,7 +4,7 @@ import { Observable } from "rxjs";
 import { ApiResponse } from "../models/api-types";
 import Product from "../models/product";
 import { Wishlist } from "../models/wishlist";
-import { Cart } from "../models/cart";
+import { mapData, normalizeWishlist } from "../models/normalize";
 
 @Injectable({
   providedIn: "root",
@@ -15,7 +15,7 @@ export class WishlistsApiService {
   private readonly wishlistItemsUrl = "wishlist/items";
 
   loadWishlist(): Observable<ApiResponse<Wishlist>> {
-    return this.http.get<ApiResponse<Wishlist>>(this.wishlistUrl);
+    return this.http.get<ApiResponse<Wishlist>>(this.wishlistUrl).pipe(mapData(normalizeWishlist));
   }
 
   addToWishlist(product: Product): Observable<ApiResponse<Wishlist>> {
@@ -23,14 +23,18 @@ export class WishlistsApiService {
       wishlist_item: {
         product_id: product.id,
       },
-    });
+    }).pipe(mapData(normalizeWishlist));
   }
 
   removeFromWishlist(product: Product): Observable<ApiResponse<Wishlist>> {
-    return this.http.delete<ApiResponse<Wishlist>>(`${this.wishlistItemsUrl}/${product.id}`);
+    return this.http
+      .delete<ApiResponse<Wishlist>>(`${this.wishlistItemsUrl}/${product.id}`)
+      .pipe(mapData(normalizeWishlist));
   }
 
   moveToCart(product: Product): Observable<ApiResponse<Wishlist>> {
-    return this.http.put<ApiResponse<Wishlist>>(`${this.wishlistItemsUrl}/${product.id}/move`, {});
+    return this.http
+      .put<ApiResponse<Wishlist>>(`${this.wishlistItemsUrl}/${product.id}/move`, {})
+      .pipe(mapData(normalizeWishlist));
   }
 }

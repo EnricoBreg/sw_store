@@ -167,7 +167,7 @@ import { OrderData, OrdersService } from "../../core/services/orders.service";
             </ng-container>
 
             <ng-container checkoutItems>
-              @for (item of cart()?.items; track item.product.id) {
+              @for (item of cart()?.items; track item.id) {
                 <div class="mb-2 pb-2">
                   <div class="flex gap-2 items-center space-between">
                     <img
@@ -180,10 +180,7 @@ import { OrderData, OrdersService } from "../../core/services/orders.service";
                       <p class="font-medium">{{ item.product.name }}</p>
                       <p class="text-gray-500 italic">
                         {{ item.quantity }} x
-                        {{
-                          computeDiscountPrice(item.unit_price, item.product.discount_percentage)
-                            | currency: "EUR"
-                        }}
+                        {{ item.discounted_unit_price | currency: "EUR" }}
                       </p>
                     </div>
                   </div>

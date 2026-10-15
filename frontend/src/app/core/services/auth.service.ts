@@ -46,11 +46,7 @@ export class AuthService {
         const user = response.body?.data;
 
         if (user && token) {
-          this.#error.set(undefined);
-          this.store.setAuth(user!, token!);
-          // caricamento del carrello al login dell'utente
-          this.cartService.loadCart();
-          this.wishlistService.loadWishlist();
+          this.startSession(user, token);
           this.router.navigate(["/"]);
         }
       },
@@ -66,10 +62,7 @@ export class AuthService {
         const user = response.data;
 
         if (user && token) {
-          this.#error.set(undefined);
-          this.store.setAuth(user, token);
-          this.cartService.loadCart();
-          this.wishlistService.loadWishlist();
+          this.startSession(user, token);
           this.router.navigate(["/"], { replaceUrl: true });
         }
       },
@@ -111,11 +104,7 @@ export class AuthService {
         const user = response.body?.data;
 
         if (user && token) {
-          this.#error.set(undefined);
-          this.store.setAuth(user!, token!);
-          // caricamento del carrello alla registrazione dell'utente
-          this.cartService.loadCart();
-          this.wishlistService.loadWishlist();
+          this.startSession(user, token);
           this.router.navigate(["/"]);
         }
       },
@@ -126,15 +115,38 @@ export class AuthService {
     });
   }
 
+  /** Aggiorna i dati dell'utente corrente (usato dalla guard delle rotte riservate). */
   me() {
     return this.api.getCurrentUserInfo().pipe(
       tap((response: ApiResponse<User>) => {
-        const user = response.data;
-        this.store.setAuth(user, this.jwtToken()!);
-        this.cartService.loadCart();
-        this.wishlistService.loadWishlist();
-      })
+        this.store.setAuth(response.data, this.jwtToken()!);
+      }),
     );
+  }
+
+  /**
+   * All'avvio dell'app: se c'è una sessione salvata, carrello e wishlist vengono letti dal backend.
+   * Se il token non è più valido, la 401 viene gestita dall'errorInterceptor (logout e login).
+   */
+  restoreSession() {
+    // Vecchie copie locali di carrello e wishlist: non sono più usate
+    localStorage.removeItem("sw-store-cart");
+    localStorage.removeItem("sw-store-wishlist");
+
+    if (this.authenticated()) {
+      this.loadUserData();
+    }
+  }
+
+  private startSession(user: User, token: string) {
+    this.#error.set(undefined);
+    this.store.setAuth(user, token);
+    this.loadUserData();
+  }
+
+  private loadUserData() {
+    this.cartService.loadCart();
+    this.wishlistService.loadWishlist();
   }
 
   signOut() {

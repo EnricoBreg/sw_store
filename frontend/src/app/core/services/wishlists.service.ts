@@ -1,47 +1,47 @@
-import { computed, effect, inject, Injectable, signal } from "@angular/core";
-import { Subject, debounceTime, switchMap, tap } from "rxjs";
-import { CartApiService } from "../http/cart-api.service";
-import { Cart, CartItem } from "../models/cart";
-import Product from "../models/product";
-import { CartStore } from "../state/cart.store";
-import { Toaster } from "./toaster";
+import { computed, inject, Injectable, signal } from "@angular/core";
+import { Observable } from "rxjs";
 import { WishlistsApiService } from "../http/wishlists-api.service";
-import { WishlistStore } from "../state/wishlist.store";
-import { Wishlist, WishlistItem } from "../models/wishlist";
+import { getApiErrorDetail, getApiErrorMessage } from "../http/api-error";
 import { ApiResponse } from "../models/api-types";
+import Product from "../models/product";
+import { Wishlist } from "../models/wishlist";
 import { CartService } from "./cart.service";
-import { getApiErrorMessage } from "../http/api-error";
+import { Toaster } from "./toaster";
 
+/**
+ * Stato della wishlist: come per il carrello, la fonte di verità è il backend e lo stato
+ * viene sostituito con la wishlist restituita a ogni risposta. Mentre una richiesta è in corso
+ * il prodotto risulta "in attesa", così l'interfaccia può disabilitare i pulsanti.
+ */
 @Injectable({
   providedIn: "root",
 })
 export class WishlistsService {
-  private api = inject(WishlistsApiService);
-  private store = inject(WishlistStore);
-  private cartService = inject(CartService);
-  private toaster = inject(Toaster);
+  private readonly api = inject(WishlistsApiService);
+  private readonly cartService = inject(CartService);
+  private readonly toaster = inject(Toaster);
 
-  #wishlist = signal<Wishlist | null>(this.store.wishlist());
-  #error = signal<string | undefined>(undefined);
+  readonly #wishlist = signal<Wishlist | null>(null);
+  readonly #pendingProductIds = signal<ReadonlySet<number>>(new Set());
+  readonly #error = signal<string | undefined>(undefined);
 
-  wishlist = this.#wishlist.asReadonly();
-  error = this.#error.asReadonly();
+  readonly wishlist = this.#wishlist.asReadonly();
+  readonly error = this.#error.asReadonly();
 
-  wishlistItemCount = computed(() => this.#wishlist()?.items.length ?? 0);
+  readonly wishlistItemCount = computed(() => this.#wishlist()?.items.length ?? 0);
 
-  constructor() {
-    effect(() => {
-      const wishlist = this.#wishlist();
+  isInWishlist(productId: number): boolean {
+    return !!this.#wishlist()?.items.some((item) => item.product.id === productId);
+  }
 
-      if (wishlist) {
-        this.store.setWishlist(wishlist);
-      }
-    });
+  isPending(productId: number): boolean {
+    return this.#pendingProductIds().has(productId);
   }
 
   loadWishlist() {
     this.api.loadWishlist().subscribe({
       next: (response) => {
+        this.#error.set(undefined);
         this.#wishlist.set(response.data);
       },
       error: (err) => {
@@ -53,117 +53,72 @@ export class WishlistsService {
   }
 
   addToWishlist(product: Product) {
-    const previousWishlist = this.#wishlist();
-
-    this.#wishlist.update((wl) => {
-      if (!wl) return wl;
-
-      const existingItem = wl.items.find((i) => i.product.id === product.id);
-
-      let updatedItems: WishlistItem[] = [...wl.items];
-      if (!existingItem) {
-        updatedItems = [...wl.items, { id: Math.random(), product }];
-      }
-
-      return {
-        ...wl,
-        items: updatedItems,
-      };
-    });
-
-    this.api.addToWishlist(product).subscribe({
-      next: (response) => {
-        this.#wishlist.set(response.data);
-        this.toaster.success(response.message || $localize`:@@toast.addedToWishlist:Prodotto aggiunto alla tua wishlist`);
-      },
-      error: (err) => {
-        // Rollback allo stato precedente in caso di errore nella chiamata
-        this.#wishlist.set(previousWishlist);
-        const msg = getApiErrorMessage(err, $localize`:@@wishlistService.updateError:Errore durante l'aggiornamento della wishlist.`);
-
-        this.toaster.error(msg);
-        this.#error.set(msg);
-      },
+    this.run(product, this.api.addToWishlist(product), {
+      success: $localize`:@@toast.addedToWishlist:Prodotto aggiunto alla tua wishlist`,
+      error: $localize`:@@wishlistService.updateError:Errore durante l'aggiornamento della wishlist.`,
     });
   }
 
   removeFromWishlist(product: Product) {
-    const previousWishlist = this.#wishlist();
-
-    this.#wishlist.update((wl) => {
-      if (!wl) return wl;
-
-      const existingItem = wl.items.find((i) => i.product.id === product.id);
-      let updatedItems = [...wl.items];
-
-      if (existingItem) {
-        updatedItems = wl.items.filter((ci) => ci.product.id !== product.id);
-      }
-
-      this.api.removeFromWishlist(product).subscribe({
-        next: (response) => {
-          this.#wishlist.set(response.data);
-          this.toaster.success(response.message || $localize`:@@toast.removedFromWishlist:Prodotto rimosso dalla tua wishlist`);
-        },
-        error: (err) => {
-          this.#wishlist.set(previousWishlist);
-          const msg = getApiErrorMessage(err, $localize`:@@wishlistService.updateError:Errore durante l'aggiornamento della wishlist.`);
-
-          this.toaster.error(msg);
-          this.#error.set(msg);
-        },
-      });
-
-      return {
-        ...wl,
-        items: updatedItems,
-      };
+    this.run(product, this.api.removeFromWishlist(product), {
+      success: $localize`:@@toast.removedFromWishlist:Prodotto rimosso dalla tua wishlist`,
+      error: $localize`:@@wishlistService.updateError:Errore durante l'aggiornamento della wishlist.`,
     });
   }
 
+  /** Sposta un pezzo del prodotto nel carrello: il backend lo toglie dalla wishlist solo se l'aggiunta riesce. */
   moveToCart(product: Product) {
-    const previousWishlist = this.#wishlist();
+    this.run(
+      product,
+      this.api.moveToCart(product),
+      {
+        success: $localize`:@@toast.movedToCart:Prodotto spostato nel carrello`,
+        error: $localize`:@@wishlistService.moveToCartError:Errore durante lo spostamento del prodotto nel carrello.`,
+      },
+      // La risposta contiene solo la wishlist: il carrello va riletto
+      () => this.cartService.loadCart(),
+    );
+  }
 
-    this.#wishlist.update((wl) => {
-      if (!wl) return wl;
+  /** Svuota lo stato locale senza chiamate API (logout, sessione scaduta). */
+  clearWishlist() {
+    this.#wishlist.set(null);
+    this.#pendingProductIds.set(new Set());
+    this.#error.set(undefined);
+  }
 
-      const existingItem = wl.items.find((i) => i.product.id === product.id);
-      let updatedItems = [...wl.items];
+  private run(
+    product: Product,
+    request: Observable<ApiResponse<Wishlist>>,
+    messages: { success: string; error: string },
+    onSuccess?: () => void,
+  ) {
+    if (this.isPending(product.id)) return;
+    this.setPending(product.id, true);
 
-      if (existingItem) {
-        updatedItems = wl.items.filter((ci) => ci.product.id !== product.id);
-      }
-      
-      this.api.moveToCart(product).subscribe({
-        next: (response) => {
-          this.#wishlist.set(response.data);
-          this.cartService.loadCart();
-          this.toaster.success(response.message || $localize`:@@toast.movedToCart:Prodotto spostato nel carrello`);
-        },
-        error: (err) => {
-          this.#wishlist.set(previousWishlist);
-          const msg = getApiErrorMessage(
-            err,
-            $localize`:@@wishlistService.moveToCartError:Errore durante lo spostamento del prodotto nel carrello.`,
-          );
-          this.toaster.error(msg);
-          this.#error.set(msg);
-        },
-      });
-
-      return {
-        ...wl,
-        items: updatedItems,
-      };
+    request.subscribe({
+      next: (response) => {
+        this.setPending(product.id, false);
+        this.#error.set(undefined);
+        this.#wishlist.set(response.data);
+        onSuccess?.();
+        this.toaster.success(response.message || messages.success);
+      },
+      error: (err) => {
+        this.setPending(product.id, false);
+        const message = getApiErrorDetail(err, messages.error);
+        this.#error.set(message);
+        this.toaster.error(message);
+      },
     });
   }
 
-  /**
-   * Metodo che si occupa solamente di svuotare la wishlist senza fare una chiamata api.
-   * Usato principalmente quando l'utente effettua un logout, o la sessione è scaduta.
-   */
-  clearWishlist() {
-    this.store.clearWishlist();
-    this.#wishlist.set(null);
+  private setPending(productId: number, pending: boolean) {
+    this.#pendingProductIds.update((ids) => {
+      const next = new Set(ids);
+      if (pending) next.add(productId);
+      else next.delete(productId);
+      return next;
+    });
   }
 }

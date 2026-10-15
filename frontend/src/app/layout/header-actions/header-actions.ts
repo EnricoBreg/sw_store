@@ -98,7 +98,7 @@ export class HeaderActions {
   readonly cartService = inject(CartService);
   readonly whishlistService = inject(WishlistsService);
 
-  cartItemCount = this.cartService.cartItemCount;
+  cartItemCount = this.cartService.itemsCount;
   wishlistItemCount = this.whishlistService.wishlistItemCount;
 
   greetUtente = computed(() => {

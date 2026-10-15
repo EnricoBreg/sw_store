@@ -11,13 +11,13 @@ import EmptyCart from "../empty-cart/empty-cart";
   imports: [ViewPanel, CartListItem, EmptyCart],
   template: `
     <div appViewPanel>
-      @if (!cartService.cartEmpty()) {
+      @if (!cartService.isEmpty()) {
         <h2 class="text-2xl font-bold mb-4" i18n="@@cartList.itemsCount">
-          Articoli nel carrello: {{ cartService.cartItemCount() }}
+          Articoli nel carrello: {{ cartService.itemsCount() }}
         </h2>
         
         <div class="flex flex-col gap-6">
-          @for (item of cartService.cart()?.items; track item.product.id) {
+          @for (item of cartService.cart()?.items; track item.id) {
             <app-cart-list-item [cartItem]="item" />
           }
         </div>

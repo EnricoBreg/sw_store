@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { ApiResponse } from '../models/api-types';
 import Product from '../models/product';
 import { ProductsQuery } from '../services/products.service';
+import { mapData, mapListData, normalizeProduct } from '../models/normalize';
 
 @Injectable({
   providedIn: 'root',
@@ -34,10 +35,10 @@ export class ProductsApiService {
       }
     }
 
-    return this.http.get<ApiResponse<Product[]>>(this.url, { params });
+    return this.http.get<ApiResponse<Product[]>>(this.url, { params }).pipe(mapListData(normalizeProduct));
   } 
 
   getById(productId: number): Observable<ApiResponse<Product>> {
-    return this.http.get<ApiResponse<Product>>(`${this.url}/${productId}`);
+    return this.http.get<ApiResponse<Product>>(`${this.url}/${productId}`).pipe(mapData(normalizeProduct));
   }
 }
