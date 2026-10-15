@@ -47,12 +47,8 @@ class Api::V1::Users::WishlistItemsController < Api::V1::AuthenticatedController
       return
     end
 
-    cart_item = current_user.cart.cart_items.find_by(product_id: @product.id)
-    if cart_item
-      cart_item.quantity += 1
-    else
-      cart_item = current_user.cart.cart_items.build(product: @product, quantity: 1, unit_price: @product.price)
-    end
+    # Stesse regole di POST /cart/items: prodotto attivo e quantità entro lo stock.
+    cart_item = current_user.cart.add_product(@product, 1)
 
     if cart_item.save
       @wishlist.wishlist_items.find_by(product_id: @product.id).destroy

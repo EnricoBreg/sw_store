@@ -25,48 +25,26 @@ class Api::V1::Users::OrdersController < Api::V1::AuthenticatedController
     cart = current_user.cart
 
     if cart.empty?
-      render_error(
-        message: :checkout_empty_cart,
-      )
+      message = I18n.t("api.messages.checkout_empty_cart")
+      render_error(message: message, errors: [ message ], status: :unprocessable_entity)
       return
     end
 
-    ActiveRecord::Base.transaction do
-      safe_params = order_params.merge(
-        total_amount: cart.total_amount,
+    @order = Order.create_from_cart(cart, order_params)
+
+    if @order.persisted?
+      render_success(
+        message: I18n.t("api.messages.checkout_successful", id: @order.id),
+        data: serialize_resource(@order, OrderSerializer),
+        status: :created
       )
-
-      # Creazione dell'ordine
-      @order = current_user.orders.create!(safe_params)
-
-      # Conversione dei cart_item in order_item
-      cart.cart_items.each do |cart_item|
-        @order.order_items.create!(
-          product: cart_item.product,
-          quantity: cart_item.quantity,
-          unit_price: cart_item.unit_price * (1 - (cart_item.product.discount_percentage.to_f / 100)),
-          discount_percentage: cart_item.product.discount_percentage
-        )
-
-        cart_item.product.decrement!(:stock_quantity, cart_item.quantity)
-      end
-
-      # Svuotamento del carrello
-      cart.cart_items.destroy_all
+    else
+      render_error(
+        message: :checkout_error,
+        errors: @order.errors.full_messages,
+        status: :unprocessable_entity
+      )
     end
-
-    render_success(
-      message: I18n.t("api.messages.checkout_successful", id: @order.id),
-      data: serialize_resource(@order, OrderSerializer),
-      status: :created
-    )
-
-  rescue ActiveRecord::RecordInvalid => err
-    render_error(
-      message: :checkout_error,
-      errors: @order.errors.full_messages,
-      status: :unprocessable_entity
-    )
   end
 
   # PUT /api/v1/orders/:id

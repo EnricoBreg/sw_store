@@ -1,0 +1,12 @@
+# unit_price: prezzo di listino del prodotto al momento dell'ultima modifica della riga.
+customer_headphones:
+  cart: customer_cart
+  product: headphones
+  quantity: 2
+  unit_price: 99.90
+
+other_customer_keyboard:
+  cart: other_customer_cart
+  product: keyboard
+  quantity: 1
+  unit_price: 79.00

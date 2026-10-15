@@ -84,8 +84,30 @@ Gli endpoint di lista accettano `page` e `limit` in query string e restituiscono
   "image_url": "…" | null, "thumbnail_url": "…" | null, "category": Category }
 ```
 
-**Cart**: `{ "id", "user_id", "items": [ CartItem ] }`
-**CartItem**: `{ "id", "cart_id", "quantity", "unit_price", "product": Product }`
+**Importi:** i valori decimali (prezzi, sconti, totali) sono serializzati come **stringhe** (es. `"89.91"`), come per `Product.price`. I valori calcolati sono arrotondati a 2 decimali.
+
+**Cart**
+
+```json
+{ "id", "user_id",
+  "items": [ CartItem ],
+  "items_count": 3,          // somma delle quantità (numero di pezzi)
+  "total_amount": "268.73" } // somma dei total_price delle righe: è l'importo che POST /orders addebiterà
+```
+
+**CartItem**
+
+```json
+{ "id": 12,                         // id del CartItem: si usa in PATCH/DELETE /cart/items/:id
+  "cart_id", "product_id", "quantity",
+  "unit_price": "99.9",             // prezzo di listino attuale del prodotto (non scontato)
+  "discount_percentage": "10.0",    // sconto attuale del prodotto
+  "discounted_unit_price": "89.91", // unit_price scontato
+  "total_price": "179.82",          // discounted_unit_price × quantity
+  "product": Product }
+```
+
+I prezzi del carrello seguono sempre prezzo e sconto **attuali** del prodotto; vengono fissati solo alla creazione dell'ordine. Il frontend può mostrare righe e totale senza ricalcoli.
 
 **Wishlist**: `{ "id", "user_id", "items": [ WishlistItem ] }`
 **WishlistItem**: `{ "id", "wishlist_id", "product": Product }`
@@ -114,7 +136,17 @@ Transizioni di stato consentite (ogni altra transizione, o uno stato sconosciuto
 - Il rimborso (`refunded`) **non** ripristina lo stock: la merce resa non è necessariamente rivendibile; eventuali rientri a magazzino si gestiscono modificando il prodotto.
 - I dati di spedizione (`first_name`, `last_name`, `street`, `city`, `zip_code`, `country`, `stripe_payment_token`) sono modificabili solo finché l'ordine è `pending` o `paid`.
 
-**OrderItem**: `{ "id", "order_id", "unit_price", "quantity", "discount_percentage", "total_price", "product": Product }`
+**OrderItem**
+
+```json
+{ "id", "order_id", "quantity",
+  "unit_price": "89.91",         // prezzo unitario PAGATO, già scontato, fissato alla creazione dell'ordine
+  "discount_percentage": "10.0", // sconto applicato al momento dell'ordine (informativo, già incluso in unit_price)
+  "total_price": "179.82",       // unit_price × quantity (nessun ulteriore sconto)
+  "product": Product }           // prodotto nello stato attuale (prezzo corrente, può differire)
+```
+
+`Order.total_amount` è la somma dei `total_price` delle righe.
 
 **Address**: `{ "id", "nickname", "first_name", "last_name", "street", "city", "zip_code", "country", "is_default" }`
 
@@ -214,22 +246,32 @@ Flusso (il frontend non chiama questi endpoint con HttpClient, ma con una naviga
 
 ## Carrello (utente)
 
-| Metodo | Path                          | Auth   | Descrizione                                   |
-| ------ | ----------------------------- | ------ | --------------------------------------------- |
-| GET    | `/cart`                       | Utente | Carrello corrente                              |
-| POST   | `/cart/items`                 | Utente | Aggiunge un prodotto (o ne somma la quantità)  |
-| PUT/PATCH | `/cart/items/:product_id`  | Utente | Imposta la quantità (≤ 0 rimuove)              |
-| DELETE | `/cart/items/:product_id`     | Utente | Rimuove il prodotto                            |
+> **Breaking change (T4):** `PATCH`/`DELETE` usano l'**id del CartItem** (`items[].id` di `GET /cart`), non più l'id del prodotto. `PATCH` con `quantity <= 0` non rimuove più la riga: risponde 422 (per rimuovere si usa `DELETE`).
+
+| Metodo | Path                  | Auth   | Descrizione                                   |
+| ------ | --------------------- | ------ | --------------------------------------------- |
+| GET    | `/cart`               | Utente | Carrello corrente                              |
+| POST   | `/cart/items`         | Utente | Aggiunge un prodotto (o ne somma la quantità)  |
+| PATCH/PUT | `/cart/items/:id`  | Utente | Imposta la quantità di una riga                |
+| DELETE | `/cart/items/:id`     | Utente | Rimuove una riga                               |
+
+`:id` è l'id del CartItem. Una riga che non appartiene al carrello dell'utente corrente dà **404** (`not_found`).
+Tutte le risposte di successo contengono `data: Cart` (carrello aggiornato).
+
+Regole di disponibilità (POST e PATCH): il prodotto deve essere attivo (`active: true`) e la quantità totale della riga non può superare `stock_quantity`. `quantity` deve essere un intero ≥ 1.
 
 - `GET /cart` → **200:** `data: Cart`.
 - `POST /cart/items`
-  - **Payload:** `{ "cart_item": { "product_id": 1, "quantity": 2 } }`
-  - **201:** `message: added_to_cart`, `data: Cart`. **422:** `add_to_cart_error`. **404** se il prodotto non esiste.
-- `PUT /cart/items/:product_id`
-  - **Payload:** `{ "cart_item": { "quantity": 3 } }`
-  - **200:** `message: quantity_updated` (oppure `product_removed_from_cart` se `quantity <= 0`), `data: Cart`.
-  - **404:** `product_not_in_cart`. **422:** `quantity_update_error`.
-- `DELETE /cart/items/:product_id` → **200:** `message: removed_from_cart`, `data: Cart`. **404:** `product_not_in_cart`.
+  - **Payload:** `{ "cart_item": { "product_id": 1, "quantity": 2 } }` (`quantity` opzionale, default 1). Se il prodotto è già nel carrello la quantità viene **sommata**.
+  - **201:** `message: added_to_cart`, `data: Cart`.
+  - **404:** prodotto inesistente (`not_found`).
+  - **422:** `message: add_to_cart_error`, `errors: [...]`. Casi: prodotto non attivo (`product_not_available`), quantità oltre lo stock (`insufficient_stock`, indica la quantità disponibile), quantità non valida.
+- `PATCH /cart/items/:id`
+  - **Payload:** `{ "cart_item": { "quantity": 3 } }` (quantità finale della riga, non un incremento).
+  - **200:** `message: quantity_updated`, `data: Cart`.
+  - **404:** riga inesistente o di un altro utente.
+  - **422:** `message: quantity_update_error`, `errors: [...]` (stessi casi di POST, compreso `quantity <= 0`).
+- `DELETE /cart/items/:id` → **200:** `message: removed_from_cart`, `data: Cart`. **404:** riga inesistente o di un altro utente.
 
 ## Wishlist (utente)
 
@@ -245,7 +287,7 @@ Flusso (il frontend non chiama questi endpoint con HttpClient, ma con una naviga
   - **Payload:** `{ "wishlist_item": { "product_id": 1 } }`
   - **200:** `message: added_to_wishlist`, `data: Wishlist`. **422:** `already_in_wishlist` oppure `add_to_wishlist_error`.
 - `DELETE /wishlist/items/:product_id` → **200:** `message: removed_from_wishlist`, `data: Wishlist`. **404:** `product_not_in_wishlist`.
-- `PUT /wishlist/items/:product_id/move` → **201:** `message: added_to_cart`, `data: Wishlist`. **404:** `product_not_in_wishlist`. **422:** `add_to_cart_error`.
+- `PUT /wishlist/items/:product_id/move` → aggiunge 1 pezzo al carrello (somma se già presente) con le stesse regole di disponibilità di `POST /cart/items`, poi rimuove il prodotto dalla wishlist. **201:** `message: added_to_cart`, `data: Wishlist`. **404:** `product_not_in_wishlist`. **422:** `add_to_cart_error`, `errors: [...]` (prodotto non attivo o stock insufficiente; la wishlist resta invariata).
 
 ## Ordini dell'utente
 
@@ -260,9 +302,12 @@ Flusso (il frontend non chiama questi endpoint con HttpClient, ma con una naviga
 - `GET /orders`: query `page`, `limit` (`status` è letto ma non applicato, vedi *Problemi noti*). **200:** `data: [Order]`, `meta`.
 - `POST /orders`
   - **Payload:** `{ "order": { "first_name", "last_name", "street", "city", "zip_code", "country", "stripe_payment_token" } }` (tutti obbligatori).
-  - Il totale è calcolato dal carrello. Per ogni riga crea un OrderItem con il prezzo scontato, decrementa lo stock e svuota il carrello, tutto in una transazione.
+  - In un'unica transazione, con lock sui prodotti: verifica che ogni prodotto sia attivo e con stock sufficiente, crea l'ordine con un OrderItem per riga (prezzo e sconto attuali fissati in `unit_price`), decrementa lo stock e svuota il carrello. Se qualcosa fallisce non viene modificato nulla (carrello e stock restano invariati).
+  - `total_amount` = somma dei `total_price` delle righe (uguale a `Cart.total_amount` al momento del checkout).
   - **201:** `message: checkout_successful`, `data: Order`.
-  - **400:** `message: checkout_empty_cart` se il carrello è vuoto. **422:** `message: checkout_error`.
+  - **422:** `message: checkout_empty_cart`, `errors: [...]` se il carrello è vuoto.
+  - **422:** `message: checkout_error`, `errors: [...]` se mancano dati del form (errori di validazione) oppure se uno o più prodotti non sono disponibili (`product_not_available`, `insufficient_stock`, un messaggio per prodotto).
+  - **422:** `parameters_missing` se manca l'oggetto `order`.
 - Gli endpoint `/orders/:id` agiscono solo sugli ordini dell'utente corrente: un ordine di un altro utente dà **404** (`not_found`).
 - `GET /orders/:id` → **200:** `data: Order`.
 - `PUT /orders/:id`: payload come `POST` (lo stato non è modificabile dall'utente). **200:** `order_updated_successfully`, `data: Order`. **422:** `order_update_error` (es. ordine già spedito, vedi *Transizioni di stato*).
@@ -368,7 +413,6 @@ La creazione avviene solo tramite `/auth/signup`.
 Comportamenti attuali del backend che differiscono da quanto ci si aspetterebbe. Vanno risolti con task dedicati, poi questa sezione va aggiornata.
 
 1. **`GET /orders`:** il filtro `status` non viene applicato (il risultato di `where` è scartato).
-2. **`DELETE /cart/items/:product_id`:** se il prodotto non è nel carrello manca un `return` dopo la risposta 404: il codice prosegue su `nil` ed è un errore 500.
-3. **Admin, `order_by` / `order_direction`:** interpolati direttamente nella clausola SQL `ORDER BY` senza whitelist.
-4. **`PUT /admin/products/:id`** risponde `201` invece di `200`; **`PUT /admin/categories/:id`** usa il messaggio `category_created_successfully`.
-5. **OAuth, request phase:** `POST /auth/google_oauth2` non verifica un token CSRF. Rischio accettato e basso, vedi *OAuth Google*.
+2. **Admin, `order_by` / `order_direction`:** interpolati direttamente nella clausola SQL `ORDER BY` senza whitelist.
+3. **`PUT /admin/products/:id`** risponde `201` invece di `200`; **`PUT /admin/categories/:id`** usa il messaggio `category_created_successfully`.
+4. **OAuth, request phase:** `POST /auth/google_oauth2` non verifica un token CSRF. Rischio accettato e basso, vedi *OAuth Google*.
