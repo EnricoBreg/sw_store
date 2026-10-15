@@ -32,6 +32,7 @@ import EmptyCart from "../empty-cart/empty-cart";
                     matIconButton
                     i18n-aria-label="@@wishlistList.moveToCart"
                     aria-label="Sposta nel carrello"
+                    [disabled]="isPending(item.product.id)"
                     (click)="moveToCart(item.product)"
                   >
                     <mat-icon>add_shopping_cart</mat-icon>
@@ -56,6 +57,10 @@ export default class ListWishlistItems {
   private readonly service = inject(WishlistsService);
 
   wishlist = this.service.wishlist;
+
+  isPending(productId: number) {
+    return this.service.isPending(productId);
+  }
 
   moveToCart(product: Product) {
     this.service.moveToCart(product);

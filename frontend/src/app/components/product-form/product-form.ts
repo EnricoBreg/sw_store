@@ -199,7 +199,7 @@ export default class ProductForm implements OnInit {
           },
         });
 
-        this.existingImageUrl = currentProduct.image_url;
+        this.existingImageUrl = currentProduct.image_url ?? undefined;
       }
     });
   }

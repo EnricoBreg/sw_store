@@ -7,7 +7,8 @@ export default interface Product {
   price: number;
   discount_percentage: number;
   stock_quantity: number;
-  image_url: string;
+  image_url: string | null;
+  thumbnail_url?: string | null;
   active: boolean;
   category: Category;
 }

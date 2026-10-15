@@ -963,8 +963,8 @@
         <target state="translated">Your cart is empty. Add some products now!😁</target>
       </trans-unit>
       <trans-unit id="cartList.itemsCount" datatype="html">
-        <source> Articoli nel carrello: <x id="INTERPOLATION" equiv-text="{{ cartService.cartItemCount() }}"/> </source>
-        <target state="translated">Items in cart: <x id="INTERPOLATION" equiv-text="{{ cartService.cartItemCount() }}"/></target>
+        <source> Articoli nel carrello: <x id="INTERPOLATION" equiv-text="{{ cartService.itemsCount() }}"/> </source>
+        <target state="new">Items in cart: <x id="INTERPOLATION" equiv-text="{{ cartService.cartItemCount() }}"/></target>
       </trans-unit>
       <trans-unit id="cartListItem.remove" datatype="html">
         <source>Rimuovi <x id="productName" equiv-text="this.cartItem().product.name"/> dal carrello</source>

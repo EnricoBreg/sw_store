@@ -8,5 +8,6 @@ export interface Wishlist {
 
 export interface WishlistItem {
   id: number;
+  wishlist_id?: number;
   product: Product;
 }

@@ -35,16 +35,8 @@ import ViewPanel from "../../core/directives/view-panel/view-panel";
 export default class SummarizeOrder {
   readonly cartService = inject(CartService);
 
-  private readonly cart = this.cartService.cart;
-
-  total = computed(() => {
-    if (!this.cart()) return 0.0;
-    return this.cart()!.items.reduce(
-      (acc, item) =>
-        acc + item.quantity * item.unit_price * (1 - item.product.discount_percentage / 100.0),
-      0.0,
-    );
-  });
+  // Totale calcolato dal backend (è l'importo che verrà addebitato con l'ordine)
+  total = this.cartService.totalAmount;
 
   tax = computed(() => {
     const subtotal = this.total() / 1.22;

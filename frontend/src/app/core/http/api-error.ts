@@ -76,3 +76,12 @@ export function getApiErrorStatus(err: unknown): number | undefined {
   }
   return undefined;
 }
+
+/**
+ * Testo da mostrare all'utente: i dettagli in `errors` (es. "disponibili: 3") se presenti,
+ * altrimenti il messaggio generale.
+ */
+export function getApiErrorDetail(err: unknown, fallbackMessage: string): string {
+  const { message, errors } = getApiError(err, fallbackMessage);
+  return errors.length ? errors.join(" ") : message;
+}

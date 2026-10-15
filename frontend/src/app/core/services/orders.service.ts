@@ -95,7 +95,8 @@ export class OrdersService {
     this.api.checkout(parsedOrderData).subscribe({
       next: (response) => {
         this.toaster.success($localize`:@@toast.orderPlaced:Ordine effettuato con successo!`);
-        this.cartService.clearCart();
+        // Il backend ha svuotato il carrello: si rilegge lo stato dal server
+        this.cartService.loadCart();
         this.router.navigate(["/products"]);
       },
       error: (err) => {

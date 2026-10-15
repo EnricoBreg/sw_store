@@ -44,6 +44,9 @@ export default class CartPage {
   readonly loadingService = inject(LoadingService);
 
   proceedToCheckoutDisabled = computed(
-    () => this.cartService.cartEmpty() || this.loadingService.isLoading(),
+    () =>
+      this.cartService.isEmpty() ||
+      this.cartService.hasPendingChanges() ||
+      this.loadingService.isLoading(),
   );
 }

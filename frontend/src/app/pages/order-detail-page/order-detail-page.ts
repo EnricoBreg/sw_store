@@ -130,7 +130,7 @@ import { BackButton } from "../../components/back-button/back-button";
                 </div>
 
                 <p class="text-lg font-semibold">
-                  {{ item.unit_price * item.quantity | currency: "EUR" }}
+                  {{ item.total_price | currency: "EUR" }}
                 </p>
               </div>
             }

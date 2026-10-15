@@ -723,7 +723,7 @@
         <source> Il tuo carrello è vuoto. Aggiungi subito dei prodotti!😁 </source>
       </trans-unit>
       <trans-unit id="cartList.itemsCount" datatype="html">
-        <source> Articoli nel carrello: <x id="INTERPOLATION" equiv-text="{{ cartService.cartItemCount() }}"/> </source>
+        <source> Articoli nel carrello: <x id="INTERPOLATION" equiv-text="{{ cartService.itemsCount() }}"/> </source>
       </trans-unit>
       <trans-unit id="cartListItem.remove" datatype="html">
         <source>Rimuovi <x id="productName" equiv-text="this.cartItem().product.name"/> dal carrello</source>

@@ -1,4 +1,5 @@
-import { ApplicationConfig, provideBrowserGlobalErrorListeners } from "@angular/core";
+import { ApplicationConfig, inject, provideAppInitializer, provideBrowserGlobalErrorListeners } from "@angular/core";
+import { AuthService } from "./core/services/auth.service";
 import { provideRouter, withComponentInputBinding, withViewTransitions } from "@angular/router";
 
 import { routes } from "./app.routes";
@@ -13,6 +14,8 @@ import { errorInterceptor } from "./core/http/interceptors/error-interceptor";
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
+    // Con una sessione salvata, carrello e wishlist vengono letti dal backend all'avvio
+    provideAppInitializer(() => inject(AuthService).restoreSession()),
     provideRouter(routes, withComponentInputBinding(), withViewTransitions()),
     provideHttpClient(withInterceptors([loadingInterceptor, errorInterceptor, apiInterceptor, apiHeadersInterceptor])),
     provideHotToastConfig({

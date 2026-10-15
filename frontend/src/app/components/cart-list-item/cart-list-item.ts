@@ -46,7 +46,7 @@ import QuantitySelector from "../quantity-selector/quantity-selector";
           />
         </div>
         <div class="text-right font-semibold text-lg">
-          {{ total() | currency: "EUR" }}
+          {{ cartItem().total_price | currency: "EUR" }}
         </div>
       </div>
 
@@ -56,7 +56,7 @@ import QuantitySelector from "../quantity-selector/quantity-selector";
           type="button"
           class="danger"
           [attr.aria-label]="removeLabel()"
-          (click)="cartService.removeFromCart(product)"
+          (click)="cartService.removeFromCart(cartItem())"
         >
           <mat-icon>delete</mat-icon>
         </button>
@@ -75,15 +75,8 @@ export default class CartListItem {
     () => $localize`:@@cartListItem.remove:Rimuovi ${this.cartItem().product.name}:productName: dal carrello`,
   );
 
-  total = computed(() =>
-    (
-      this.cartItem().product.price *
-      (1 - this.cartItem().product.discount_percentage / 100.0) *
-      this.cartItem().quantity
-    ).toFixed(2),
-  );
 
   onQuantityChange(newQuantity: number) {
-    this.cartService.updateCartItemQuantity(this.cartItem(), newQuantity);
+    this.cartService.updateQuantity(this.cartItem(), newQuantity);
   }
 }

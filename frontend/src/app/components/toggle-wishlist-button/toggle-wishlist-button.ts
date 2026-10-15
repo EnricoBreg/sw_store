@@ -17,6 +17,7 @@ import { AuthService } from "../../core/services/auth.service";
         matIconButton
         [attr.aria-label]="isInWishlist() ? removeLabel : addLabel"
         [attr.aria-pressed]="isInWishlist()"
+        [disabled]="isPending()"
         (click)="toggleWishlist(product())"
       >
         <mat-icon>{{ isInWishlist() ? "favorite" : "favorite_border" }}</mat-icon>
@@ -35,12 +36,9 @@ export default class ToggleWishlistButton {
   readonly addLabel = $localize`:@@toggleWishlist.add:Aggiungi alla wishlist`;
   readonly removeLabel = $localize`:@@toggleWishlist.remove:Rimuovi dalla wishlist`;
 
-  wishlist = this.service.wishlist;
-
-  isInWishlist = computed(() => {
-    const wishlist = this.wishlist();
-    return !!wishlist && wishlist.items.some((i) => i.product.id === this.product().id);
-  });
+  // Stato letto dal service (signal): si aggiorna quando arriva la risposta del backend
+  isInWishlist = computed(() => this.service.isInWishlist(this.product().id));
+  isPending = computed(() => this.service.isPending(this.product().id));
 
   toggleWishlist(product: Product) {
     if (this.isInWishlist()) {
