@@ -86,6 +86,10 @@ it:
 
     errors:
       models:
+        user:
+          attributes:
+            date_of_birth:
+              must_be_adult: "deve indicare un utente maggiorenne (almeno 18 anni)."
         cart_item:
           product_not_available: "Il prodotto %{name} non è disponibile."
           attributes:
@@ -104,6 +108,10 @@ it:
       unauthorized: "Devi autenticarti per procedere."
       parameters_missing: "Alcuni parametri non sono stati trovati."
       internal_server_error: "Si è verificato un errore interno al server."
+      bad_request: "La richiesta non è valida."
+      parameter_missing_detail: "Parametro mancante o vuoto: %{param}."
+      conflict: "Operazione non consentita: la risorsa è collegata ad altri dati."
+      unprocessable_entity: "I dati inviati non sono validi."
 
     messages:
       address_created_successfully: "Indirizzo %{nickname} creato con successo."

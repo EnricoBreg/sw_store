@@ -1,7 +1,7 @@
 # Analisi dei requisiti – SW Store
 
 Stato del progetto rispetto a `docs/Progetto_di_sistemi_web_Specifiche.pdf`.
-Ultimo aggiornamento: 2026-10-15 (Fase 2: chiusi T0, T1, T2, T2-FE, T4, T5, T9, T10a, T11a).
+Ultimo aggiornamento: 2026-10-15 (Fase 2: chiusi T0, T1, T2, T2-FE, T3, T4, T5, T9, T10a, T11a).
 Path backend relativi a `backend/app/` salvo indicazione, path frontend relativi a `frontend/src/app/`. Tutte le rotte hanno prefisso `/api/v1`.
 
 Legenda stato: **fatto** / **parziale** / **mancante**.
@@ -10,7 +10,7 @@ Legenda stato: **fatto** / **parziale** / **mancante**.
 
 | Comando | Esito |
 |---|---|
-| `bin/rails test` | Dopo T4: 106 test, 326 asserzioni, tutti verdi |
+| `bin/rails test` | Dopo T3: 121 test, 398 asserzioni, tutti verdi |
 | `bin/rubocop` | 88 file, 0 offese |
 | `brakeman` | Dopo T2: 0 warning (il Redirect della baseline è risolto) |
 | `npx ng test --watch=false` | Dopo T11a/T2-FE: 72/72 verdi |
@@ -63,7 +63,7 @@ Legenda stato: **fatto** / **parziale** / **mancante**.
 |---|---|---|---|---|---|
 | 5a | Rails API mode, DB relazionale | fatto | backend | `config/application.rb`, `config/database.yml` | – |
 | 5b | Validazioni di base sui modelli | parziale | backend | `models/*` | CartItem, WishlistItem; `Product.active` senza default; messaggi custom non tradotti |
-| 5c | Gestione errori: status coerenti + JSON con messaggio | parziale | backend | `api/v1/base_controller.rb`, `concerns/authorization.rb`, `concerns/api_responses.rb` | Mancano 500 generico, `InvalidForeignKey`, `ArgumentError`, `UnknownAttributeReference`. `ParameterMissing` dovrebbe dare 400. 401/403 in formato diverso e solo in italiano. `AddressSerializer` aggiunto in T2 |
+| 5c | Gestione errori: status coerenti + JSON con messaggio | fatto (T3) | backend | `api/v1/base_controller.rb`, `concerns/authorization.rb`, `concerns/api_responses.rb`, `lib/custom_failure_app.rb`, `lib/request_locale.rb` | 400/401/403/404/409/422/500 tutti nel formato standard e tradotti (tabella in `API.md`). Resta: `order_by` su colonna inesistente dà 500 (whitelist in T8) |
 | 5d | Test: ≥1 test di modello e ≥1 request test | fatto (T1) | backend | `test/test_helper.rb`, `test/fixtures/*`, `test/models/{product,order}_test.rb`, `test/controllers/api/v1/products_controller_test.rb`, `test/controllers/auth/sessions_controller_test.rb` | – (i task successivi aggiungono i test dei bug che correggono) |
 | 6a | Nessun dato hardcoded per prodotti/carrello/ordini | parziale | frontend | `core/state/*` | Carrello e wishlist usano localStorage come fonte di verità |
 | 6b | Servizi dedicati | fatto | frontend | `core/http/*`, `core/services/*` | – |
@@ -107,7 +107,7 @@ Legenda stato: **fatto** / **parziale** / **mancante**.
 | T11a | Accessibilità, pulizia, budget del bundle | **fatto** |
 | T4 | Carrello e checkout robusti (backend) | **fatto** |
 | T6 | Carrello frontend su nuovo contratto | in corso (carrello FE non funzionante fino ad allora) |
-| T3 | Errori uniformi (backend) | in corso |
+| T3 | Errori uniformi (backend) | **fatto** |
 
 Problemi segnalati, da includere nei task successivi:
 - Admin ordini: il link "Modifica" punta a `orders/:id/edit`, rotta inesistente (task Area admin).

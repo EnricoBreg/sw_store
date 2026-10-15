@@ -61,10 +61,6 @@ class User < ApplicationRecord
   end
 
   def user_must_be_adult
-    Rails.logger.debug "Validation user age: #{date_of_birth} #{date_of_birth > 18.years.ago.to_date}"
-
-    if date_of_birth.present? && date_of_birth > 18.years.ago.to_date
-      errors.add :date_of_birth, "Devi avere almeno 18 anni per registrarti."
-    end
+    errors.add(:date_of_birth, :must_be_adult) if date_of_birth > 18.years.ago.to_date
   end
 end
