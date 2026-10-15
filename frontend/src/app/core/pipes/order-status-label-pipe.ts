@@ -6,7 +6,7 @@ import { ORDER_STATUS_LABELS, OrderStatus } from "../models/order";
 })
 export class OrderStatusLabelPipe implements PipeTransform {
   transform(value: any, ...args: unknown[]): string {
-    if (!value) return "Sconosciuto";
+    if (!value) return $localize`:@@order.status.unknown:Sconosciuto`;
     const status = value as OrderStatus;
     return ORDER_STATUS_LABELS[status] || value;
   }

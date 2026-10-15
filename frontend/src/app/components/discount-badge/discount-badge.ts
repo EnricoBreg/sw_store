@@ -10,7 +10,7 @@ import { Badge } from "../../core/directives/badge";
     @if (dp > 0) {
       <span appBadge class="bg-green-50 text-green-700 ring-green-600/20"> -{{ dp }}% </span>
     } @else {
-      <span class="text-gray-400">Nessuno sconto applicato</span>
+      <span i18n="@@discountBadge.noDiscount" class="text-gray-400">Nessuno sconto applicato</span>
     }
   `,
   styles: ``,

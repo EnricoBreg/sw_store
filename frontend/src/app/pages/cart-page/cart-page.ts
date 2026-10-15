@@ -11,7 +11,7 @@ import { LoadingService } from "../../core/http/services/loading.service";
   imports: [SummarizeOrder, MatAnchor, ListCartItems, RouterLink],
   template: `
     <div class="mx-auto max-w-[1500px] py-6">
-      <h1 class="text-3xl font-extrabold mb-4">Il tuo carrello</h1>
+      <h1 i18n="@@cartPage.title" class="text-3xl font-extrabold mb-4">Il tuo carrello</h1>
 
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div class="lg:col-span-2">
@@ -28,7 +28,7 @@ import { LoadingService } from "../../core/http/services/loading.service";
                   routerLink="/checkout"
                   [disabled]="proceedToCheckoutDisabled()"
                 >
-                  Procedi al checkout
+                  <span i18n="@@cartPage.checkout">Procedi al checkout</span>
                 </button>
               </div>
             </ng-container>

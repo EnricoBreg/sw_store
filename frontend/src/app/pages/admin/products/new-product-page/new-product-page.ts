@@ -10,7 +10,7 @@ import { MatDivider } from "@angular/material/divider";
   },
   template: `
     <section>
-      <h1 class="mb-2 text-2xl font-semibold">Nuovo prodotto</h1>
+      <h1 i18n="@@newProduct.title" class="mb-2 text-2xl font-semibold">Nuovo prodotto</h1>
       <mat-divider></mat-divider>
     </section>
     <div>

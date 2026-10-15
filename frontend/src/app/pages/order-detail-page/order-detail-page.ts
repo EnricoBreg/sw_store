@@ -24,9 +24,12 @@ import { BackButton } from "../../components/back-button/back-button";
   ],
   template: `
     <div class="mx-auto max-w-[1200px] py-6">
+      <app-back-button class="mb-4">
+        <ng-container i18n="@@tornaAiMieiOrdini">
+          Torna ai miei ordini
+        </ng-container>
+      </app-back-button>
 
-      <app-back-button class="mb-4">Torna ai miei ordini</app-back-button>
-      
       @if (error(); as error) {
         <div appErrorPanel>
           <h4 class="text-lg font-semibold text-red-700 mb-3">{{ error.message }}</h4>
@@ -40,10 +43,13 @@ import { BackButton } from "../../components/back-button/back-button";
 
       @if (order(); as order) {
         <div appViewPanel>
-          <h1 class="text-2xl font-extrabold mb-4">Dettagli ordine #{{ orderId() }}</h1>
+          <h1 i18n="@@orderDetail.title" class="text-2xl font-extrabold mb-4">
+            Dettagli ordine #{{ orderId() //i18n(ph="orderDetail.orderId") }}
+          </h1>
+
           <div class="text-sm text-gray-500 mt-2 flex items-center gap-2">
             <mat-icon>calendar_today</mat-icon>
-            <span>Effettuato</span>
+            <span i18n="@@orderDetail.effettuato">Effettuato</span>
             <app-isodate-displayer [date]="order.created_at" [relative]="true" />
             (<app-isodate-displayer [date]="order.created_at" [relative]="false" />)
           </div>
@@ -60,30 +66,31 @@ import { BackButton } from "../../components/back-button/back-button";
               class="!bg-transparent"
             >
               <mat-step
+                i18n-label="@@orderDetail.stepper.inAttesa.label"
                 label="In attesa"
                 [state]="order.status === 'cancelled' ? 'cancel' : 'number'"
                 [editable]="false"
                 [completed]="false"
               >
-                <p class="text-center text-gray-500 mt-2 max-w-xs mx-auto">
+                <p i18n="@@orderDetail.stepper.inAttesa.description" class="text-center text-gray-500 mt-2 max-w-xs mx-auto">
                   Ordine registrato nei nostri sistemi.
                 </p>
               </mat-step>
 
-              <mat-step label="Pagato" [editable]="false" [completed]="false">
-                <p class="text-center text-gray-500 mt-2 max-w-xs mx-auto">
+              <mat-step i18n-label="@@orderDetail.stepper.pagato.label" label="Pagato" [editable]="false" [completed]="false">
+                <p i18n="@@orderDetail.stepper.pagato.description" class="text-center text-gray-500 mt-2 max-w-xs mx-auto">
                   Pagamento confermato. Ordine in preparazione.
                 </p>
               </mat-step>
 
-              <mat-step label="Spedito" [editable]="false" [completed]="false">
-                <p class="text-center text-gray-500 mt-2 max-w-xs mx-auto">
+              <mat-step i18n-label="@@orderDetail.stepper.spedito.label" label="Spedito" [editable]="false" [completed]="false">
+                <p i18n="@@orderDetail.stepper.spedito.description" class="text-center text-gray-500 mt-2 max-w-xs mx-auto">
                   Affidato al corriere espresso.
                 </p>
               </mat-step>
 
-              <mat-step label="Consegnato" [editable]="false" [completed]="false">
-                <p class="text-center text-gray-500 mt-2 max-w-xs mx-auto">
+              <mat-step i18n-label="@@orderDetail.stepper.consegnato.label" label="Consegnato" [editable]="false" [completed]="false">
+                <p i18n="@@orderDetail.stepper.consegnato.description" class="text-center text-gray-500 mt-2 max-w-xs mx-auto">
                   Consegnato all'indirizzo specificato. Grazie per aver acquistato da noi!
                 </p>
               </mat-step>
@@ -96,17 +103,16 @@ import { BackButton } from "../../components/back-button/back-button";
             </mat-stepper>
           </div>
 
-          <!-- TODO: Dettagli ordine (indirizzo, totale, ecc) -->
           <div appInnerPanel>
-            <h3 class="text-xl font-bold mb-4">Dettagli di spedizione</h3>
-            <p class="text-gray-700 mb-1">Nome: {{ order.first_name }} {{ order.last_name }}</p>
-            <p class="text-gray-700 mb-1">Indirizzo: {{ order.street }}</p>
-            <p class="text-gray-700 mb-1">Città: {{ order.city }}, {{ order.zip_code }}</p>
-            <p class="text-gray-700 mb-1">Stato: {{ order.country }}</p>
+            <h3 i18n="@@orderDetail.shipping.title" class="text-xl font-bold mb-4">Dettagli di spedizione</h3>
+            <p i18n="@@orderDetails.shipping.name" class="text-gray-700 mb-1">Nome: {{ order.first_name }} {{ order.last_name }}</p>
+            <p i18n="@@orderDetails.shipping.address" class="text-gray-700 mb-1">Indirizzo: {{ order.street }}</p>
+            <p i18n="@@orderDetails.shipping.city" class="text-gray-700 mb-1">Città: {{ order.city }}, {{ order.zip_code }}</p>
+            <p i18n="@@orderDetails.shipping.country" class="text-gray-700 mb-1">Stato: {{ order.country }}</p>
           </div>
 
           <div appInnerPanel>
-            <h3 class="text-xl font-semibold">Gli articoli del tuo ordine</h3>
+            <h3 i18n="@@orderDetail.items.title" class="text-xl font-semibold">Gli articoli del tuo ordine</h3>
             @for (item of order.items; track item.id) {
               <div class="flex items-center justify-between py-4 px-6 border-b border-gray-200">
                 <div class="flex items-center gap-2">
@@ -127,8 +133,8 @@ import { BackButton } from "../../components/back-button/back-button";
               </div>
             }
             <div class="flex flex-col items-end justify-end mt-6 px-6">
-              <p class="text-2xl font-bold">Totale: {{ order.total_amount | currency: "EUR" }}</p>
-              <p class="text-sm text-gray-500">
+              <p i18n="@@orderDetail.total" class="text-2xl font-bold">Totale: {{ order.total_amount | currency: "EUR" }}</p>
+              <p i18n="@@orderDetail.vat" class="text-sm text-gray-500">
                 di cui IVA (22%): {{ computeVat(order.total_amount) | currency: "EUR" }}
               </p>
             </div>

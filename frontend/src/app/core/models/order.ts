@@ -4,12 +4,12 @@ import { User } from "./user";
 export type OrderStatus = "pending" | "paid" | "shipped" | "delivered" | "cancelled" | "refunded";
 
 export const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
-  pending: "In attesa di pagamento",
-  paid: "Pagato",
-  shipped: "Spedito",
-  delivered: "Consegnato",
-  cancelled: "Annullato",
-  refunded: "Rimborsato",
+  pending: $localize`:@@order.status.pending:In attesa di pagamento`,
+  paid: $localize`:@@order.status.paid:Pagato`,
+  shipped: $localize`:@@order.status.shipped:Spedito`,
+  delivered: $localize`:@@order.status.delivered:Consegnato`,
+  cancelled: $localize`:@@order.status.cancelled:Annullato`,
+  refunded: $localize`:@@order.status.refunded:Rimborsato`,
 };
 
 export interface Order {

@@ -27,8 +27,8 @@ import { ErrorPanel } from "../../core/directives/error-panel";
   template: ` <div class="w-full h-screen overflow-auto flex items-center">
     <div class="max-w-[500px] mx-auto bg-white p-8 elevated rounded-xl space-y-4">
       <div>
-        <h2 class="text-2xl">Registrati</h2>
-        <p class="text-sm text-gray-500">Registrati per iniziare ora lo shopping.</p>
+        <h2 i18n="@@signUp.title" class="text-2xl">Registrati</h2>
+        <p i18n="@@signUp.description" class="text-sm text-gray-500">Registrati per iniziare ora lo shopping.</p>
       </div>
       <div>
         <mat-divider />
@@ -53,6 +53,7 @@ import { ErrorPanel } from "../../core/directives/error-panel";
               type="text"
               formControlName="firstName"
               placeholder="Inserisci il tuo nome"
+              i18n-placeholder="@@signUp.firstName.placeholder"
             />
           </mat-form-field>
           <mat-form-field>
@@ -61,6 +62,7 @@ import { ErrorPanel } from "../../core/directives/error-panel";
               type="text"
               formControlName="lastName"
               placeholder="Inserisci il cognome"
+              i18n-placeholder="@@signUp.lastName.placeholder"
             />
           </mat-form-field>
           <mat-form-field>
@@ -69,6 +71,7 @@ import { ErrorPanel } from "../../core/directives/error-panel";
               type="email"
               formControlName="email"
               placeholder="Inserisci la tua email"
+              i18n-placeholder="@@signUp.email.placeholder"
             />
             <mat-icon matPrefix>email</mat-icon>
           </mat-form-field>
@@ -78,6 +81,7 @@ import { ErrorPanel } from "../../core/directives/error-panel";
               [type]="passwordVisible() ? 'text' : 'password'"
               formControlName="password"
               placeholder="Inserisci la tua password"
+              i18n-placeholder="@@signUp.password.placeholder"
             />
             <mat-icon matPrefix>lock</mat-icon>
             <button
@@ -98,6 +102,7 @@ import { ErrorPanel } from "../../core/directives/error-panel";
               [type]="passwordVisible() ? 'text' : 'password'"
               formControlName="passwordConfirmation"
               placeholder="Ripeti la tua password"
+              i18n-placeholder="@@signUp.passwordConfirmation.placeholder"
             />
             <mat-icon matPrefix>lock</mat-icon>
             <button
@@ -115,21 +120,21 @@ import { ErrorPanel } from "../../core/directives/error-panel";
         </section>
 
         <button matButton="filled" type="submit" class="w-full" [disabled]="!signUpForm.valid">
-          Registrati
+          <span i18n="@@signUp.submit">Registrati</span>
         </button>
       </form>
 
       <div class="w-full flex flex-col justify-center items-center">
-        <span class="text-sm text-gray-500 mb-4">oppure</span>
+        <span i18n="@@signUp.or" class="text-sm text-gray-500 mb-4">oppure</span>
         <button mat-stroked-button (click)="signUpWithGoogle()" class="w-full">
           <div class="flex items-center justify-center gap-2">
             <img src="assets/google_favicon_2025.svg" class="w-5 h-5" alt="Google" />
-            <span>Registrati con Google</span>
+            <span i18n="@@signUp.google">Registrati con Google</span>
           </div>
         </button>
       </div>
 
-      <p class="text-gray-500 text-sm text-center">
+      <p i18n="@@signUp.login" class="text-gray-500 text-sm text-center">
         Hai già un account? <a class="text-blue-400 underline" routerLink="/login">Accedi ora.</a>
       </p>
     </div>

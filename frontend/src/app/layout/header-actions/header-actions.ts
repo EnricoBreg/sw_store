@@ -43,7 +43,7 @@ import { WishlistsService } from "../../core/services/wishlists.service";
           <mat-icon>shopping_cart</mat-icon>
         </button>
 
-        <p class="text-sm">Ciao, {{ user.first_name }}</p>
+        <p class="text-sm">{{ greetUtente() }}</p>
         <button matIconButton [matMenuTriggerFor]="userMenu">
           <mat-icon>person</mat-icon>
         </button>
@@ -58,24 +58,24 @@ import { WishlistsService } from "../../core/services/wishlists.service";
           @if (user.admin) {
             <button class="!min-h-[32px]" mat-menu-item routerLink="/admin">
               <mat-icon>admin_panel_settings</mat-icon>
-              Area Admin
+              <ng-container i18n="@@headerAction.areaAdmin">Area Admin</ng-container>
             </button>
           }
 
           <button class="!min-h-[32px]" mat-menu-item routerLink="/my-orders">
             <mat-icon>receipt_long</mat-icon>
-            I miei ordini
+            <ng-container i18n="@@headerAction.myOrders">I miei ordini</ng-container>
           </button>
 
           <mat-divider></mat-divider>
           <button class="!min-h-[32px]" mat-menu-item (click)="authService.signOut()">
             <mat-icon>logout</mat-icon>
-            Sign Out
+            <ng-container i18n="@@headerAction.signOut">Disconnettiti</ng-container>
           </button>
         </mat-menu>
       } @else {
-        <a matButton routerLink="/login">Accedi</a>
-        <a matButton="filled" routerLink="/sign-up">Registrati</a>
+        <a i18n="@@headerAction.login" matButton routerLink="/login">Accedi</a>
+        <a i18n="@@headerAction.signUp" matButton="filled" routerLink="/sign-up">Registrati</a>
       }
     </div>
   `,
@@ -88,4 +88,11 @@ export class HeaderActions {
 
   cartItemCount = this.cartService.cartItemCount;
   wishlistItemCount = this.whishlistService.wishlistItemCount;
+
+  greetUtente = computed(() => {
+    const name = this.authService.user()?.first_name;
+    if (!name) return $localize`:@@headerAction.greetUnauthenticatedUser:Ciao, utente:username:`;
+
+    return $localize`:@@headerAction.greetAuthenticatedUser:Ciao, ${name}:username:`
+  });
 }

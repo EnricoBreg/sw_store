@@ -30,8 +30,8 @@ import { LoadingService } from "../../core/http/services/loading.service";
     <div class="w-full h-screen overflow-auto flex items-center ">
       <div class="max-w-[500px] mx-auto bg-white p-8 elevated rounded-xl space-y-4">
         <div>
-          <h2 class="text-2xl">Accedi al tuo account</h2>
-          <p class="text-sm text-gray-500">Accedi al tuo account per continuare lo shopping</p>
+          <h2 i18n="@@login.title" class="text-2xl">Accedi al tuo account</h2>
+          <p i18n="@@login.description" class="text-sm text-gray-500">Accedi al tuo account per continuare lo shopping</p>
         </div>
         <div>
           <mat-divider />
@@ -49,6 +49,7 @@ import { LoadingService } from "../../core/http/services/loading.service";
               matInput
               type="email"
               formControlName="email"
+              i18n-placeholder="@@login.email.placeholder"
               placeholder="Inserisci la tua email"
             />
             <mat-icon matPrefix>email</mat-icon>
@@ -59,6 +60,7 @@ import { LoadingService } from "../../core/http/services/loading.service";
               matInput
               [type]="passwordVisible() ? 'text' : 'password'"
               formControlName="password"
+              i18n-placeholder="@@login.password.placeholder"
               placeholder="Inserisci la tua password"
             />
             <mat-icon matPrefix>lock</mat-icon>
@@ -79,18 +81,18 @@ import { LoadingService } from "../../core/http/services/loading.service";
         </form>
 
         <div class="w-full flex flex-col justify-center items-center">
-          <span class="text-sm text-gray-500 mb-4">oppure</span>
+          <span class="text-sm text-gray-500 mb-4" i18n="@@login.or">oppure</span>
           <button mat-stroked-button (click)="loginWithGoogle()" class="w-full">
             <div class="flex items-center justify-center gap-2">
               <img src="assets/google_favicon_2025.svg" class="w-5 h-5" alt="Google" />
-              <span>Accedi con Google</span>
+              <span i18n="@@login.google">Accedi con Google</span>
             </div>
           </button>
         </div>
 
         <p class="text-gray-500 text-sm text-center">
-          Non hai ancora un account?
-          <a routerLink="/sign-up" class="text-blue-400 underline">Registrati ora</a>
+          <ng-container i18n="@@login.noAccount">Non hai ancora un account?</ng-container>
+          <a i18n="@@login.signUp" routerLink="/sign-up" class="text-blue-400 underline">Registrati ora</a>
         </p>
       </div>
     </div>

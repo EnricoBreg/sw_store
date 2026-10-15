@@ -31,9 +31,13 @@ import { OrderData, OrdersService } from "../../core/services/orders.service";
   ],
   template: `
     <div class="mx-auto max-w-[1200px] py-6">
-      <app-back-button [navigateTo]="['/cart']" class="mb-4">Rivedi carrello</app-back-button>
+      <app-back-button [navigateTo]="['/cart']" class="mb-4">
+        <ng-container i18n="@@checkoutPage.tornaAlCarrello">Rivedi carrello</ng-container>
+      </app-back-button>
 
-      <h1 class="text-3xl font-extrabold mb-4">Completa il tuo ordine</h1>
+      <h1 i18n="@@checkoutPage.completaOrdine" class="text-3xl font-extrabold mb-4">
+        Completa il tuo ordine
+      </h1>
 
       @if (error(); as error) {
         <div class="border border-red-200 rounded-xl my-4 p-6 bg-red-100 text-red-600 font-medium">
@@ -52,23 +56,25 @@ import { OrderData, OrdersService } from "../../core/services/orders.service";
           <form [formGroup]="checkoutForm" (ngSubmit)="onSubmit()" class="space-y-4">
             <!-- Fatturazione / Spedizione -->
             <section appViewPanel formGroupName="order">
-              <h2 class="text-2xl font-medium mb-4">Indirizzo di spedizione</h2>
+              <h2 i18n="@@checkoutPage.spedizione.title" class="text-2xl font-medium mb-4">
+                Indirizzo di spedizione
+              </h2>
 
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <!-- Nome e Cognome -->
                 <mat-form-field>
-                  <mat-label>Nome</mat-label>
+                  <mat-label i18n="@@checkoutPage.spedizione.nome">Nome</mat-label>
                   <input matInput type="text" formControlName="first_name" placeholder="Nome" />
                 </mat-form-field>
                 <mat-form-field>
-                  <mat-label>Cognome</mat-label>
+                  <mat-label i18n="@@checkoutPage.spedizione.cognome">Cognome</mat-label>
                   <input matInput type="text" formControlName="last_name" placeholder="Cognome" />
                 </mat-form-field>
 
                 <!-- Via e numero civico -->
                 <div class="col-span-2">
                   <mat-form-field>
-                    <mat-label>Via e numero civico</mat-label>
+                    <mat-label i18n="@@checkoutPage.spedizione.via">Via e numero civico</mat-label>
                     <input
                       matInput
                       type="text"
@@ -80,17 +86,17 @@ import { OrderData, OrdersService } from "../../core/services/orders.service";
 
                 <!-- Città e CAP -->
                 <mat-form-field>
-                  <mat-label>Città</mat-label>
+                  <mat-label i18n="@@checkoutPage.spedizione.citta">Città</mat-label>
                   <input matInput type="text" formControlName="city" placeholder="Città" />
                 </mat-form-field>
                 <mat-form-field>
-                  <mat-label>CAP</mat-label>
+                  <mat-label i18n="@@checkoutPage.spedizione.cap">CAP</mat-label>
                   <input matInput type="text" formControlName="zip_code" placeholder="CAP" />
                 </mat-form-field>
 
                 <!-- Paese -->
                 <mat-form-field>
-                  <mat-label>Paese</mat-label>
+                  <mat-label i18n="@@checkoutPage.spedizione.paese">Paese</mat-label>
                   <input matInput type="text" formControlName="country" placeholder="Paese" />
                 </mat-form-field>
               </div>
@@ -98,10 +104,12 @@ import { OrderData, OrdersService } from "../../core/services/orders.service";
 
             <!-- Pagamento -->
             <section appViewPanel formGroupName="payment">
-              <h2 class="text-2xl font-medium mb-4">Dettagli di pagamento</h2>
+              <h2 i18n="@@checkoutPage.pagamento.title" class="text-2xl font-medium mb-4">
+                Dettagli di pagamento
+              </h2>
 
               <!-- Per semplicità, non implementiamo direttamente i campi di pagamento ma ci affidiamo a Stripe Elements o simili -->
-              <p class="text-gray-500 italic">
+              <p i18n="@@checkoutPage.pagamento.description" class="text-gray-500 italic">
                 Per semplicità, in questa demo non gestiamo direttamente i dettagli di pagamento. In
                 un'app reale, qui integreremmo Stripe Elements o simili per raccogliere in modo
                 sicuro le informazioni di pagamento e ottenere un token da inviare al backend.
@@ -111,7 +119,7 @@ import { OrderData, OrdersService } from "../../core/services/orders.service";
                 <mat-radio-group formControlName="payment_method" class="flex flex-col gap-4">
                   <mat-radio-button value="card">
                     <div class="flex gap-2 items-center">
-                      <span class="font-medium">Carta di debito/credito</span>
+                      <span i18n="@@checkoutPage.pagamento.card" class="font-medium">Carta di debito/credito</span>
                       <img src="assets/mastercard.svg" alt="Mastercard" class="h-6" />
                       <img src="assets/visa.svg" alt="Visa" class="h-6" />
                       <img src="assets/amex.svg" alt="America Express" class="h-6" />
@@ -137,7 +145,7 @@ import { OrderData, OrdersService } from "../../core/services/orders.service";
             <!-- Submit -->
             <div appViewPanel class="mt-4">
               @if (checkoutForm.valid) {
-                <p class="text-gray-500 my-3">Tutto pronto! Invia subito il tuo ordine!</p>
+                <p i18n="@@checkoutPage.submit.description" class="text-gray-500 my-3">Tutto pronto! Invia subito il tuo ordine!</p>
               }
               <button
                 type="submit"
@@ -145,7 +153,7 @@ import { OrderData, OrdersService } from "../../core/services/orders.service";
                 class="w-full"
                 [disabled]="checkoutForm.invalid || isLoading()"
               >
-                {{ isLoading() ? "Invio dell'ordine..." : "Conferma ordine" }}
+                {{ isLoading() ? invioInCorso : invioOrdine }}
               </button>
             </div>
           </form>
@@ -155,7 +163,7 @@ import { OrderData, OrdersService } from "../../core/services/orders.service";
         <div>
           <app-summarize-order>
             <ng-container title>
-              <h4 class="text-lg font-semibold">Riepilogo ordine</h4>
+              <h4 i18n="@@checkoutPage.riepilogo.title" class="text-lg font-semibold">Riepilogo ordine</h4>
             </ng-container>
 
             <ng-container checkoutItems>
@@ -203,6 +211,9 @@ export default class CheckoutPage implements OnInit {
 
   readonly handleImageError = handleImageError;
   readonly computeDiscountPrice = computeDiscountPrice;
+
+  invioOrdine = $localize`:@@checkoutPage.submit.default:Conferma ordine`;
+  invioInCorso = $localize`:@@checkoutPage.submit.inProgress:Invio dell'ordine...`;
 
   readonly checkoutForm = this.fb.group({
     order: this.fb.group({

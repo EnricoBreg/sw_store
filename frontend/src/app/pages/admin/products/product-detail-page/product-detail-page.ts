@@ -23,11 +23,13 @@ import DiscountBadge from "../../../../components/discount-badge/discount-badge"
   ],
   template: `
     <div>
-      <app-back-button class="mb-10"> Torna alla lista dei prodotti </app-back-button>
+      <app-back-button class="mb-10">
+        <ng-container i18n="@@productDetail.backButton">Torna alla lista dei prodotti</ng-container>
+      </app-back-button>
 
       <div class="mb-6">
-        <h3 class="mb-2 text-xl font-semibold">Dettagli prodotto</h3>
-        <p>
+        <h3 i18n="@@productDetail.title" class="mb-2 text-xl font-semibold">Dettagli prodotto</h3>
+        <p i18n="@@productDetail.description">
           Questa è la pagina dei dettagli del prodotto. Qui puoi visualizzare e modificare le
           informazioni del prodotto selezionato.
         </p>
@@ -35,7 +37,7 @@ import DiscountBadge from "../../../../components/discount-badge/discount-badge"
 
       <div>
         @if (product(); as prod) {
-          <h4 class="mb-10 text-lg font-semibold">Informazioni prodotto:</h4>
+          <h4 i18n="@@productDetail.info" class="mb-10 text-lg font-semibold">Informazioni prodotto:</h4>
 
           <div class="flex flex-col md:flex-row gap-5 items-center lg:items-start">
             <img
@@ -49,15 +51,15 @@ import DiscountBadge from "../../../../components/discount-badge/discount-badge"
             <div>
               <h1 class="text-2xl font-bold">{{ prod.name }}</h1>
               <div class="my-2 text-gray-700">
-                <p class="font-semibold text-lg">Identificativo (ID):</p>
+                <p i18n="@@productDetail.product.id" class="font-semibold text-lg">Identificativo (ID):</p>
                 <p class="text-lg">{{ prod.id }}</p>
               </div>
               <div class="my-2 text-gray-700">
-                <p class="font-semibold text-lg">Descrizione:</p>
+                <p i18n="@@productDetail.product.description" class="font-semibold text-lg">Descrizione:</p>
                 <p class="text-lg">{{ prod.description }}</p>
               </div>
               <div class="my-2 text-gray-700">
-                <p class="font-semibold text-lg">Categoria:</p>
+                <p i18n="@@productDetail.product.category" class="font-semibold text-lg">Categoria:</p>
                 <p class="text-lg">{{ prod.category.name }} (ID: {{ prod.category.id }})</p>
               </div>
             </div>
@@ -70,16 +72,16 @@ import DiscountBadge from "../../../../components/discount-badge/discount-badge"
                 <thead class="bg-gray-50 text-gray-700">
                   <tr>
                     <th scope="col" class="px-6 py-4 font-semibold border-b border-gray-200">
-                      Prezzo
+                      <span i18n="@@productDetail.product.price">Prezzo</span>
                     </th>
                     <th scope="col" class="px-6 py-4 font-semibold border-b border-gray-200">
-                      Sconto
+                      <span i18n="@@productDetail.product.discount">Sconto</span>
                     </th>
                     <th scope="col" class="px-6 py-4 font-semibold border-b border-gray-200">
-                      Prezzo effettivo
+                      <span i18n="@@productDetail.product.discountPrice">Prezzo effettivo</span>
                     </th>
                     <th scope="col" class="px-6 py-4 font-semibold border-b border-gray-200">
-                      Quantità disponibile
+                      <span i18n="@@productDetail.product.stock">Quantità disponibile</span>
                     </th>
                   </tr>
                 </thead>
@@ -115,16 +117,16 @@ import DiscountBadge from "../../../../components/discount-badge/discount-badge"
           <div class="flex items-center gap-2">
             <a matButton="filled" [routerLink]="['edit']" class="mt-6">
               <mat-icon>edit</mat-icon>
-              Modifica
+              <span i18n="@@edit">Modifica</span>
             </a>
 
             <a matButton="outlined" color="warn" class="mt-6">
               <mat-icon>delete</mat-icon>
-              Elimina (non implementato)
+              <span i18n="@@delete">Elimina</span> (non implementato)
             </a>
           </div>
         } @else {
-          <p class="text-red-500">Non è stato possibile caricare i dettagli del prodotto.</p>
+          <p i18n="@@productDetail.error" class="text-red-500">Non è stato possibile caricare i dettagli del prodotto.</p>
         }
       </div>
     </div>
