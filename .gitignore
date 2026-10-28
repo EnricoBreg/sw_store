@@ -20,3 +20,6 @@ Thumbs.db
 # Segreti locali (mai committare)
 docs/.new_google_secret.txt
 *.secret.txt
+
+.claude/
+CLAUDE.md
