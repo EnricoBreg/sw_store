@@ -1,0 +1,12 @@
+Grazie per il tuo ordine!
+
+Di seguito le informazioni essenziali dell'ordine appena fatto:
+
+Ordine n. <%= @order.code %>
+Data: <%= l(@order.created_at, format: :long) %>
+
+<% @order.order_items.each do |item| %>
+  - <%= item.product.name %> x <%= item.quantity %> - <%= number_to_currency(item.unit_price, unit: "€") %>
+<% end %>
+
+Totale: <%= number_to_currency(@order.total_amount, unit: "€") %>

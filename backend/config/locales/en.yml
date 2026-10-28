@@ -199,3 +199,8 @@ en:
       not_logged_in: "No active session found."
       signed_up: "You signed up successfully."
       signed_up_failed: "Errore during sign up."
+
+  mailer:
+    orders:
+      greetings: "Thanks for your order!"
+      confirmation: "Confirmation of your order %{codice}"

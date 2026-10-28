@@ -1,0 +1,24 @@
+<h1><%= I18n.t("mailer.orders.greetings", first_name: @order.user.first_name) %></h1>
+
+<p>
+  <%= I18n.t("mailer.orders.order.number") %> <strong><%= @order.id %></strong><br>
+  <%= I18n.t("mailer.orders.order.date") %> <%= l(@order.created_at, format: :long) %><br>
+  <%= I18n.t("mailer.orders.order.status") %> <%= @order.status %>
+</p>
+
+<table>
+  <thead>
+    <tr><th><%= I18n.t("mailer.orders.product.caption") %></th><th><%= I18n.t("mailer.orders.product.quantity") %></th><th><%= I18n.t("mailer.orders.product.price") %></th></tr>
+  </thead>
+  <tbody>
+    <% @order.order_items.each do |item| %>
+      <tr>
+        <td><%= item.product.name %></td>
+        <td><%= item.quantity %></td>
+        <td><%= number_to_currency(item.unit_price, unit: "€") %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<p><strong><%= I18n.t("mailer.orders.order.total") %> <%= number_to_currency(@order.total_amount, unit: "€") %></strong></p>

@@ -190,3 +190,19 @@ it:
       signed_up: "Ti sei registrato con successo."
       signed_up_failed: "Errore durante la registrazione."
 
+  mailer:
+    orders:
+      greetings: "Grazie per il tuo ordine, %{first_name}!"
+      confirmation: "Conferma del tuo ordine %{codice}"
+      order:
+        caption: "Ordine"
+        number: "Ordine n.:"
+        date: "Data:"
+        status: "Stato:"
+        total: "Totale:"
+      product:
+        caption: "Prodotto"
+        quantity: "Quantità"
+        price: "Prezzo"
+
+

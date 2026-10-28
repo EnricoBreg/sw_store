@@ -34,6 +34,10 @@ class Api::V1::Users::OrdersController < Api::V1::AuthenticatedController
     @order = Order.create_from_cart(cart, order_params)
 
     if @order.persisted?
+      # Invia l'email di conferema dell'ordine all'utente quando viene effettivamente salvato
+      # l'ordine del database.
+      OrderMailer.with(order: @order).confirmation(@order).deliver_later
+
       render_success(
         message: I18n.t("api.messages.checkout_successful", id: @order.id),
         data: serialize_resource(@order, OrderSerializer),
